@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Open book: left page -->
+  <path d="M256 108C180 88 76 108 52 156V392C76 344 180 328 256 348Z"/>
+  <!-- Open book: right page -->
+  <path d="M256 108C332 88 436 108 460 156V392C436 344 332 328 256 348Z"/>
+  <!-- Spine -->
+  <rect x="244" y="108" width="24" height="240" rx="4"/>
+</svg>

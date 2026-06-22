@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Drawstring pouch body -->
+  <path d="M256 472C136 472 52 428 52 348C52 240 128 164 256 164C384 164 460 240 460 348C460 428 376 472 256 472Z"/>
+  <!-- Neck/collar -->
+  <ellipse cx="256" cy="158" rx="76" ry="30"/>
+  <!-- Drawstring knot + ties -->
+  <path d="M222 128L198 60L248 86L256 44L264 86L314 60L290 128Q274 108 256 104Q238 108 222 128Z"/>
+</svg>

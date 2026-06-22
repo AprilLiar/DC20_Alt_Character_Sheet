@@ -133,16 +133,24 @@
   z-index: 1;
 }
 
-.dc20-alt-sheet .tab-label {
-  font-family: var(--font-heading);
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--tab-inactive-text);
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
+.dc20-alt-sheet .tab-icon {
+  display: block;
+  width: 26px;
+  height: 26px;
+  background-color: var(--tab-inactive-text);
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  transition: background-color var(--t-fast);
 }
-.dc20-alt-sheet .page-tab.active .tab-label {
-  color: var(--p-accent);
+.dc20-alt-sheet .page-tab.active .tab-icon {
+  background-color: var(--p-accent);
 }
+.dc20-alt-sheet .tab-icon-core      { mask-image: url('../assets/icons/tab-core.svg');      -webkit-mask-image: url('../assets/icons/tab-core.svg'); }
+.dc20-alt-sheet .tab-icon-combat    { mask-image: url('../assets/icons/tab-combat.svg');    -webkit-mask-image: url('../assets/icons/tab-combat.svg'); }
+.dc20-alt-sheet .tab-icon-features  { mask-image: url('../assets/icons/tab-features.svg');  -webkit-mask-image: url('../assets/icons/tab-features.svg'); }
+.dc20-alt-sheet .tab-icon-inventory { mask-image: url('../assets/icons/tab-inventory.svg'); -webkit-mask-image: url('../assets/icons/tab-inventory.svg'); }
+.dc20-alt-sheet .tab-icon-biography { mask-image: url('../assets/icons/tab-biography.svg'); -webkit-mask-image: url('../assets/icons/tab-biography.svg'); }
