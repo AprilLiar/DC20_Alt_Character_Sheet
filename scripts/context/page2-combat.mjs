@@ -1,6 +1,7 @@
 // Maps item types to the filter tab they belong to
 const TYPE_TO_FILTER = {
   weapon:      'weapon',
+  equipment:   'equipment',
   spell:       'spell',
   maneuver:    'maneuver',
   feature:     'feature',
@@ -67,7 +68,7 @@ export async function prepareCombat(actor) {
     if (!filterType) continue;
 
     const hasResourceCost = costs
-      ? Object.entries(costs).some(([k, v]) => ['ap','stamina','mana','grit','health'].includes(k) && v)
+      ? Object.entries(costs).some(([k, v]) => ['ap','sp','sta','stamina','mp','mana','map','grit','health'].includes(k) && v)
       : false;
 
     if (!isWeapon && !hasResourceCost) continue;

@@ -161,6 +161,9 @@
       class="combat-filter-btn {{#if (eq combatFilter 'weapon')}}active{{/if}}"
       data-filter="weapon">Weapons</button>
     <button type="button"
+      class="combat-filter-btn {{#if (eq combatFilter 'equipment')}}active{{/if}}"
+      data-filter="equipment">Equipment</button>
+    <button type="button"
       class="combat-filter-btn {{#if (eq combatFilter 'spell')}}active{{/if}}"
       data-filter="spell">Spells</button>
     <button type="button"
@@ -175,7 +178,8 @@
   <div class="combat-actions">
     {{#each combatActions}}
     <div class="combat-action-row" data-item-id="{{id}}" data-filter-type="{{filterType}}">
-      <img class="ca-img" src="{{img}}" alt="{{name}}">
+      <img class="ca-img" src="{{img}}" alt="{{name}}"
+        data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
       <span class="ca-name">{{name}}</span>
       <span class="ca-cost muted">{{itemCost costs}}</span>
       {{#if rangeType}}<span class="ca-range muted">{{rangeType}}</span>{{/if}}

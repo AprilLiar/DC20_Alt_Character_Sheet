@@ -127,7 +127,8 @@
           <ul class="qol-list">
             {{#each favourites}}
             <li class="qol-row" data-item-id="{{id}}">
-              <img class="qol-img" src="{{img}}" alt="{{name}}">
+              <img class="qol-img" src="{{img}}" alt="{{name}}"
+                data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
               <span class="qol-name">{{name}}</span>
               <button type="button" class="qol-use-btn"
                 data-action="useItem" data-item-id="{{id}}" title="Use">
@@ -148,7 +149,8 @@
           <ul class="qol-list">
             {{#each lastUsed}}
             <li class="qol-row" data-item-id="{{id}}">
-              <img class="qol-img" src="{{img}}" alt="{{name}}">
+              <img class="qol-img" src="{{img}}" alt="{{name}}"
+                data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
               <span class="qol-name">{{name}}</span>
               <button type="button" class="qol-use-btn"
                 data-action="useItem" data-item-id="{{id}}" title="Use">
