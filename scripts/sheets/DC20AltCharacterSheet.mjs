@@ -73,6 +73,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /* -------------------------------------------- */
 
   _onRender(context, options) {
+    super._onRender(context, options);
     this._bindPageTabs();
     this._bindCombatFilter();
     this._registerContextMenu();

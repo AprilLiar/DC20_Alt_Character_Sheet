@@ -5,13 +5,11 @@
     <div class="bio-col">
       <h3 class="section-heading">Biography</h3>
       {{#if isEditable}}
-        <div class="bio-editor"
-          data-edit="system.details.biography.value"
-          data-dtype="String">
-          {{{biography}}}
-        </div>
+        <textarea class="bio-editor"
+          name="system.details.biography.value"
+          rows="14">{{biography}}</textarea>
       {{else}}
-        <div class="bio-view">{{{biography}}}</div>
+        <div class="bio-view">{{biography}}</div>
       {{/if}}
     </div>
 
