@@ -1,0 +1,130 @@
+{
+  "DC20AltSheet": {
+    "sheetLabel": "DC20 Alternative Sheet",
+
+    "tabs": {
+      "main":      "Main",
+      "combat":    "Combat",
+      "features":  "Features",
+      "inventory": "Inventory",
+      "details":   "Details"
+    },
+
+    "attr": {
+      "might":        "Might",
+      "agility":      "Agility",
+      "charisma":     "Charisma",
+      "intelligence": "Intelligence",
+      "saveMastery":  "Save Mastery"
+    },
+
+    "section": {
+      "attributes":    "Attributes",
+      "skills":        "Skills",
+      "languages":     "Languages",
+      "movement":      "Movement",
+      "senses":        "Senses",
+      "death":         "Death",
+      "size":          "Size",
+      "resources":     "Resources",
+      "conditions":    "Conditions",
+      "damageReduction": "Damage Reduction",
+      "dmgTypes":      "Damage Types",
+      "features":      "Class Features",
+      "maneuvers":     "Maneuvers",
+      "spells":        "Spells",
+      "techniques":    "Techniques",
+      "weapons":       "Weapons",
+      "equipment":     "Equipment",
+      "consumables":   "Consumables",
+      "loot":          "Loot",
+      "origins":       "Origins",
+      "combatTraining": "Combat Training",
+      "pointPools":    "Point Pools",
+      "biography":     "Biography"
+    },
+
+    "resource": {
+      "hp":         "Hit Points",
+      "ap":         "Action Points",
+      "stamina":    "Stamina",
+      "mana":       "Mana",
+      "grit":       "Grit",
+      "restPoints": "Rest Points"
+    },
+
+    "rollMod": {
+      "saveDC":  "Save DC",
+      "attack":  "Attack Mod",
+      "check":   "Check Mod"
+    },
+
+    "known": {
+      "spells":    "Spells",
+      "maneuvers": "Maneuvers",
+      "infusions": "Infusions"
+    },
+
+    "roll": {
+      "attribute":  "Attribute Check ({attr})",
+      "save":       "Saving Throw ({attr})",
+      "check":      "Check",
+      "checkHint":  "Click to roll attribute check"
+    },
+
+    "death": {
+      "threshold": "Threshold"
+    },
+
+    "detail": {
+      "ancestry":  "Ancestry",
+      "background": "Background",
+      "class":     "Class",
+      "subclass":  "Subclass"
+    },
+
+    "training": {
+      "weapons":      "Weapons",
+      "spellFocuses": "Spell Focuses",
+      "lightShield":  "Light Shield",
+      "heavyShield":  "Heavy Shield",
+      "lightArmor":   "Light Armor",
+      "heavyArmor":   "Heavy Armor"
+    },
+
+    "points": {
+      "skill":    "Skill Points",
+      "trade":    "Trade Points",
+      "language": "Language Points"
+    },
+
+    "dmr": {
+      "flat": "Flat Reduction"
+    },
+
+    "create": {
+      "feature": "Create Feature"
+    },
+
+    "newItem": "New {type}",
+    "use":     "Use",
+    "edit":    "Edit",
+    "delete":  "Delete",
+    "equip":   "Equip / Unequip",
+
+    "empty": {
+      "skills":      "No skills defined.",
+      "features":    "No features.",
+      "maneuvers":   "No maneuvers.",
+      "spells":      "No spells.",
+      "weapons":     "No weapons.",
+      "equipment":   "No equipment.",
+      "consumables": "No consumables."
+    },
+
+    "deleteConfirm": {
+      "title":   "Delete Item",
+      "content": "Delete <strong>{name}</strong>? This cannot be undone."
+    }
+  }
+}
