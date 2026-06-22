@@ -1,0 +1,42 @@
+{
+  "id": "dc20-alt-character-sheet",
+  "title": "DC20 Alternative Character Sheet",
+  "description": "An alternative character sheet for the DC20 RPG system with a redesigned layout and quality-of-life improvements.",
+  "authors": [
+    {
+      "name": "aprilliar",
+      "flags": {}
+    }
+  ],
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "dc20rpg",
+        "type": "system",
+        "compatibility": {
+          "minimum": "0.9",
+          "verified": "0.10.5"
+        }
+      }
+    ]
+  },
+  "esmodules": [
+    "scripts/dc20-alt-sheet.mjs"
+  ],
+  "styles": [
+    "styles/dc20-alt-sheet.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "flags": {}
+}

@@ -1,0 +1,102 @@
+<div class="tab tab-body" data-group="primary" data-tab="tab-details">
+  <div class="details-layout">
+
+    <!-- Left: Background & Origins -->
+    <div class="details-col">
+      <h3 class="section-title">{{localize "DC20AltSheet.section.origins"}}</h3>
+
+      <div class="detail-field">
+        <label>{{localize "DC20AltSheet.detail.ancestry"}}</label>
+        <span>{{details.ancestry.name}}</span>
+      </div>
+      <div class="detail-field">
+        <label>{{localize "DC20AltSheet.detail.background"}}</label>
+        <span>{{details.background.name}}</span>
+      </div>
+      <div class="detail-field">
+        <label>{{localize "DC20AltSheet.detail.class"}}</label>
+        <span>{{details.class.name}}</span>
+      </div>
+      {{#if details.subclass.name}}
+      <div class="detail-field">
+        <label>{{localize "DC20AltSheet.detail.subclass"}}</label>
+        <span>{{details.subclass.name}}</span>
+      </div>
+      {{/if}}
+
+      <!-- Combat Training -->
+      <h3 class="section-title mt">{{localize "DC20AltSheet.section.combatTraining"}}</h3>
+      <div class="training-grid">
+        <label class="training-check">
+          <input type="checkbox" name="system.combatTraining.weapons"
+            {{#if combatTraining.weapons}}checked{{/if}}
+            {{#unless isEditable}}disabled{{/unless}}>
+          {{localize "DC20AltSheet.training.weapons"}}
+        </label>
+        <label class="training-check">
+          <input type="checkbox" name="system.combatTraining.spellFocuses"
+            {{#if combatTraining.spellFocuses}}checked{{/if}}
+            {{#unless isEditable}}disabled{{/unless}}>
+          {{localize "DC20AltSheet.training.spellFocuses"}}
+        </label>
+        <label class="training-check">
+          <input type="checkbox" name="system.combatTraining.lightShield"
+            {{#if combatTraining.lightShield}}checked{{/if}}
+            {{#unless isEditable}}disabled{{/unless}}>
+          {{localize "DC20AltSheet.training.lightShield"}}
+        </label>
+        <label class="training-check">
+          <input type="checkbox" name="system.combatTraining.heavyShield"
+            {{#if combatTraining.heavyShield}}checked{{/if}}
+            {{#unless isEditable}}disabled{{/unless}}>
+          {{localize "DC20AltSheet.training.heavyShield"}}
+        </label>
+        <label class="training-check">
+          <input type="checkbox" name="system.combatTraining.lightArmor"
+            {{#if combatTraining.lightArmor}}checked{{/if}}
+            {{#unless isEditable}}disabled{{/unless}}>
+          {{localize "DC20AltSheet.training.lightArmor"}}
+        </label>
+        <label class="training-check">
+          <input type="checkbox" name="system.combatTraining.heavyArmor"
+            {{#if combatTraining.heavyArmor}}checked{{/if}}
+            {{#unless isEditable}}disabled{{/unless}}>
+          {{localize "DC20AltSheet.training.heavyArmor"}}
+        </label>
+      </div>
+
+      <!-- Skill Points Remaining -->
+      <h3 class="section-title mt">{{localize "DC20AltSheet.section.pointPools"}}</h3>
+      <div class="point-pool-grid">
+        {{#with system.skillPoints}}
+        <div class="point-pool">
+          <span class="pp-label">{{localize "DC20AltSheet.points.skill"}}</span>
+          <span class="pp-val">{{current}}/{{max}}</span>
+        </div>
+        <div class="point-pool">
+          <span class="pp-label">{{localize "DC20AltSheet.points.trade"}}</span>
+          <span class="pp-val">{{tradeMax}}</span>
+        </div>
+        <div class="point-pool">
+          <span class="pp-label">{{localize "DC20AltSheet.points.language"}}</span>
+          <span class="pp-val">{{langMax}}</span>
+        </div>
+        {{/with}}
+      </div>
+    </div>
+
+    <!-- Right: Biography -->
+    <div class="details-col biography-col">
+      <h3 class="section-title">{{localize "DC20AltSheet.section.biography"}}</h3>
+      <div class="biography-editor">
+        {{{biography}}}
+      </div>
+      {{#if isEditable}}
+      <div class="biography-raw">
+        <textarea name="system.details.biography.value" rows="12">{{system.details.biography.value}}</textarea>
+      </div>
+      {{/if}}
+    </div>
+
+  </div>
+</div>
