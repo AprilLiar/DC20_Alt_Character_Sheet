@@ -1,0 +1,148 @@
+/* ============================================================
+   DC20 Alt Sheet — Header Strip & Page Navigation
+   ============================================================ */
+
+/* ── Header strip ── */
+.dc20-alt-sheet .sheet-header-strip {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+  padding: 7px var(--gap-lg);
+  background: var(--p-border);
+  border-bottom: 2px solid var(--p-border);
+}
+
+/* Dividers between resources */
+.dc20-alt-sheet .hstrip-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--p-border-light);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* Each resource group in the strip */
+.dc20-alt-sheet .hstrip-resource {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xs);
+}
+
+.dc20-alt-sheet .hstrip-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--p-light);
+  min-width: 22px;
+}
+
+/* Label accent colors */
+.dc20-alt-sheet .hp-label  { color: #e88; }
+.dc20-alt-sheet .sp-label  { color: #d4a84b; }
+.dc20-alt-sheet .mp-label  { color: #9988cc; }
+
+/* AP pip row in header */
+.dc20-alt-sheet .ap-pips-strip {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+
+/* Generic pip dot (reused on combat page too) */
+.dc20-alt-sheet .ap-pip {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(180, 200, 255, 0.5);
+  background: transparent;
+  transition: background var(--t-fast);
+}
+.dc20-alt-sheet .ap-pip.filled {
+  background: #6699dd;
+  border-color: #99bbff;
+  box-shadow: 0 0 4px rgba(100, 150, 255, 0.6);
+}
+
+/* xx/yy pair */
+.dc20-alt-sheet .hstrip-pair {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+.dc20-alt-sheet .hstrip-sep {
+  color: var(--p-border-faint);
+  font-size: var(--fs-sm);
+}
+.dc20-alt-sheet .hstrip-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  color: var(--p-light);
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  text-align: center;
+  width: 38px;
+  padding: 1px 2px;
+  transition: border-color var(--t-fast);
+}
+.dc20-alt-sheet .hstrip-input:hover  { border-bottom-color: var(--p-border-faint); }
+.dc20-alt-sheet .hstrip-input:focus  { border-bottom-color: var(--p-gold-light); outline: none; }
+.dc20-alt-sheet .hstrip-input:disabled { opacity: 0.7; cursor: default; }
+
+/* ── Right-side bookmark nav ── */
+.dc20-alt-sheet .page-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  padding: var(--gap-sm) 0 var(--gap-sm) var(--gap-xs);
+  background: var(--p-bg-aged);
+  border-left: 2px solid var(--p-border);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.dc20-alt-sheet .page-tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tab-inactive-bg);
+  border: 1.5px solid var(--p-border-light);
+  border-left: none;
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  padding: var(--gap-sm) var(--gap-xs);
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+  text-align: center;
+}
+.dc20-alt-sheet .page-tab:hover {
+  background: var(--p-hover);
+  border-color: var(--p-border);
+}
+.dc20-alt-sheet .page-tab.active {
+  background: var(--tab-active-bg);
+  border-color: var(--tab-active-border);
+  border-left: none;
+  /* Extend tab into page area to look attached */
+  margin-left: -2px;
+  padding-left: calc(var(--gap-xs) + 2px);
+  z-index: 1;
+}
+
+.dc20-alt-sheet .tab-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--tab-inactive-text);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.dc20-alt-sheet .page-tab.active .tab-label {
+  color: var(--p-accent);
+}

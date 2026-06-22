@@ -1,0 +1,167 @@
+<section class="page-scroll" data-page="core">
+  <div class="core-layout">
+
+    {{!-- LEFT: 2×2 Attribute Cards + Movement/Senses --}}
+    <div class="core-col col-attributes">
+      <h3 class="section-heading">Attributes</h3>
+      <div class="attributes-grid">
+        {{#each attributes}}
+        <div class="attribute-card" data-attr="{{key}}">
+          <div class="attr-name">{{label}}</div>
+          <div class="attr-score">{{signedNum check}}</div>
+          <div class="attr-actions">
+            <button type="button" class="attr-btn check-btn rollable"
+              data-action="rollAttribute" data-attr="{{key}}"
+              title="Roll Attribute Check">
+              <i class="fas fa-dice-d20"></i>
+              <span>{{signedNum check}}</span>
+            </button>
+            <button type="button" class="attr-btn save-btn rollable"
+              data-action="rollSave" data-attr="{{key}}"
+              title="Roll Saving Throw">
+              <i class="fas fa-shield-alt"></i>
+              <span>{{signedNum save}}</span>
+            </button>
+          </div>
+          {{#if saveMastery}}
+            <span class="save-mastery-dot" title="Save Mastery">
+              <i class="fas fa-star"></i>
+            </span>
+          {{/if}}
+        </div>
+        {{/each}}
+      </div>
+
+      {{!-- Movement --}}
+      {{#if movement.length}}
+        <h4 class="subsection-heading mt">Movement</h4>
+        <div class="mv-list">
+          {{#each movement}}
+          <div class="mv-entry">
+            <span class="mv-type">{{label}}</span>
+            <span class="mv-val">{{value}}<span class="mv-unit"> ft</span></span>
+          </div>
+          {{/each}}
+        </div>
+      {{/if}}
+
+      {{!-- Senses --}}
+      {{#if senses.length}}
+        <h4 class="subsection-heading mt">Senses</h4>
+        <div class="mv-list">
+          {{#each senses}}
+          <div class="mv-entry">
+            <span class="mv-type">{{label}}</span>
+            <span class="mv-val">{{range}}<span class="mv-unit"> ft</span></span>
+          </div>
+          {{/each}}
+        </div>
+      {{/if}}
+
+      {{!-- Size / Death --}}
+      {{#if size}}
+        <div class="mv-entry mt">
+          <span class="mv-type">Size</span>
+          <span class="mv-val">{{size}}</span>
+        </div>
+      {{/if}}
+    </div>
+
+    {{!-- MIDDLE: Skills + Languages --}}
+    <div class="core-col col-skills">
+      <h3 class="section-heading">Skills</h3>
+      <div class="skills-list">
+        {{#each skills}}
+        <div class="skill-row" data-skill="{{key}}">
+          <span class="skill-profs">{{{profDots mastery 2}}}</span>
+          <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">
+            {{label}}
+          </span>
+          <span class="skill-attr muted">{{attribute}}</span>
+          <span class="skill-bonus rollable" data-action="rollSkill" data-skill="{{key}}">
+            {{signedNum bonus}}
+          </span>
+        </div>
+        {{else}}
+        <p class="empty-note">No skills defined.</p>
+        {{/each}}
+      </div>
+
+      {{#if languages.length}}
+        <h3 class="section-heading mt">Languages</h3>
+        <div class="skills-list">
+          {{#each languages}}
+          <div class="skill-row lang-row">
+            <span class="skill-profs">{{{profDots mastery 2}}}</span>
+            <span class="skill-name">{{label}}</span>
+          </div>
+          {{/each}}
+        </div>
+      {{/if}}
+    </div>
+
+    {{!-- RIGHT: Portrait + Identity + Favourites + Last Used --}}
+    <div class="core-col col-identity">
+
+      <div class="portrait-wrap">
+        <img class="portrait-img" src="{{portrait}}" alt="{{actorName}}"
+          {{#if isEditable}}data-edit="img"{{/if}}>
+      </div>
+
+      <div class="identity-block">
+        <div class="char-name">{{actorName}}</div>
+        <div class="char-meta">
+          {{#if details.level}}<span class="char-meta-item">Level {{details.level}}</span>{{/if}}
+          {{#if details.combatMastery}}<span class="char-meta-item char-cm">CM +{{details.combatMastery}}</span>{{/if}}
+          {{#if details.class.name}}<span class="char-meta-item">{{details.class.name}}</span>{{/if}}
+          {{#if details.subclass.name}}<span class="char-meta-item muted">{{details.subclass.name}}</span>{{/if}}
+          {{#if details.ancestry.name}}<span class="char-meta-item">{{details.ancestry.name}}</span>{{/if}}
+          {{#if details.background.name}}<span class="char-meta-item muted">{{details.background.name}}</span>{{/if}}
+        </div>
+      </div>
+
+      {{!-- Favourites --}}
+      <div class="qol-section">
+        <h4 class="subsection-heading">Favourites</h4>
+        {{#if favourites.length}}
+          <ul class="qol-list">
+            {{#each favourites}}
+            <li class="qol-row" data-item-id="{{id}}">
+              <img class="qol-img" src="{{img}}" alt="{{name}}">
+              <span class="qol-name">{{name}}</span>
+              <button type="button" class="qol-use-btn"
+                data-action="useItem" data-item-id="{{id}}" title="Use">
+                <i class="fas fa-play"></i>
+              </button>
+            </li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <p class="empty-note">Right-click items to pin them here.</p>
+        {{/if}}
+      </div>
+
+      {{!-- Last 3 Used --}}
+      <div class="qol-section">
+        <h4 class="subsection-heading">Last Used</h4>
+        {{#if lastUsed.length}}
+          <ul class="qol-list">
+            {{#each lastUsed}}
+            <li class="qol-row" data-item-id="{{id}}">
+              <img class="qol-img" src="{{img}}" alt="{{name}}">
+              <span class="qol-name">{{name}}</span>
+              <button type="button" class="qol-use-btn"
+                data-action="useItem" data-item-id="{{id}}" title="Use">
+                <i class="fas fa-play"></i>
+              </button>
+            </li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <p class="empty-note">Recently used items appear here.</p>
+        {{/if}}
+      </div>
+
+    </div>
+  </div>
+</section>

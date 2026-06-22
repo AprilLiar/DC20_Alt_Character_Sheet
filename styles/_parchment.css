@@ -1,0 +1,105 @@
+/* ============================================================
+   DC20 Alt Sheet — Parchment Decorative Elements
+   Ruled lines, section headings, borders, ink treatments.
+   ============================================================ */
+
+/* ── Section headings — Cinzel, ruled underline ── */
+.dc20-alt-sheet .section-heading {
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--p-accent);
+  border-bottom: 1px solid var(--p-border-faint);
+  padding-bottom: 3px;
+  margin: 0 0 var(--gap-sm);
+}
+
+.dc20-alt-sheet .subsection-heading {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--p-ink-muted);
+  margin: var(--gap-sm) 0 4px;
+}
+
+/* ── Feature source groups ── */
+.dc20-alt-sheet .feature-group {
+  margin-bottom: var(--gap-lg);
+}
+.dc20-alt-sheet .feature-source-heading {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 0.08em;
+  color: var(--p-border);
+  padding: 2px 0 2px var(--gap-xs);
+  border-left: 3px solid var(--p-accent);
+  margin-bottom: var(--gap-xs);
+}
+
+/* ── Page section header row (title + add button) ── */
+.dc20-alt-sheet .page-section-header,
+.dc20-alt-sheet .item-section-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--gap-sm);
+}
+.dc20-alt-sheet .page-section-header .section-heading,
+.dc20-alt-sheet .item-section-hdr .section-heading {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+/* ── Item section spacing ── */
+.dc20-alt-sheet .item-section {
+  margin-bottom: var(--gap-xl);
+}
+
+/* ── Generic inputs — ink-on-parchment feel ── */
+.dc20-alt-sheet input[type="number"],
+.dc20-alt-sheet input[type="text"] {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  color: var(--p-ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  text-align: center;
+  width: 40px;
+  padding: 1px 2px;
+  transition: border-color var(--t-fast);
+}
+.dc20-alt-sheet input[type="number"]:hover,
+.dc20-alt-sheet input[type="text"]:hover  {
+  border-bottom-color: var(--p-border-faint);
+}
+.dc20-alt-sheet input[type="number"]:focus,
+.dc20-alt-sheet input[type="text"]:focus  {
+  border-bottom-color: var(--p-gold);
+  outline: none;
+}
+.dc20-alt-sheet input:disabled { opacity: 0.6; cursor: default; }
+
+/* ── Textarea ── */
+.dc20-alt-sheet textarea {
+  background: var(--p-light);
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-sm);
+  color: var(--p-ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  padding: var(--gap-sm);
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+}
+.dc20-alt-sheet textarea:focus {
+  border-color: var(--p-accent);
+  outline: none;
+}

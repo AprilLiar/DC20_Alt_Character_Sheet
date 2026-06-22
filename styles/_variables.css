@@ -1,0 +1,41 @@
+/* ============================================================
+   DC20 Alt Sheet — Design Tokens
+   All structural values (spacing, radii, shadows).
+   Colors are overridden by the active theme file.
+   ============================================================ */
+
+.dc20-alt-sheet {
+  /* ── Spacing ── */
+  --gap-xs:  4px;
+  --gap-sm:  8px;
+  --gap-md:  12px;
+  --gap-lg:  16px;
+  --gap-xl:  24px;
+
+  /* ── Border radii ── */
+  --r-sm:    4px;
+  --r-md:    6px;
+  --r-lg:    10px;
+  --r-xl:    14px;
+
+  /* ── Font stack (override in theme) ── */
+  --font-heading: 'Cinzel', 'Palatino Linotype', 'Book Antiqua', serif;
+  --font-body:    'Crimson Text', 'Palatino Linotype', Georgia, serif;
+  --font-ui:      'Crimson Text', 'Palatino Linotype', Georgia, serif;
+
+  /* ── Font sizes ── */
+  --fs-xs:   10px;
+  --fs-sm:   11px;
+  --fs-md:   13px;
+  --fs-lg:   15px;
+  --fs-xl:   18px;
+  --fs-2xl:  24px;
+  --fs-3xl:  32px;
+
+  /* ── Layout ── */
+  --nav-width: 72px;
+
+  /* ── Transitions ── */
+  --t-fast: 0.12s ease;
+  --t-mid:  0.2s ease;
+}

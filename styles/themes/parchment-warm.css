@@ -1,0 +1,56 @@
+/* ============================================================
+   DC20 Alt Sheet — Parchment Warm Theme
+   Swap this file to change the entire visual identity.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+.dc20-alt-sheet {
+  /* ── Parchment Palette ── */
+  --p-bg:           #f0e2b6;   /* main parchment */
+  --p-bg-card:      #e8d5a0;   /* card/inset areas */
+  --p-bg-aged:      #d4b483;   /* darker aged parchment */
+  --p-light:        #f8f0d8;   /* lightest parchment */
+  --p-hover:        #ecddb0;   /* hover state */
+
+  --p-border:       #5c3a1e;   /* dark brown ink border */
+  --p-border-light: #8b6347;   /* medium brown */
+  --p-border-faint: #c4a97a;   /* faint ruled line */
+
+  --p-ink:          #2c1a0e;   /* primary text */
+  --p-ink-muted:    #7a5535;   /* muted/secondary text */
+  --p-accent:       #8b4513;   /* saddle brown accent */
+  --p-gold:         #b8860b;   /* dark goldenrod */
+  --p-gold-light:   #daa520;   /* goldenrod highlight */
+  --p-red:          #8b0000;   /* dark red (HP) */
+
+  /* ── Resource accent colors (ink-toned) ── */
+  --c-hp:       #8b0000;
+  --c-hp-light: #c0392b;
+  --c-ap:       #1a3a6b;
+  --c-ap-light: #2e6da4;
+  --c-sta:      #6b3a1a;
+  --c-sta-light:#b05c28;
+  --c-mana:     #3a1a6b;
+  --c-mana-light:#7b4fae;
+  --c-grit:     #1a4a1a;
+  --c-grit-light:#3a8a3a;
+  --c-rest:     #2a2a3a;
+  --c-rest-light:#555580;
+
+  /* ── Condition glow ── */
+  --cond-glow:  0 0 8px 2px rgba(180, 60, 20, 0.7);
+  --cond-bg:    rgba(180, 60, 20, 0.15);
+
+  /* ── Active tab indicator ── */
+  --tab-active-bg:     var(--p-bg);
+  --tab-active-border: var(--p-accent);
+  --tab-inactive-bg:   var(--p-bg-aged);
+  --tab-inactive-text: var(--p-ink-muted);
+
+  /* ── Font overrides ── */
+  font-family: var(--font-body);
+  font-size:   var(--fs-md);
+  color:       var(--p-ink);
+  line-height: 1.4;
+}
