@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 5-pointed star, outer r=220, inner r=88, center (256,256), first point up -->
+  <polygon points="
+    256,36
+    308,185 465,188
+    340,283 385,434
+    256,344 127,434
+    172,283 47,188
+    204,185
+  "/>
+</svg>
