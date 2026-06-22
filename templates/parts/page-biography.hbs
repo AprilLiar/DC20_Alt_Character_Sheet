@@ -7,15 +7,16 @@
       {{#if isEditable}}
         <textarea class="bio-editor"
           name="system.details.biography.value"
-          rows="14">{{biography}}</textarea>
+          rows="18">{{biography}}</textarea>
       {{else}}
         <div class="bio-view">{{biography}}</div>
       {{/if}}
     </div>
 
-    {{!-- Right: Traits, Training, Points --}}
+    {{!-- Right: Origins + Appearance --}}
     <div class="traits-col">
 
+      {{!-- Origins --}}
       <h3 class="section-heading">Origins</h3>
       <div class="origin-list">
         {{#if details.ancestry.name}}
@@ -44,69 +45,109 @@
         {{/if}}
       </div>
 
-      {{!-- Combat Training --}}
-      {{#if combatTraining}}
-      <h3 class="section-heading mt">Combat Training</h3>
-      <div class="training-list">
-        {{#each combatTraining}}
-        <div class="training-row">
-          <input type="checkbox" id="ct-{{@key}}"
-            {{#if value}}checked{{/if}} disabled>
-          <label for="ct-{{@key}}">{{label}}</label>
-        </div>
-        {{/each}}
-      </div>
-      {{/if}}
+      {{!-- Appearance --}}
+      <h3 class="section-heading mt">Appearance</h3>
+      <div class="appearance-form">
 
-      {{!-- Point Pools --}}
-      {{#if skillPoints}}
-      <h3 class="section-heading mt">Point Pools</h3>
-      <div class="points-list">
-        {{#if skillPoints.skill}}
-        <div class="points-row">
-          <span class="pt-label">Skill Points</span>
-          <span class="pt-val">{{skillPoints.skill.available}} / {{skillPoints.skill.total}}</span>
+        <div class="appr-row">
+          <label class="appr-label">Hair</label>
+          <select class="appr-select" name="flags.{{moduleId}}.appearance.hair"
+            {{#unless isEditable}}disabled{{/unless}}>
+            <option value="">—</option>
+            <option value="blonde"     {{#if (eq appearance.hair "blonde")}}selected{{/if}}>Blonde</option>
+            <option value="brown"      {{#if (eq appearance.hair "brown")}}selected{{/if}}>Brown</option>
+            <option value="dark-brown" {{#if (eq appearance.hair "dark-brown")}}selected{{/if}}>Dark Brown</option>
+            <option value="black"      {{#if (eq appearance.hair "black")}}selected{{/if}}>Black</option>
+            <option value="auburn"     {{#if (eq appearance.hair "auburn")}}selected{{/if}}>Auburn</option>
+            <option value="red"        {{#if (eq appearance.hair "red")}}selected{{/if}}>Red</option>
+            <option value="chestnut"   {{#if (eq appearance.hair "chestnut")}}selected{{/if}}>Chestnut</option>
+            <option value="gray"       {{#if (eq appearance.hair "gray")}}selected{{/if}}>Gray</option>
+            <option value="white"      {{#if (eq appearance.hair "white")}}selected{{/if}}>White</option>
+            <option value="silver"     {{#if (eq appearance.hair "silver")}}selected{{/if}}>Silver</option>
+            <option value="blue"       {{#if (eq appearance.hair "blue")}}selected{{/if}}>Blue</option>
+            <option value="green"      {{#if (eq appearance.hair "green")}}selected{{/if}}>Green</option>
+            <option value="purple"     {{#if (eq appearance.hair "purple")}}selected{{/if}}>Purple</option>
+            <option value="bald"       {{#if (eq appearance.hair "bald")}}selected{{/if}}>Bald / None</option>
+            <option value="other"      {{#if (eq appearance.hair "other")}}selected{{/if}}>Other</option>
+          </select>
         </div>
-        {{/if}}
-        {{#if skillPoints.trade}}
-        <div class="points-row">
-          <span class="pt-label">Trade Points</span>
-          <span class="pt-val">{{skillPoints.trade.available}} / {{skillPoints.trade.total}}</span>
-        </div>
-        {{/if}}
-        {{#if skillPoints.language}}
-        <div class="points-row">
-          <span class="pt-label">Language Points</span>
-          <span class="pt-val">{{skillPoints.language.available}} / {{skillPoints.language.total}}</span>
-        </div>
-        {{/if}}
-      </div>
-      {{/if}}
 
-      {{!-- Known counts --}}
-      {{#if known}}
-      <h3 class="section-heading mt">Known</h3>
-      <div class="points-list">
-        {{#if known.spells}}
-        <div class="points-row">
-          <span class="pt-label">Spells</span>
-          <span class="pt-val">{{known.spells.current}} / {{known.spells.max}}</span>
+        <div class="appr-row">
+          <label class="appr-label">Eyes</label>
+          <select class="appr-select" name="flags.{{moduleId}}.appearance.eyes"
+            {{#unless isEditable}}disabled{{/unless}}>
+            <option value="">—</option>
+            <option value="brown"      {{#if (eq appearance.eyes "brown")}}selected{{/if}}>Brown</option>
+            <option value="dark-brown" {{#if (eq appearance.eyes "dark-brown")}}selected{{/if}}>Dark Brown</option>
+            <option value="blue"       {{#if (eq appearance.eyes "blue")}}selected{{/if}}>Blue</option>
+            <option value="light-blue" {{#if (eq appearance.eyes "light-blue")}}selected{{/if}}>Light Blue</option>
+            <option value="green"      {{#if (eq appearance.eyes "green")}}selected{{/if}}>Green</option>
+            <option value="hazel"      {{#if (eq appearance.eyes "hazel")}}selected{{/if}}>Hazel</option>
+            <option value="gray"       {{#if (eq appearance.eyes "gray")}}selected{{/if}}>Gray</option>
+            <option value="amber"      {{#if (eq appearance.eyes "amber")}}selected{{/if}}>Amber</option>
+            <option value="black"      {{#if (eq appearance.eyes "black")}}selected{{/if}}>Black</option>
+            <option value="violet"     {{#if (eq appearance.eyes "violet")}}selected{{/if}}>Violet</option>
+            <option value="gold"       {{#if (eq appearance.eyes "gold")}}selected{{/if}}>Gold</option>
+            <option value="silver"     {{#if (eq appearance.eyes "silver")}}selected{{/if}}>Silver</option>
+            <option value="red"        {{#if (eq appearance.eyes "red")}}selected{{/if}}>Red</option>
+            <option value="other"      {{#if (eq appearance.eyes "other")}}selected{{/if}}>Other</option>
+          </select>
         </div>
-        {{/if}}
-        {{#if known.maneuvers}}
-        <div class="points-row">
-          <span class="pt-label">Maneuvers</span>
-          <span class="pt-val">{{known.maneuvers.current}} / {{known.maneuvers.max}}</span>
+
+        <div class="appr-row">
+          <label class="appr-label">Skin</label>
+          <select class="appr-select" name="flags.{{moduleId}}.appearance.skin"
+            {{#unless isEditable}}disabled{{/unless}}>
+            <option value="">—</option>
+            <option value="fair"       {{#if (eq appearance.skin "fair")}}selected{{/if}}>Fair</option>
+            <option value="light"      {{#if (eq appearance.skin "light")}}selected{{/if}}>Light</option>
+            <option value="medium"     {{#if (eq appearance.skin "medium")}}selected{{/if}}>Medium</option>
+            <option value="tan"        {{#if (eq appearance.skin "tan")}}selected{{/if}}>Tan</option>
+            <option value="olive"      {{#if (eq appearance.skin "olive")}}selected{{/if}}>Olive</option>
+            <option value="brown"      {{#if (eq appearance.skin "brown")}}selected{{/if}}>Brown</option>
+            <option value="dark-brown" {{#if (eq appearance.skin "dark-brown")}}selected{{/if}}>Dark Brown</option>
+            <option value="ebony"      {{#if (eq appearance.skin "ebony")}}selected{{/if}}>Ebony</option>
+            <option value="pale"       {{#if (eq appearance.skin "pale")}}selected{{/if}}>Pale</option>
+            <option value="freckled"   {{#if (eq appearance.skin "freckled")}}selected{{/if}}>Freckled</option>
+            <option value="other"      {{#if (eq appearance.skin "other")}}selected{{/if}}>Other</option>
+          </select>
         </div>
-        {{/if}}
-        {{#if known.techniques}}
-        <div class="points-row">
-          <span class="pt-label">Techniques</span>
-          <span class="pt-val">{{known.techniques.current}} / {{known.techniques.max}}</span>
+
+        <div class="appr-row">
+          <label class="appr-label">Height</label>
+          <input class="appr-input" type="text"
+            name="flags.{{moduleId}}.appearance.height"
+            value="{{appearance.height}}"
+            placeholder="e.g. 5'10&quot;"
+            {{#unless isEditable}}disabled{{/unless}}>
         </div>
-        {{/if}}
-      </div>
-      {{/if}}
+
+        <div class="appr-row">
+          <label class="appr-label">Weight</label>
+          <input class="appr-input" type="text"
+            name="flags.{{moduleId}}.appearance.weight"
+            value="{{appearance.weight}}"
+            placeholder="e.g. 160 lbs"
+            {{#unless isEditable}}disabled{{/unless}}>
+        </div>
+
+        <div class="appr-block">
+          <label class="appr-label">Clothing</label>
+          <textarea class="appr-textarea" rows="3"
+            name="flags.{{moduleId}}.appearance.clothing"
+            placeholder="What do they typically wear?"
+            {{#unless isEditable}}disabled{{/unless}}>{{appearance.clothing}}</textarea>
+        </div>
+
+        <div class="appr-block">
+          <label class="appr-label">Distinguishing Features</label>
+          <textarea class="appr-textarea" rows="3"
+            name="flags.{{moduleId}}.appearance.features"
+            placeholder="Scars, tattoos, markings…"
+            {{#unless isEditable}}disabled{{/unless}}>{{appearance.features}}</textarea>
+        </div>
+
+      </div>{{!-- /appearance-form --}}
 
     </div>
   </div>

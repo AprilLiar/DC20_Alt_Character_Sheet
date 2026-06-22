@@ -168,32 +168,17 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   static async _onRollAttribute(event, target) {
     const attrKey = target.closest('[data-attr]').dataset.attr;
-    const actor = this.actor;
-    if (typeof actor.rollAttributeCheck === 'function') return actor.rollAttributeCheck(attrKey);
-    const attr = actor.system.attributes?.[attrKey];
-    const roll = new Roll('1d20 + @check', { check: attr?.check ?? 0 });
-    await roll.evaluate();
-    roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `${attrKey.toUpperCase()} Check` });
+    return this.actor.roll(attrKey, 'check');
   }
 
   static async _onRollSave(event, target) {
     const attrKey = target.closest('[data-attr]').dataset.attr;
-    const actor = this.actor;
-    if (typeof actor.rollSave === 'function') return actor.rollSave(attrKey);
-    const attr = actor.system.attributes?.[attrKey];
-    const roll = new Roll('1d20 + @save', { save: attr?.save ?? 0 });
-    await roll.evaluate();
-    roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `${attrKey.toUpperCase()} Save` });
+    return this.actor.roll(attrKey, 'save');
   }
 
   static async _onRollSkill(event, target) {
     const skillKey = target.closest('[data-skill]').dataset.skill;
-    const actor = this.actor;
-    if (typeof actor.rollSkillCheck === 'function') return actor.rollSkillCheck(skillKey);
-    const skill = actor.system.skills?.[skillKey];
-    const roll = new Roll('1d20 + @bonus', { bonus: skill?.bonus ?? 0 });
-    await roll.evaluate();
-    roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: skillKey });
+    return this.actor.roll(skillKey, 'check');
   }
 
   static async _onCreateItem(event, target) {
@@ -228,6 +213,6 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     const item = this.actor.items.get(itemId);
     if (!item) return;
     await recordItemUse(this.actor, itemId);
-    if (typeof item.use === 'function') item.use();
+    return item.roll();
   }
 }
