@@ -7,7 +7,9 @@ import { prepareInventory } from '../context/page4-inventory.mjs';
 import { prepareBiography } from '../context/page5-biography.mjs';
 import { addFavourite, removeFavourite, isFavourite, recordItemUse } from '../helpers/tracking.mjs';
 
-export class DC20AltCharacterSheet extends foundry.applications.sheets.ActorSheetV2 {
+export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsApplicationMixin(
+  foundry.applications.sheets.ActorSheetV2
+) {
 
   static DEFAULT_OPTIONS = {
     classes: ['dc20-alt-sheet'],
