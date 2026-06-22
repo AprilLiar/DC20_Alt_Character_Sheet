@@ -1,14 +1,19 @@
 {
   "id": "dc20-alt-character-sheet",
   "title": "DC20 Alternative Character Sheet",
-  "description": "An alternative character sheet for the DC20 RPG system with a redesigned layout and quality-of-life improvements.",
+  "description": "An alternative character sheet for the DC20 RPG system with a parchment aesthetic, bookmark navigation, Favourites, and Last Used tracking.",
   "authors": [
     {
-      "name": "aprilliar",
+      "name": "AprilLiar",
+      "url": "https://github.com/AprilLiar",
       "flags": {}
     }
   ],
   "version": "0.1.0",
+  "url": "https://github.com/AprilLiar/DC20_Alt_Character_Sheet",
+  "manifest": "https://github.com/AprilLiar/DC20_Alt_Character_Sheet/releases/latest/download/module.json",
+  "download": "https://github.com/AprilLiar/DC20_Alt_Character_Sheet/releases/download/v0.1.0/dc20-alt-character-sheet.zip",
+  "changelog": "https://github.com/AprilLiar/DC20_Alt_Character_Sheet/releases/tag/v0.1.0",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
