@@ -1,0 +1,267 @@
+<section class="page-scroll" data-page="combat">
+
+  {{!-- Upper: Resources + Defences --}}
+  <div class="combat-upper">
+
+    {{!-- Resources --}}
+    <div class="resources-col">
+      <h3 class="section-heading">Resources</h3>
+
+      <div class="resource-bar-row hp-row">
+        <span class="res-name hp-name">HP</span>
+        <div class="res-bar-track">
+          <div class="res-bar-fill hp-fill" style="width:{{percent resources.health.value resources.health.max}}%"></div>
+        </div>
+        <span class="res-vals">
+          <input type="number" name="system.resources.health.value"
+            value="{{resources.health.value}}" {{#unless isEditable}}disabled{{/unless}}>
+          <span class="res-sep">/</span>
+          <input type="number" name="system.resources.health.max"
+            value="{{resources.health.max}}" {{#unless isEditable}}disabled{{/unless}}>
+        </span>
+        {{#if resources.health.temp}}
+          <span class="res-temp">(+{{resources.health.temp}})</span>
+        {{/if}}
+      </div>
+
+      <div class="resource-bar-row ap-row">
+        <span class="res-name ap-name">AP</span>
+        <div class="ap-pips-row">{{{apPips resources.ap.value resources.ap.max}}}</div>
+        <span class="res-vals">
+          <input type="number" name="system.resources.ap.value"
+            value="{{resources.ap.value}}" min="0" max="{{resources.ap.max}}"
+            {{#unless isEditable}}disabled{{/unless}}>
+          <span class="res-sep res-sep-slash">/{{resources.ap.max}}</span>
+        </span>
+      </div>
+
+      <div class="resource-bar-row sta-row">
+        <span class="res-name sta-name">STA</span>
+        <div class="res-bar-track">
+          <div class="res-bar-fill sta-fill" style="width:{{percent resources.stamina.value resources.stamina.max}}%"></div>
+        </div>
+        <span class="res-vals">
+          <input type="number" name="system.resources.stamina.value"
+            value="{{resources.stamina.value}}" {{#unless isEditable}}disabled{{/unless}}>
+          <span class="res-sep">/</span>
+          <input type="number" name="system.resources.stamina.max"
+            value="{{resources.stamina.max}}" {{#unless isEditable}}disabled{{/unless}}>
+        </span>
+      </div>
+
+      <div class="resource-bar-row mana-row">
+        <span class="res-name mana-name">MNA</span>
+        <div class="res-bar-track">
+          <div class="res-bar-fill mana-fill" style="width:{{percent resources.mana.value resources.mana.max}}%"></div>
+        </div>
+        <span class="res-vals">
+          <input type="number" name="system.resources.mana.value"
+            value="{{resources.mana.value}}" {{#unless isEditable}}disabled{{/unless}}>
+          <span class="res-sep">/</span>
+          <input type="number" name="system.resources.mana.max"
+            value="{{resources.mana.max}}" {{#unless isEditable}}disabled{{/unless}}>
+        </span>
+      </div>
+
+      {{#if grit.max}}
+      <div class="resource-bar-row grit-row">
+        <span class="res-name grit-name">GRT</span>
+        <div class="res-bar-track">
+          <div class="res-bar-fill grit-fill" style="width:{{percent grit.value grit.max}}%"></div>
+        </div>
+        <span class="res-vals">
+          <input type="number" name="system.resources.grit.value"
+            value="{{grit.value}}" {{#unless isEditable}}disabled{{/unless}}>
+          <span class="res-sep">/</span>
+          <input type="number" name="system.resources.grit.max"
+            value="{{grit.max}}" {{#unless isEditable}}disabled{{/unless}}>
+        </span>
+      </div>
+      {{/if}}
+
+      {{#if restPoints.max}}
+      <div class="resource-bar-row rest-row">
+        <span class="res-name rest-name">REST</span>
+        <div class="res-bar-track">
+          <div class="res-bar-fill rest-fill" style="width:{{percent restPoints.value restPoints.max}}%"></div>
+        </div>
+        <span class="res-vals">
+          <input type="number" name="system.resources.restPoints.value"
+            value="{{restPoints.value}}" {{#unless isEditable}}disabled{{/unless}}>
+          <span class="res-sep">/</span>
+          <input type="number" name="system.resources.restPoints.max"
+            value="{{restPoints.max}}" {{#unless isEditable}}disabled{{/unless}}>
+        </span>
+      </div>
+      {{/if}}
+    </div>
+
+    {{!-- Defences + Roll Mods --}}
+    <div class="defences-col">
+      <h3 class="section-heading">Defences</h3>
+
+      <div class="def-shields">
+        <div class="def-shield pd-shield">
+          <div class="def-val">{{defences.precision.value}}</div>
+          <div class="def-lbl">PD</div>
+        </div>
+        <div class="def-shield ad-shield">
+          <div class="def-val">{{defences.area.value}}</div>
+          <div class="def-lbl">AD</div>
+        </div>
+      </div>
+
+      <div class="roll-mods">
+        {{#if saveDC.spell}}
+        <div class="rm-row">
+          <span class="rm-label">Spell DC</span>
+          <span class="rm-val">{{saveDC.spell}}</span>
+        </div>
+        {{/if}}
+        {{#if saveDC.martial}}
+        <div class="rm-row">
+          <span class="rm-label">Martial DC</span>
+          <span class="rm-val">{{saveDC.martial}}</span>
+        </div>
+        {{/if}}
+        {{#if attackMod.spell}}
+        <div class="rm-row">
+          <span class="rm-label">Spell Atk</span>
+          <span class="rm-val">{{signedNum attackMod.spell}}</span>
+        </div>
+        {{/if}}
+        {{#if attackMod.martial}}
+        <div class="rm-row">
+          <span class="rm-label">Martial Atk</span>
+          <span class="rm-val">{{signedNum attackMod.martial}}</span>
+        </div>
+        {{/if}}
+        {{#if checkMod.spell}}
+        <div class="rm-row">
+          <span class="rm-label">Spell Chk</span>
+          <span class="rm-val">{{signedNum checkMod.spell}}</span>
+        </div>
+        {{/if}}
+        {{#if checkMod.martial}}
+        <div class="rm-row">
+          <span class="rm-label">Martial Chk</span>
+          <span class="rm-val">{{signedNum checkMod.martial}}</span>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>{{!-- /combat-upper --}}
+
+  {{!-- Filter Tabs --}}
+  <div class="combat-filter-bar">
+    <button type="button"
+      class="combat-filter-btn {{#if (eq combatFilter 'all')}}active{{/if}}"
+      data-filter="all">All</button>
+    <button type="button"
+      class="combat-filter-btn {{#if (eq combatFilter 'weapon')}}active{{/if}}"
+      data-filter="weapon">Weapons</button>
+    <button type="button"
+      class="combat-filter-btn {{#if (eq combatFilter 'spell')}}active{{/if}}"
+      data-filter="spell">Spells</button>
+    <button type="button"
+      class="combat-filter-btn {{#if (eq combatFilter 'maneuver')}}active{{/if}}"
+      data-filter="maneuver">Maneuvers</button>
+    <button type="button"
+      class="combat-filter-btn {{#if (eq combatFilter 'feature')}}active{{/if}}"
+      data-filter="feature">Features</button>
+  </div>
+
+  {{!-- Combat Actions --}}
+  <div class="combat-actions">
+    {{#each combatActions}}
+    <div class="combat-action-row" data-item-id="{{id}}" data-filter-type="{{filterType}}">
+      <img class="ca-img" src="{{img}}" alt="{{name}}">
+      <span class="ca-name">{{name}}</span>
+      <span class="ca-cost muted">{{itemCost costs}}</span>
+      {{#if rangeType}}<span class="ca-range muted">{{rangeType}}</span>{{/if}}
+      {{#if attackBonus}}<span class="ca-atk">{{signedNum attackBonus}}</span>{{/if}}
+      <div class="ca-controls">
+        <button type="button" class="ca-btn use-btn"
+          data-action="useItem" data-item-id="{{id}}" title="Use">
+          <i class="fas fa-play"></i>
+        </button>
+        {{#if ../isEditable}}
+        <button type="button" class="ca-btn edit-btn"
+          data-action="editItem" data-item-id="{{id}}" title="Edit">
+          <i class="fas fa-pencil-alt"></i>
+        </button>
+        <button type="button" class="ca-btn del-btn"
+          data-action="deleteItem" data-item-id="{{id}}" title="Delete">
+          <i class="fas fa-trash"></i>
+        </button>
+        {{/if}}
+      </div>
+    </div>
+    {{else}}
+    <p class="empty-note">No combat actions.</p>
+    {{/each}}
+  </div>
+
+  {{!-- Conditions --}}
+  <div class="conditions-area">
+
+    {{!-- Basic Conditions: active only, glowing icons --}}
+    <div class="basic-conditions-section">
+      <h3 class="section-heading">Conditions</h3>
+      {{#if activeConditions.length}}
+        <div class="basic-conditions-grid">
+          {{#each activeConditions}}
+          <div class="basic-cond-icon" title="{{label}}{{#if (gt stacks 1)}} ×{{stacks}}{{/if}}">
+            {{#if icon}}
+              <img src="{{icon}}" alt="{{label}}">
+            {{else}}
+              <i class="fas fa-exclamation-circle"></i>
+            {{/if}}
+            {{#if (gt stacks 1)}}
+              <span class="cond-stack-badge">{{stacks}}</span>
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="empty-note">No active conditions.</p>
+      {{/if}}
+    </div>
+
+    {{!-- Active Effects --}}
+    <div class="effects-section">
+      <h3 class="section-heading">Active Effects</h3>
+
+      {{#if passiveEffects.length}}
+        <h4 class="subsection-heading">Passive</h4>
+        <div class="effects-list">
+          {{#each passiveEffects}}
+          <div class="effect-row">
+            {{#if icon}}<img class="fx-icon" src="{{icon}}" alt="{{name}}">{{/if}}
+            <span class="fx-name">{{name}}</span>
+          </div>
+          {{/each}}
+        </div>
+      {{/if}}
+
+      {{#if temporaryEffects.length}}
+        <h4 class="subsection-heading">Temporary</h4>
+        <div class="effects-list">
+          {{#each temporaryEffects}}
+          <div class="effect-row">
+            {{#if icon}}<img class="fx-icon" src="{{icon}}" alt="{{name}}">{{/if}}
+            <span class="fx-name">{{name}}</span>
+            {{#if duration}}<span class="fx-dur muted">{{duration}}</span>{{/if}}
+          </div>
+          {{/each}}
+        </div>
+      {{/if}}
+
+      {{#unless passiveEffects.length}}{{#unless temporaryEffects.length}}
+        <p class="empty-note">No active effects.</p>
+      {{/unless}}{{/unless}}
+    </div>
+
+  </div>{{!-- /conditions-area --}}
+
+</section>

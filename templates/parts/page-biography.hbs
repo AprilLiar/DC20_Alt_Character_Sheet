@@ -1,0 +1,115 @@
+<section class="page-scroll" data-page="biography">
+  <div class="bio-layout">
+
+    {{!-- Left: Biography editor --}}
+    <div class="bio-col">
+      <h3 class="section-heading">Biography</h3>
+      {{#if isEditable}}
+        <div class="bio-editor"
+          data-edit="system.details.biography.value"
+          data-dtype="String">
+          {{{biography}}}
+        </div>
+      {{else}}
+        <div class="bio-view">{{{biography}}}</div>
+      {{/if}}
+    </div>
+
+    {{!-- Right: Traits, Training, Points --}}
+    <div class="traits-col">
+
+      <h3 class="section-heading">Origins</h3>
+      <div class="origin-list">
+        {{#if details.ancestry.name}}
+        <div class="origin-row">
+          <span class="origin-label">Ancestry</span>
+          <span class="origin-val">{{details.ancestry.name}}</span>
+        </div>
+        {{/if}}
+        {{#if details.background.name}}
+        <div class="origin-row">
+          <span class="origin-label">Background</span>
+          <span class="origin-val">{{details.background.name}}</span>
+        </div>
+        {{/if}}
+        {{#if details.class.name}}
+        <div class="origin-row">
+          <span class="origin-label">Class</span>
+          <span class="origin-val">{{details.class.name}}</span>
+        </div>
+        {{/if}}
+        {{#if details.subclass.name}}
+        <div class="origin-row">
+          <span class="origin-label">Subclass</span>
+          <span class="origin-val">{{details.subclass.name}}</span>
+        </div>
+        {{/if}}
+      </div>
+
+      {{!-- Combat Training --}}
+      {{#if combatTraining}}
+      <h3 class="section-heading mt">Combat Training</h3>
+      <div class="training-list">
+        {{#each combatTraining}}
+        <div class="training-row">
+          <input type="checkbox" id="ct-{{@key}}"
+            {{#if value}}checked{{/if}} disabled>
+          <label for="ct-{{@key}}">{{label}}</label>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{!-- Point Pools --}}
+      {{#if skillPoints}}
+      <h3 class="section-heading mt">Point Pools</h3>
+      <div class="points-list">
+        {{#if skillPoints.skill}}
+        <div class="points-row">
+          <span class="pt-label">Skill Points</span>
+          <span class="pt-val">{{skillPoints.skill.available}} / {{skillPoints.skill.total}}</span>
+        </div>
+        {{/if}}
+        {{#if skillPoints.trade}}
+        <div class="points-row">
+          <span class="pt-label">Trade Points</span>
+          <span class="pt-val">{{skillPoints.trade.available}} / {{skillPoints.trade.total}}</span>
+        </div>
+        {{/if}}
+        {{#if skillPoints.language}}
+        <div class="points-row">
+          <span class="pt-label">Language Points</span>
+          <span class="pt-val">{{skillPoints.language.available}} / {{skillPoints.language.total}}</span>
+        </div>
+        {{/if}}
+      </div>
+      {{/if}}
+
+      {{!-- Known counts --}}
+      {{#if known}}
+      <h3 class="section-heading mt">Known</h3>
+      <div class="points-list">
+        {{#if known.spells}}
+        <div class="points-row">
+          <span class="pt-label">Spells</span>
+          <span class="pt-val">{{known.spells.current}} / {{known.spells.max}}</span>
+        </div>
+        {{/if}}
+        {{#if known.maneuvers}}
+        <div class="points-row">
+          <span class="pt-label">Maneuvers</span>
+          <span class="pt-val">{{known.maneuvers.current}} / {{known.maneuvers.max}}</span>
+        </div>
+        {{/if}}
+        {{#if known.techniques}}
+        <div class="points-row">
+          <span class="pt-label">Techniques</span>
+          <span class="pt-val">{{known.techniques.current}} / {{known.techniques.max}}</span>
+        </div>
+        {{/if}}
+      </div>
+      {{/if}}
+
+    </div>
+  </div>
+</section>

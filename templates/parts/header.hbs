@@ -1,114 +1,59 @@
-<header class="sheet-header">
+<div class="sheet-header-strip">
 
-  <div class="portrait-wrap">
-    <img class="portrait" src="{{actor.img}}" alt="{{actor.name}}"
-      {{#if isEditable}}data-edit="img"{{/if}}>
-  </div>
-
-  <div class="header-identity">
-    <input type="text" name="name" value="{{actor.name}}" class="character-name"
-      {{#unless isEditable}}disabled{{/unless}}>
-
-    <div class="header-meta">
-      <span class="meta-item level">
-        <i class="fas fa-layer-group"></i>
-        Level <strong>{{details.level}}</strong>
-      </span>
-      {{#if details.combatMastery}}
-        <span class="meta-sep">·</span>
-        <span class="meta-item">CM +{{details.combatMastery}}</span>
-      {{/if}}
-      {{#if details.ancestry.name}}
-        <span class="meta-sep">|</span>
-        <span class="meta-item">{{details.ancestry.name}}</span>
-      {{/if}}
-      {{#if details.class.name}}
-        <span class="meta-sep">|</span>
-        <span class="meta-item">{{details.class.name}}</span>
-      {{/if}}
-      {{#if details.subclass.name}}
-        <span class="meta-sep">·</span>
-        <span class="meta-item muted">{{details.subclass.name}}</span>
-      {{/if}}
-    </div>
-
-    <!-- HP Bar -->
-    <div class="hp-bar-wrap">
-      <div class="hp-bar-fill"
-        style="width: {{percent resources.health.value resources.health.max}}%"></div>
-      <div class="hp-bar-values">
-        <label>HP</label>
-        <input type="number" name="system.resources.health.value"
-          value="{{resources.health.value}}" {{#unless isEditable}}disabled{{/unless}}>
-        <span>/</span>
-        <input type="number" name="system.resources.health.max"
-          value="{{resources.health.max}}" {{#unless isEditable}}disabled{{/unless}}>
-        {{#if resources.health.temp}}
-          <span class="temp-hp">(+{{resources.health.temp}})</span>
-        {{/if}}
-      </div>
+  {{!-- Action Points: pips --}}
+  <div class="hstrip-resource ap-strip">
+    <span class="hstrip-label">AP</span>
+    <div class="ap-pips-strip">
+      {{{apPips header.ap.value header.ap.max}}}
     </div>
   </div>
 
-  <!-- Right-side quick resources -->
-  <div class="header-resources">
-    <div class="quick-res ap" title="Action Points">
-      <span class="qr-label"><i class="fas fa-bolt"></i> AP</span>
-      <div class="ap-pips">
-        {{apPips resources.ap.value 4}}
-      </div>
-      <input type="number" name="system.resources.ap.value"
-        value="{{resources.ap.value}}" min="0" max="{{resources.ap.max}}"
+  <div class="hstrip-divider"></div>
+
+  {{!-- Hit Points --}}
+  <div class="hstrip-resource hp-strip">
+    <span class="hstrip-label hp-label">HP</span>
+    <span class="hstrip-pair">
+      <input type="number" name="system.resources.health.value"
+        value="{{header.hp.value}}" class="hstrip-input"
         {{#unless isEditable}}disabled{{/unless}}>
-    </div>
-
-    <div class="quick-res stamina" title="Stamina">
-      <span class="qr-label"><i class="fas fa-fist-raised"></i> STA</span>
-      <div class="qr-bar">
-        <div class="qr-fill" style="width: {{percent resources.stamina.value resources.stamina.max}}%"></div>
-      </div>
-      <div class="qr-nums">
-        <input type="number" name="system.resources.stamina.value"
-          value="{{resources.stamina.value}}" {{#unless isEditable}}disabled{{/unless}}>
-        <span>/{{resources.stamina.max}}</span>
-      </div>
-    </div>
-
-    <div class="quick-res mana" title="Mana">
-      <span class="qr-label"><i class="fas fa-magic"></i> MNA</span>
-      <div class="qr-bar">
-        <div class="qr-fill" style="width: {{percent resources.mana.value resources.mana.max}}%"></div>
-      </div>
-      <div class="qr-nums">
-        <input type="number" name="system.resources.mana.value"
-          value="{{resources.mana.value}}" {{#unless isEditable}}disabled{{/unless}}>
-        <span>/{{resources.mana.max}}</span>
-      </div>
-    </div>
-
-    <div class="quick-res grit" title="Grit">
-      <span class="qr-label"><i class="fas fa-fire"></i> GRT</span>
-      <div class="qr-bar">
-        <div class="qr-fill" style="width: {{percent resources.grit.value resources.grit.max}}%"></div>
-      </div>
-      <div class="qr-nums">
-        <input type="number" name="system.resources.grit.value"
-          value="{{resources.grit.value}}" {{#unless isEditable}}disabled{{/unless}}>
-        <span>/{{resources.grit.max}}</span>
-      </div>
-    </div>
+      <span class="hstrip-sep">/</span>
+      <input type="number" name="system.resources.health.max"
+        value="{{header.hp.max}}" class="hstrip-input"
+        {{#unless isEditable}}disabled{{/unless}}>
+    </span>
   </div>
 
-  <!-- Defences -->
-  <div class="header-defences">
-    <div class="defence-shield pd">
-      <div class="def-value">{{defences.precision.value}}</div>
-      <div class="def-label">PD</div>
-    </div>
-    <div class="defence-shield ad">
-      <div class="def-value">{{defences.area.value}}</div>
-      <div class="def-label">AD</div>
-    </div>
+  <div class="hstrip-divider"></div>
+
+  {{!-- Stamina Points --}}
+  <div class="hstrip-resource sp-strip">
+    <span class="hstrip-label sp-label">SP</span>
+    <span class="hstrip-pair">
+      <input type="number" name="system.resources.stamina.value"
+        value="{{header.stamina.value}}" class="hstrip-input"
+        {{#unless isEditable}}disabled{{/unless}}>
+      <span class="hstrip-sep">/</span>
+      <input type="number" name="system.resources.stamina.max"
+        value="{{header.stamina.max}}" class="hstrip-input"
+        {{#unless isEditable}}disabled{{/unless}}>
+    </span>
   </div>
 
-</header>
+  <div class="hstrip-divider"></div>
+
+  {{!-- Mana Points --}}
+  <div class="hstrip-resource mp-strip">
+    <span class="hstrip-label mp-label">MP</span>
+    <span class="hstrip-pair">
+      <input type="number" name="system.resources.mana.value"
+        value="{{header.mana.value}}" class="hstrip-input"
+        {{#unless isEditable}}disabled{{/unless}}>
+      <span class="hstrip-sep">/</span>
+      <input type="number" name="system.resources.mana.max"
+        value="{{header.mana.max}}" class="hstrip-input"
+        {{#unless isEditable}}disabled{{/unless}}>
+    </span>
+  </div>
+
+</div>

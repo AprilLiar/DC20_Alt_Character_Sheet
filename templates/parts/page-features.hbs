@@ -1,0 +1,123 @@
+<section class="page-scroll" data-page="features">
+
+  <div class="page-section-header">
+    <h3 class="section-heading">Passive Features</h3>
+    {{#if isEditable}}
+    <button type="button" class="add-btn"
+      data-action="createItem" data-type="feature">
+      <i class="fas fa-plus"></i> Add Feature
+    </button>
+    {{/if}}
+  </div>
+
+  {{!-- Class --}}
+  {{#if featureGroups.class.length}}
+  <div class="feature-group">
+    <h4 class="feature-source-heading">Class</h4>
+    <ul class="items-list">
+      {{#each featureGroups.class}}
+      <li class="item-row" data-item-id="{{id}}">
+        <img class="item-img" src="{{img}}" alt="{{name}}">
+        <span class="item-name">{{name}}</span>
+        {{#if featureType}}<span class="item-tag muted">{{featureType}}</span>{{/if}}
+        {{#if ../isEditable}}
+        <div class="item-controls">
+          <button type="button" data-action="editItem" data-item-id="{{id}}" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+          <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+        {{/if}}
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+  {{/if}}
+
+  {{!-- Subclass --}}
+  {{#if featureGroups.subclass.length}}
+  <div class="feature-group">
+    <h4 class="feature-source-heading">Subclass</h4>
+    <ul class="items-list">
+      {{#each featureGroups.subclass}}
+      <li class="item-row" data-item-id="{{id}}">
+        <img class="item-img" src="{{img}}" alt="{{name}}">
+        <span class="item-name">{{name}}</span>
+        {{#if featureType}}<span class="item-tag muted">{{featureType}}</span>{{/if}}
+        {{#if ../isEditable}}
+        <div class="item-controls">
+          <button type="button" data-action="editItem" data-item-id="{{id}}" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+          <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+        {{/if}}
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+  {{/if}}
+
+  {{!-- Ancestry --}}
+  {{#if featureGroups.ancestry.length}}
+  <div class="feature-group">
+    <h4 class="feature-source-heading">Ancestry</h4>
+    <ul class="items-list">
+      {{#each featureGroups.ancestry}}
+      <li class="item-row" data-item-id="{{id}}">
+        <img class="item-img" src="{{img}}" alt="{{name}}">
+        <span class="item-name">{{name}}</span>
+        {{#if featureType}}<span class="item-tag muted">{{featureType}}</span>{{/if}}
+        {{#if ../isEditable}}
+        <div class="item-controls">
+          <button type="button" data-action="editItem" data-item-id="{{id}}" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+          <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+        {{/if}}
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+  {{/if}}
+
+  {{!-- Background --}}
+  {{#if featureGroups.background.length}}
+  <div class="feature-group">
+    <h4 class="feature-source-heading">Background</h4>
+    <ul class="items-list">
+      {{#each featureGroups.background}}
+      <li class="item-row" data-item-id="{{id}}">
+        <img class="item-img" src="{{img}}" alt="{{name}}">
+        <span class="item-name">{{name}}</span>
+        {{#if featureType}}<span class="item-tag muted">{{featureType}}</span>{{/if}}
+        {{#if ../isEditable}}
+        <div class="item-controls">
+          <button type="button" data-action="editItem" data-item-id="{{id}}" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+          <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+        {{/if}}
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+  {{/if}}
+
+  {{!-- Other --}}
+  {{#if featureGroups.other.length}}
+  <div class="feature-group">
+    <h4 class="feature-source-heading">Other</h4>
+    <ul class="items-list">
+      {{#each featureGroups.other}}
+      <li class="item-row" data-item-id="{{id}}">
+        <img class="item-img" src="{{img}}" alt="{{name}}">
+        <span class="item-name">{{name}}</span>
+        {{#if featureType}}<span class="item-tag muted">{{featureType}}</span>{{/if}}
+        {{#if ../isEditable}}
+        <div class="item-controls">
+          <button type="button" data-action="editItem" data-item-id="{{id}}" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+          <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+        {{/if}}
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+  {{/if}}
+
+</section>

@@ -1,0 +1,98 @@
+/* ============================================================
+   DC20 Alt Sheet — Layout
+   Window structure: header strip + right-side nav + page area.
+   ============================================================ */
+
+/* Application window background */
+.dc20-alt-sheet .window-content {
+  display: grid;
+  grid-template-columns: 1fr var(--nav-width);
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  overflow: hidden;
+  background: var(--p-bg);
+  padding: 0;
+}
+
+/* Header strip: full width, first row */
+.dc20-alt-sheet [data-application-part="header"] {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+/* Right-side navigation: second row, second column */
+.dc20-alt-sheet [data-application-part="nav"] {
+  grid-column: 2;
+  grid-row: 2;
+  overflow: hidden;
+}
+
+/* All page parts: second row, first column — stack in same cell */
+.dc20-alt-sheet [data-application-part="page-core"],
+.dc20-alt-sheet [data-application-part="page-combat"],
+.dc20-alt-sheet [data-application-part="page-features"],
+.dc20-alt-sheet [data-application-part="page-inventory"],
+.dc20-alt-sheet [data-application-part="page-biography"] {
+  grid-column: 1;
+  grid-row: 2;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Scrollable page container — hidden until activated */
+.dc20-alt-sheet .page-scroll {
+  display: none;
+  height: 100%;
+  overflow-y: auto;
+  padding: var(--gap-lg) var(--gap-xl) var(--gap-lg) var(--gap-lg);
+  box-sizing: border-box;
+}
+.dc20-alt-sheet .page-scroll.active {
+  display: block;
+}
+
+/* Scrollbar styling */
+.dc20-alt-sheet .page-scroll::-webkit-scrollbar         { width: 6px; }
+.dc20-alt-sheet .page-scroll::-webkit-scrollbar-track   { background: var(--p-bg-aged); }
+.dc20-alt-sheet .page-scroll::-webkit-scrollbar-thumb   {
+  background: var(--p-border-light);
+  border-radius: 3px;
+}
+
+/* ── Core page 3-column layout ── */
+.dc20-alt-sheet .core-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr 160px;
+  gap: var(--gap-lg);
+  min-height: 100%;
+}
+.dc20-alt-sheet .core-col { min-width: 0; }
+
+/* ── Combat page: upper split ── */
+.dc20-alt-sheet .combat-upper {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: var(--gap-lg);
+  margin-bottom: var(--gap-lg);
+}
+
+/* ── Biography page 2-column layout ── */
+.dc20-alt-sheet .bio-layout {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: var(--gap-xl);
+  min-height: 100%;
+}
+.dc20-alt-sheet .bio-col,
+.dc20-alt-sheet .traits-col { min-width: 0; }
+
+/* ── Utility ── */
+.dc20-alt-sheet .mt      { margin-top: var(--gap-md); }
+.dc20-alt-sheet .muted   { color: var(--p-ink-muted); }
+.dc20-alt-sheet .rollable { cursor: pointer; }
+.dc20-alt-sheet .empty-note {
+  color: var(--p-ink-muted);
+  font-style: italic;
+  font-size: var(--fs-sm);
+  padding: var(--gap-xs) 0;
+}

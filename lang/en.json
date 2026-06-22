@@ -3,11 +3,18 @@
     "sheetLabel": "DC20 Alternative Sheet",
 
     "tabs": {
-      "main":      "Main",
+      "core":      "Core",
       "combat":    "Combat",
       "features":  "Features",
       "inventory": "Inventory",
-      "details":   "Details"
+      "biography": "Biography"
+    },
+
+    "ctx": {
+      "addFavourite":    "Add to Favourites",
+      "removeFavourite": "Remove from Favourites",
+      "editItem":        "Edit Item",
+      "deleteItem":      "Delete Item"
     },
 
     "attr": {
@@ -19,29 +26,26 @@
     },
 
     "section": {
-      "attributes":    "Attributes",
-      "skills":        "Skills",
-      "languages":     "Languages",
-      "movement":      "Movement",
-      "senses":        "Senses",
-      "death":         "Death",
-      "size":          "Size",
-      "resources":     "Resources",
-      "conditions":    "Conditions",
-      "damageReduction": "Damage Reduction",
-      "dmgTypes":      "Damage Types",
-      "features":      "Class Features",
-      "maneuvers":     "Maneuvers",
-      "spells":        "Spells",
-      "techniques":    "Techniques",
-      "weapons":       "Weapons",
-      "equipment":     "Equipment",
-      "consumables":   "Consumables",
-      "loot":          "Loot",
-      "origins":       "Origins",
-      "combatTraining": "Combat Training",
-      "pointPools":    "Point Pools",
-      "biography":     "Biography"
+      "attributes":      "Attributes",
+      "skills":          "Skills",
+      "languages":       "Languages",
+      "movement":        "Movement",
+      "senses":          "Senses",
+      "resources":       "Resources",
+      "defences":        "Defences",
+      "conditions":      "Conditions",
+      "activeEffects":   "Active Effects",
+      "features":        "Passive Features",
+      "weapons":         "Weapons",
+      "equipment":       "Equipment",
+      "consumables":     "Consumables",
+      "loot":            "Loot",
+      "origins":         "Origins",
+      "combatTraining":  "Combat Training",
+      "pointPools":      "Point Pools",
+      "biography":       "Biography",
+      "favourites":      "Favourites",
+      "lastUsed":        "Last Used"
     },
 
     "resource": {
@@ -59,51 +63,12 @@
       "check":   "Check Mod"
     },
 
-    "known": {
-      "spells":    "Spells",
-      "maneuvers": "Maneuvers",
-      "infusions": "Infusions"
-    },
-
-    "roll": {
-      "attribute":  "Attribute Check ({attr})",
-      "save":       "Saving Throw ({attr})",
-      "check":      "Check",
-      "checkHint":  "Click to roll attribute check"
-    },
-
-    "death": {
-      "threshold": "Threshold"
-    },
-
-    "detail": {
-      "ancestry":  "Ancestry",
-      "background": "Background",
-      "class":     "Class",
-      "subclass":  "Subclass"
-    },
-
-    "training": {
-      "weapons":      "Weapons",
-      "spellFocuses": "Spell Focuses",
-      "lightShield":  "Light Shield",
-      "heavyShield":  "Heavy Shield",
-      "lightArmor":   "Light Armor",
-      "heavyArmor":   "Heavy Armor"
-    },
-
-    "points": {
-      "skill":    "Skill Points",
-      "trade":    "Trade Points",
-      "language": "Language Points"
-    },
-
-    "dmr": {
-      "flat": "Flat Reduction"
-    },
-
     "create": {
-      "feature": "Create Feature"
+      "feature":    "Add Feature",
+      "weapon":     "Add Weapon",
+      "equipment":  "Add Equipment",
+      "consumable": "Add Consumable",
+      "loot":       "Add Loot"
     },
 
     "newItem": "New {type}",
@@ -115,11 +80,13 @@
     "empty": {
       "skills":      "No skills defined.",
       "features":    "No features.",
-      "maneuvers":   "No maneuvers.",
-      "spells":      "No spells.",
       "weapons":     "No weapons.",
       "equipment":   "No equipment.",
-      "consumables": "No consumables."
+      "consumables": "No consumables.",
+      "conditions":  "No active conditions.",
+      "effects":     "No active effects.",
+      "favourites":  "Right-click items to pin them here.",
+      "lastUsed":    "Recently used items appear here."
     },
 
     "deleteConfirm": {
