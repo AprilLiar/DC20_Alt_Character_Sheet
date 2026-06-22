@@ -1,4 +1,4 @@
-import { MODULE_ID }        from '../dc20-alt-sheet.mjs';
+import { MODULE_ID }        from '../constants.mjs';
 import { prepareHeader }    from '../context/prepareHeader.mjs';
 import { prepareCore }      from '../context/page1-core.mjs';
 import { prepareCombat }    from '../context/page2-combat.mjs';
