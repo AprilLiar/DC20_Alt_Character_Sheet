@@ -185,10 +185,6 @@
       {{#if rangeType}}<span class="ca-range muted">{{rangeType}}</span>{{/if}}
       {{#if attackBonus}}<span class="ca-atk">{{signedNum attackBonus}}</span>{{/if}}
       <div class="ca-controls">
-        <button type="button" class="ca-btn use-btn"
-          data-action="useItem" data-item-id="{{id}}" title="Use">
-          <i class="fas fa-play"></i>
-        </button>
         {{#if ../isEditable}}
         <button type="button" class="ca-btn edit-btn"
           data-action="editItem" data-item-id="{{id}}" title="Edit">

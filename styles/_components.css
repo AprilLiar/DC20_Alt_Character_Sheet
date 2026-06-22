@@ -746,3 +746,73 @@
 .dc20-alt-sheet .points-row:last-child { border-bottom: none; }
 .dc20-alt-sheet .pt-label { color: var(--p-ink-muted); }
 .dc20-alt-sheet .pt-val   { font-weight: 700; font-family: var(--font-heading); color: var(--p-ink); }
+
+/* ════════════════════════════════════════
+   APPEARANCE FORM (Biography page)
+═══════════════════════════════════════ */
+.dc20-alt-sheet .appearance-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+.dc20-alt-sheet .appr-row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+.dc20-alt-sheet .appr-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+}
+.dc20-alt-sheet .appr-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--p-ink-muted);
+  min-width: 64px;
+  flex-shrink: 0;
+}
+.dc20-alt-sheet .appr-select,
+.dc20-alt-sheet .appr-input {
+  flex: 1;
+  background: var(--p-bg);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--r-sm);
+  color: var(--p-ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  padding: 2px 6px;
+  height: 26px;
+}
+.dc20-alt-sheet .appr-select:focus,
+.dc20-alt-sheet .appr-input:focus {
+  border-color: var(--p-border);
+  outline: none;
+}
+.dc20-alt-sheet .appr-textarea {
+  width: 100%;
+  background: var(--p-bg);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--r-sm);
+  color: var(--p-ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  padding: 4px 6px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+.dc20-alt-sheet .appr-textarea:focus {
+  border-color: var(--p-border);
+  outline: none;
+}
+.dc20-alt-sheet .appr-select:disabled,
+.dc20-alt-sheet .appr-input:disabled,
+.dc20-alt-sheet .appr-textarea:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
