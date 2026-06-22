@@ -1,4 +1,4 @@
-import { MODULE_ID } from '../dc20-alt-sheet.mjs';
+import { MODULE_ID } from '../constants.mjs';
 
 export function getFavourites(actor) {
   return actor.getFlag(MODULE_ID, 'favourites') ?? [];
