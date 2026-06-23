@@ -62,6 +62,6 @@ export async function prepareCore(actor) {
     portrait: actor.img,
     actorName: actor.name,
     death: system.death ?? {},
-    size: system.size ?? '',
+    size: system.size?.size ?? '',
   };
 }

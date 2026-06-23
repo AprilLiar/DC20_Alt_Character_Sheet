@@ -158,6 +158,23 @@
 .dc20-alt-sheet .mv-val  { font-weight: 600; color: var(--p-ink); }
 .dc20-alt-sheet .mv-unit { font-size: var(--fs-xs); color: var(--p-ink-muted); }
 
+.dc20-alt-sheet .size-select {
+  background: var(--p-bg-card);
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-sm);
+  color: var(--p-ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  padding: 1px var(--gap-xs);
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: border-color var(--t-fast);
+}
+.dc20-alt-sheet .size-select:hover  { border-color: var(--p-border-light); }
+.dc20-alt-sheet .size-select:focus  { border-color: var(--p-accent); outline: none; }
+.dc20-alt-sheet .size-val { font-weight: 600; color: var(--p-ink); text-transform: capitalize; }
+
 /* ════════════════════════════════════════
    PORTRAIT + IDENTITY
 ═══════════════════════════════════════ */
