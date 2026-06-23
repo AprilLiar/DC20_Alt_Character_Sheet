@@ -98,6 +98,20 @@
         {{/each}}
       </div>
 
+      {{#if trades.length}}
+        <h3 class="section-heading mt">Trades</h3>
+        <div class="skills-list">
+          {{#each trades}}
+          <div class="skill-row">
+            <span class="skill-profs">{{{profDots mastery 2}}}</span>
+            <span class="skill-name">{{label}}</span>
+            <span class="skill-attr muted">{{attribute}}</span>
+            <span class="skill-bonus">{{signedNum bonus}}</span>
+          </div>
+          {{/each}}
+        </div>
+      {{/if}}
+
       {{#if languages.length}}
         <h3 class="section-heading mt">Languages</h3>
         <div class="skills-list">
