@@ -39,7 +39,7 @@
           {{#each movement}}
           <div class="mv-entry">
             <span class="mv-type">{{label}}</span>
-            <span class="mv-val">{{value}}<span class="mv-unit"> ft</span></span>
+            <span class="mv-val">{{value}}<span class="mv-unit"> sp</span></span>
           </div>
           {{/each}}
         </div>
@@ -58,13 +58,24 @@
         </div>
       {{/if}}
 
-      {{!-- Size / Death --}}
-      {{#if size}}
-        <div class="mv-entry mt">
-          <span class="mv-type">Size</span>
-          <span class="mv-val">{{size}}</span>
-        </div>
-      {{/if}}
+      {{!-- Size --}}
+      <div class="mv-entry size-entry mt">
+        <span class="mv-type">Size</span>
+        {{#if isEditable}}
+          <select class="size-select" name="system.size.size">
+            <option value="tiny"       {{#if (eq size "tiny")}}selected{{/if}}>Tiny</option>
+            <option value="small"      {{#if (eq size "small")}}selected{{/if}}>Small</option>
+            <option value="medium"     {{#if (eq size "medium")}}selected{{/if}}>Medium</option>
+            <option value="large"      {{#if (eq size "large")}}selected{{/if}}>Large</option>
+            <option value="huge"       {{#if (eq size "huge")}}selected{{/if}}>Huge</option>
+            <option value="gargantuan" {{#if (eq size "gargantuan")}}selected{{/if}}>Gargantuan</option>
+            <option value="colossal"   {{#if (eq size "colossal")}}selected{{/if}}>Colossal</option>
+            <option value="titanic"    {{#if (eq size "titanic")}}selected{{/if}}>Titanic</option>
+          </select>
+        {{else}}
+          <span class="mv-val size-val">{{#if size}}{{size}}{{else}}—{{/if}}</span>
+        {{/if}}
+      </div>
     </div>
 
     {{!-- MIDDLE: Skills + Languages --}}

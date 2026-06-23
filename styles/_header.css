@@ -79,7 +79,7 @@
   background: transparent;
   border: none;
   border-bottom: 1px solid transparent;
-  color: var(--p-light);
+  color: var(--p-bg);
   font-family: var(--font-body);
   font-size: var(--fs-md);
   font-weight: 600;
@@ -242,11 +242,11 @@
 
 .dc20-alt-sheet .picker-item {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: var(--gap-xs);
+  gap: var(--gap-sm);
   padding: var(--gap-sm) var(--gap-md);
-  min-width: 80px;
+  min-width: 110px;
   background: var(--p-bg-aged);
   border: 1.5px solid var(--p-border-light);
   border-radius: var(--r-sm);
@@ -258,8 +258,9 @@
   border-color: var(--p-accent);
 }
 .dc20-alt-sheet .picker-item .btab-icon {
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
   background-color: var(--p-ink);
 }
 .dc20-alt-sheet .picker-item:hover .btab-icon { background-color: var(--p-accent); }
