@@ -23,11 +23,6 @@
               <span>{{signedNum save}}</span>
             </button>
           </div>
-          {{#if saveMastery}}
-            <span class="save-mastery-dot" title="Save Mastery">
-              <i class="fas fa-star"></i>
-            </span>
-          {{/if}}
         </div>
         {{/each}}
       </div>
@@ -84,7 +79,7 @@
       <div class="skills-list">
         {{#each skills}}
         <div class="skill-row" data-skill="{{key}}">
-          <span class="skill-profs">{{{profDots mastery 2}}}</span>
+          <span class="skill-profs">{{{profDots mastery 5}}}</span>
           <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">
             {{label}}
           </span>
@@ -103,7 +98,7 @@
         <div class="skills-list">
           {{#each trades}}
           <div class="skill-row">
-            <span class="skill-profs">{{{profDots mastery 2}}}</span>
+            <span class="skill-profs">{{{profDots mastery 5}}}</span>
             <span class="skill-name">{{label}}</span>
             <span class="skill-attr muted">{{attribute}}</span>
             <span class="skill-bonus">{{signedNum bonus}}</span>
@@ -117,7 +112,7 @@
         <div class="skills-list">
           {{#each languages}}
           <div class="skill-row lang-row">
-            <span class="skill-profs">{{{profDots mastery 2}}}</span>
+            <span class="skill-profs">{{{profDots mastery 5}}}</span>
             <span class="skill-name">{{label}}</span>
           </div>
           {{/each}}

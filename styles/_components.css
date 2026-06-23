@@ -85,9 +85,10 @@
   gap: 2px;
 }
 
+/* 5 dots at 5px × 5px, 1px gap = 5×5+4×1 = 29px → column 32px */
 .dc20-alt-sheet .skill-row {
   display: grid;
-  grid-template-columns: 20px 1fr 24px 32px;
+  grid-template-columns: 32px 1fr 24px 32px;
   align-items: center;
   gap: var(--gap-xs);
   padding: 2px 4px;
@@ -97,19 +98,20 @@
 }
 .dc20-alt-sheet .skill-row:last-child  { border-bottom: none; }
 .dc20-alt-sheet .skill-row:hover       { background: var(--p-hover); }
-.dc20-alt-sheet .lang-row { grid-template-columns: 20px 1fr; }
+.dc20-alt-sheet .lang-row { grid-template-columns: 32px 1fr; }
 
 .dc20-alt-sheet .skill-profs {
   display: flex;
-  gap: 2px;
+  gap: 1px;
   align-items: center;
 }
 .dc20-alt-sheet .prof-dot {
-  width: 7px;
-  height: 7px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   border: 1px solid var(--p-border-light);
   background: transparent;
+  flex-shrink: 0;
 }
 .dc20-alt-sheet .prof-dot.filled {
   background: var(--p-accent);

@@ -1,16 +1,18 @@
 <div class="split-page split-core">
 
-  {{!-- Compact attribute row --}}
+  {{!-- Compact attribute cards — full name + two roll buttons --}}
   <div class="sc-attrs">
     {{#each attributes}}
     <div class="sc-attr" data-attr="{{key}}">
-      <span class="sc-attr-name">{{abbr}}</span>
-      <button type="button" class="sc-attr-btn rollable" data-action="rollAttribute" data-attr="{{key}}" title="Check">
-        <i class="fas fa-dice-d20"></i>{{signedNum check}}
-      </button>
-      <button type="button" class="sc-attr-btn rollable" data-action="rollSave" data-attr="{{key}}" title="Save">
-        <i class="fas fa-shield-alt"></i>{{signedNum save}}
-      </button>
+      <span class="sc-attr-name">{{label}}</span>
+      <div class="sc-attr-buttons">
+        <button type="button" class="sc-attr-btn rollable" data-action="rollAttribute" data-attr="{{key}}" title="Check">
+          <i class="fas fa-dice-d20"></i>{{signedNum check}}
+        </button>
+        <button type="button" class="sc-attr-btn rollable" data-action="rollSave" data-attr="{{key}}" title="Save">
+          <i class="fas fa-shield-alt"></i>{{signedNum save}}
+        </button>
+      </div>
     </div>
     {{/each}}
   </div>
@@ -24,8 +26,8 @@
       <div class="sc-skill-grid">
         {{#each skills}}
         <div class="sc-skill-row rollable" data-action="rollSkill" data-skill="{{key}}" title="{{label}}">
-          <span class="sc-skill-profs">{{{profDots mastery 2}}}</span>
-          <span class="sc-skill-name">{{abbr3 label}}</span>
+          <span class="sc-skill-profs">{{{profDots mastery 5}}}</span>
+          <span class="sc-skill-name">{{label}}</span>
           <span class="sc-skill-attr">{{abbr3 attribute}}</span>
           <span class="sc-skill-bonus">{{signedNum bonus}}</span>
         </div>
@@ -43,8 +45,8 @@
         <div class="sc-panel-heading">Trades</div>
         {{#each trades}}
         <div class="sc-skill-row">
-          <span class="sc-skill-profs">{{{profDots mastery 2}}}</span>
-          <span class="sc-skill-name">{{abbr3 label}}</span>
+          <span class="sc-skill-profs">{{{profDots mastery 5}}}</span>
+          <span class="sc-skill-name">{{label}}</span>
           <span class="sc-skill-bonus">{{signedNum bonus}}</span>
         </div>
         {{/each}}
@@ -55,7 +57,7 @@
         <div class="sc-panel-heading">Languages</div>
         {{#each languages}}
         <div class="sc-skill-row">
-          <span class="sc-skill-profs">{{{profDots mastery 2}}}</span>
+          <span class="sc-skill-profs">{{{profDots mastery 5}}}</span>
           <span class="sc-skill-name">{{label}}</span>
         </div>
         {{/each}}
