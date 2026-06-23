@@ -41,7 +41,7 @@ export function registerHandlebarsHelpers() {
   Handlebars.registerHelper('apPips', (current, max = 4) => {
     const pips = [];
     for (let i = 0; i < max; i++) {
-      pips.push(`<span class="ap-pip ${i < current ? 'filled' : ''}"></span>`);
+      pips.push(`<span class="ap-pip ${i < current ? 'filled' : ''}" data-pip-index="${i}"></span>`);
     }
     return new Handlebars.SafeString(pips.join(''));
   });
