@@ -1,0 +1,67 @@
+<div class="split-page split-inventory compact-list">
+
+  {{!-- Currency --}}
+  <div class="currency-bar compact">
+    <div class="currency-chip pp"><span class="curr-label">PP</span>
+      <input type="number" name="system.currency.pp" value="{{currency.pp}}" {{#unless isEditable}}disabled{{/unless}}></div>
+    <div class="currency-chip gp"><span class="curr-label">GP</span>
+      <input type="number" name="system.currency.gp" value="{{currency.gp}}" {{#unless isEditable}}disabled{{/unless}}></div>
+    <div class="currency-chip sp"><span class="curr-label">SP</span>
+      <input type="number" name="system.currency.sp" value="{{currency.sp}}" {{#unless isEditable}}disabled{{/unless}}></div>
+    <div class="currency-chip cp"><span class="curr-label">CP</span>
+      <input type="number" name="system.currency.cp" value="{{currency.cp}}" {{#unless isEditable}}disabled{{/unless}}></div>
+  </div>
+
+  {{#if itemGroups.weapons.length}}
+  <h4 class="section-heading mt">Weapons</h4>
+  <ul class="items-list">
+    {{#each itemGroups.weapons}}
+    <li class="item-row {{#if equipped}}equipped{{/if}}" data-item-id="{{id}}">
+      <img class="item-img" src="{{img}}" alt="{{name}}">
+      <span class="item-name">{{name}}</span>
+      <span class="item-qty muted">×{{quantity}}</span>
+    </li>
+    {{/each}}
+  </ul>
+  {{/if}}
+
+  {{#if itemGroups.equipment.length}}
+  <h4 class="section-heading mt">Equipment</h4>
+  <ul class="items-list">
+    {{#each itemGroups.equipment}}
+    <li class="item-row {{#if equipped}}equipped{{/if}}" data-item-id="{{id}}">
+      <img class="item-img" src="{{img}}" alt="{{name}}">
+      <span class="item-name">{{name}}</span>
+      <span class="item-qty muted">×{{quantity}}</span>
+    </li>
+    {{/each}}
+  </ul>
+  {{/if}}
+
+  {{#if itemGroups.consumables.length}}
+  <h4 class="section-heading mt">Consumables</h4>
+  <ul class="items-list">
+    {{#each itemGroups.consumables}}
+    <li class="item-row" data-item-id="{{id}}">
+      <img class="item-img" src="{{img}}" alt="{{name}}">
+      <span class="item-name">{{name}}</span>
+      <span class="item-qty muted">×{{quantity}}</span>
+    </li>
+    {{/each}}
+  </ul>
+  {{/if}}
+
+  {{#if itemGroups.loot.length}}
+  <h4 class="section-heading mt">Loot</h4>
+  <ul class="items-list">
+    {{#each itemGroups.loot}}
+    <li class="item-row" data-item-id="{{id}}">
+      <img class="item-img" src="{{img}}" alt="{{name}}">
+      <span class="item-name">{{name}}</span>
+      <span class="item-qty muted">×{{quantity}}</span>
+    </li>
+    {{/each}}
+  </ul>
+  {{/if}}
+
+</div>

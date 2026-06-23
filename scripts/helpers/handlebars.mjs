@@ -30,6 +30,16 @@ export function registerHandlebarsHelpers() {
   Handlebars.registerHelper('add', (a, b) => Number(a) + Number(b));
   Handlebars.registerHelper('sub', (a, b) => Number(a) - Number(b));
 
+  // Joins all string arguments (the final Handlebars options arg is dropped).
+  // Used to build dynamic partial names, e.g. {{> (concat "dc20-split-" id)}}
+  Handlebars.registerHelper('concat', (...args) => {
+    args.pop();
+    return args.join('');
+  });
+
+  // First three characters of a string — used for compact split-tab skill lists.
+  Handlebars.registerHelper('abbr3', (s) => String(s ?? '').slice(0, 3));
+
   Handlebars.registerHelper('profDots', (level, max = 2) => {
     const dots = [];
     for (let i = 0; i < max; i++) {

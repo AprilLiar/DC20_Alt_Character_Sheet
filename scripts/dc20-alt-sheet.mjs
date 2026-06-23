@@ -13,6 +13,18 @@ Hooks.once('init', () => {
     makeDefault: false,
     label: 'DC20AltSheet.sheetLabel',
   });
+
+  // Compact split-tab variants, registered as named Handlebars partials so the
+  // page-split part can pull them in dynamically via {{> (concat ...)}}.
+  const components = `modules/${MODULE_ID}/templates/components`;
+  const loadTemplates = foundry.applications.handlebars?.loadTemplates ?? globalThis.loadTemplates;
+  loadTemplates({
+    'dc20-split-core':      `${components}/split-core.hbs`,
+    'dc20-split-combat':    `${components}/split-combat.hbs`,
+    'dc20-split-features':  `${components}/split-features.hbs`,
+    'dc20-split-inventory': `${components}/split-inventory.hbs`,
+    'dc20-split-biography': `${components}/split-biography.hbs`,
+  });
 });
 
 Hooks.once('ready', () => {

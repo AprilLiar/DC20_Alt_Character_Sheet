@@ -1,0 +1,27 @@
+<div class="split-page split-combat">
+
+  {{!-- Filter tabs (shared logic with the full combat page) --}}
+  <div class="combat-filter-bar">
+    <button type="button" class="combat-filter-btn active" data-filter="all">All</button>
+    <button type="button" class="combat-filter-btn" data-filter="weapon">Wpn</button>
+    <button type="button" class="combat-filter-btn" data-filter="spell">Spell</button>
+    <button type="button" class="combat-filter-btn" data-filter="maneuver">Mnvr</button>
+    <button type="button" class="combat-filter-btn" data-filter="feature">Feat</button>
+  </div>
+
+  {{!-- Actions only --}}
+  <div class="combat-actions compact-list">
+    {{#each combatActions}}
+    <div class="combat-action-row" data-item-id="{{id}}" data-filter-type="{{filterType}}">
+      <img class="ca-img" src="{{img}}" alt="{{name}}"
+        data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+      <span class="ca-name">{{name}}</span>
+      <span class="ca-cost">{{itemCost costs}}</span>
+      {{#if attackBonus}}<span class="ca-atk">{{signedNum attackBonus}}</span>{{/if}}
+    </div>
+    {{else}}
+    <p class="empty-note">No combat actions.</p>
+    {{/each}}
+  </div>
+
+</div>

@@ -1,0 +1,199 @@
+/* ============================================================
+   DC20 Alt Sheet — Split Tabs
+   Two compact page variants side-by-side with a draggable divider,
+   plus the picker drop-zone builder and split tab-bar styling.
+   ============================================================ */
+
+/* ── Split view container ── */
+.dc20-alt-sheet .split-view {
+  display: none;
+  height: 100%;
+  min-height: 0;
+}
+.dc20-alt-sheet .split-view.active {
+  display: flex;
+  flex-direction: row;
+}
+
+/* Each pane scrolls independently; flex-grow set inline from the saved ratio */
+.dc20-alt-sheet .split-pane {
+  flex-basis: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--gap-md);
+  box-sizing: border-box;
+}
+.dc20-alt-sheet .split-pane::-webkit-scrollbar       { width: 6px; }
+.dc20-alt-sheet .split-pane::-webkit-scrollbar-track { background: var(--p-bg-aged); }
+.dc20-alt-sheet .split-pane::-webkit-scrollbar-thumb {
+  background: var(--p-border-light);
+  border-radius: 3px;
+}
+
+/* ── Draggable divider ── */
+.dc20-alt-sheet .split-divider {
+  flex: 0 0 7px;
+  align-self: stretch;
+  cursor: col-resize;
+  background: var(--p-border-light);
+  border-left: 1px solid var(--p-border);
+  border-right: 1px solid var(--p-border);
+  transition: background var(--t-fast);
+  position: relative;
+}
+.dc20-alt-sheet .split-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 28px;
+  border-radius: 2px;
+  background: var(--p-border);
+  opacity: 0.7;
+}
+.dc20-alt-sheet .split-divider:hover,
+.dc20-alt-sheet .split-divider.dragging {
+  background: var(--p-accent);
+}
+
+/* ── Picker split builder ── */
+.dc20-alt-sheet .split-builder {
+  display: flex;
+  gap: var(--gap-md);
+  margin-top: var(--gap-sm);
+  padding-top: var(--gap-sm);
+  border-top: 1px solid var(--p-border-faint);
+}
+.dc20-alt-sheet .split-zone {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-xs);
+  min-height: 38px;
+  padding: var(--gap-xs) var(--gap-sm);
+  border: 2px dashed var(--p-border-light);
+  border-radius: var(--r-sm);
+  background: var(--p-bg-aged);
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+.dc20-alt-sheet .split-zone.drag-over {
+  border-color: var(--p-accent);
+  background: var(--p-hover);
+}
+.dc20-alt-sheet .split-zone.filled {
+  border-style: solid;
+  border-color: var(--p-border);
+}
+.dc20-alt-sheet .split-zone-hint {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-style: italic;
+  color: var(--p-ink);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.dc20-alt-sheet .split-zone-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  color: var(--p-ink);
+}
+.dc20-alt-sheet .split-zone .btab-icon {
+  width: 16px;
+  height: 16px;
+  background-color: var(--p-ink);
+}
+
+/* ── Split tab in the bar (two icons) ── */
+.dc20-alt-sheet .btab-split-icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.dc20-alt-sheet .btab-split-sep {
+  color: var(--p-ink-muted);
+  font-size: var(--fs-xs);
+}
+
+/* ── Compact list tweaks (features / inventory split variants) ── */
+.dc20-alt-sheet .compact-list .item-row {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+.dc20-alt-sheet .compact-list .item-img,
+.dc20-alt-sheet .compact-list .ca-img {
+  width: 20px;
+  height: 20px;
+}
+.dc20-alt-sheet .compact-list .item-name,
+.dc20-alt-sheet .compact-list .ca-name {
+  font-size: var(--fs-sm);
+}
+.dc20-alt-sheet .currency-bar.compact { gap: var(--gap-xs); margin-bottom: var(--gap-sm); }
+
+/* ── Split Core ── */
+.dc20-alt-sheet .sc-attrs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-xs);
+  margin-bottom: var(--gap-sm);
+}
+.dc20-alt-sheet .sc-attr {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xs);
+  padding: 3px var(--gap-xs);
+  background: var(--p-light);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--r-sm);
+}
+.dc20-alt-sheet .sc-attr-name {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--p-ink-muted);
+  min-width: 26px;
+}
+.dc20-alt-sheet .sc-attr-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  justify-content: center;
+  background: var(--p-bg-card);
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-sm);
+  padding: 2px 3px;
+  font-size: var(--fs-xs);
+  color: var(--p-ink);
+  cursor: pointer;
+}
+.dc20-alt-sheet .sc-attr-btn i { font-size: 9px; }
+.dc20-alt-sheet .sc-attr-btn:hover { background: var(--p-bg-aged); border-color: var(--c-ap); }
+
+.dc20-alt-sheet .sc-skills {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px var(--gap-sm);
+  margin-bottom: var(--gap-sm);
+}
+.dc20-alt-sheet .sc-skill {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xs);
+  padding: 1px 0;
+  font-size: var(--fs-xs);
+}
+.dc20-alt-sheet .sc-skill-name { flex: 1; color: var(--p-ink); }
+.dc20-alt-sheet .sc-skill-bonus { font-weight: 600; color: var(--p-accent); }
+
+.dc20-alt-sheet .sc-lists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-sm);
+}

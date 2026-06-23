@@ -1,0 +1,17 @@
+<div class="split-page split-features compact-list">
+  {{#each featureGroups}}
+  <div class="feature-group">
+    <h4 class="feature-source-heading">{{label}}</h4>
+    <ul class="items-list">
+      {{#each items}}
+      <li class="item-row" data-item-id="{{id}}">
+        <img class="item-img" src="{{img}}" alt="{{name}}">
+        <span class="item-name">{{name}}</span>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+  {{else}}
+  <p class="empty-note">No passive features.</p>
+  {{/each}}
+</div>

@@ -1,0 +1,13 @@
+{{#if split}}
+<div class="split-view active" data-split-id="{{split.id}}">
+  <div class="split-pane split-pane-left" style="flex-grow: {{split.leftGrow}}">
+    {{> (concat "dc20-split-" split.left) leftCtx}}
+  </div>
+  <div class="split-divider" title="Drag to resize"></div>
+  <div class="split-pane split-pane-right" style="flex-grow: {{split.rightGrow}}">
+    {{> (concat "dc20-split-" split.right) rightCtx}}
+  </div>
+</div>
+{{else}}
+<div class="split-view" data-split-empty="1"></div>
+{{/if}}

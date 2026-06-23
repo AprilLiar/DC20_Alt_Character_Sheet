@@ -1,0 +1,65 @@
+<div class="split-page split-core">
+
+  {{!-- Compact attribute blocks --}}
+  <div class="sc-attrs">
+    {{#each attributes}}
+    <div class="sc-attr" data-attr="{{key}}">
+      <span class="sc-attr-name">{{abbr}}</span>
+      <button type="button" class="sc-attr-btn rollable" data-action="rollAttribute" data-attr="{{key}}" title="Check">
+        <i class="fas fa-dice-d20"></i>{{signedNum check}}
+      </button>
+      <button type="button" class="sc-attr-btn rollable" data-action="rollSave" data-attr="{{key}}" title="Save">
+        <i class="fas fa-shield-alt"></i>{{signedNum save}}
+      </button>
+    </div>
+    {{/each}}
+  </div>
+
+  {{!-- Shortened skill list (3-letter names, no languages) --}}
+  <div class="sc-skills">
+    {{#each skills}}
+    <div class="sc-skill rollable" data-action="rollSkill" data-skill="{{key}}" title="{{label}}">
+      <span class="sc-skill-profs">{{{profDots mastery 2}}}</span>
+      <span class="sc-skill-name">{{abbr3 label}}</span>
+      <span class="sc-skill-bonus">{{signedNum bonus}}</span>
+    </div>
+    {{else}}
+    <p class="empty-note">No skills.</p>
+    {{/each}}
+  </div>
+
+  {{!-- Quick-access lists --}}
+  <div class="sc-lists">
+    <div class="sc-list">
+      <h4 class="subsection-heading">Last Used</h4>
+      {{#if lastUsed.length}}
+        <ul class="qol-list">
+          {{#each lastUsed}}
+          <li class="qol-row" data-item-id="{{id}}">
+            <img class="qol-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+            <span class="qol-name">{{name}}</span>
+          </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <p class="empty-note">—</p>
+      {{/if}}
+    </div>
+    <div class="sc-list">
+      <h4 class="subsection-heading">Favourites</h4>
+      {{#if favourites.length}}
+        <ul class="qol-list">
+          {{#each favourites}}
+          <li class="qol-row" data-item-id="{{id}}">
+            <img class="qol-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+            <span class="qol-name">{{name}}</span>
+          </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <p class="empty-note">—</p>
+      {{/if}}
+    </div>
+  </div>
+
+</div>

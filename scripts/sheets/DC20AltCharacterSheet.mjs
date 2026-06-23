@@ -35,6 +35,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     'page-features':  { template: `modules/${MODULE_ID}/templates/parts/page-features.hbs`,  scrollable: ['.page-scroll'] },
     'page-inventory': { template: `modules/${MODULE_ID}/templates/parts/page-inventory.hbs`, scrollable: ['.page-scroll'] },
     'page-biography': { template: `modules/${MODULE_ID}/templates/parts/page-biography.hbs`, scrollable: ['.page-scroll'] },
+    'page-split':     { template: `modules/${MODULE_ID}/templates/parts/page-split.hbs`,     scrollable: ['.split-pane'] },
   };
 
   /** All pages the user can open, in display order */
@@ -54,19 +55,54 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   _tabsInitialized = false;
   /** Active combat filter */
   _combatFilter = 'all';
+  /** Pending split-tab builder selection (left/right page ids) */
+  _pendingSplit = { left: null, right: null };
+  /** Page id currently being dragged (from a tab or the picker) */
+  _dragPageId = null;
 
   /* -------------------------------------------- */
   /*  Tab State Persistence                        */
   /* -------------------------------------------- */
 
+  /** True when an id refers to a split tab (two page ids joined by '+'). */
+  _isSplitId(id) {
+    return typeof id === 'string' && id.includes('+');
+  }
+
+  /** Validate a tab id — a single known page, or a split of two known pages. */
+  _isValidTabId(id, valid) {
+    if (this._isSplitId(id)) {
+      const parts = id.split('+');
+      return parts.length === 2 && parts.every(p => valid.has(p));
+    }
+    return valid.has(id);
+  }
+
+  /** Human-readable label for a single page id. */
+  _labelOf(id) {
+    return DC20AltCharacterSheet.PAGE_DEFS.find(p => p.id === id)?.label ?? id;
+  }
+
   _loadTabState() {
     const state  = this.actor.flags?.[MODULE_ID]?.tabState;
     const valid  = new Set(DC20AltCharacterSheet.PAGE_DEFS.map(p => p.id));
-    this._openTabs  = (state?.openTabs ?? []).filter(id => valid.has(id));
+    this._openTabs  = (state?.openTabs ?? []).filter(id => this._isValidTabId(id, valid));
     const savedActive = state?.activeTab;
-    this._activeTab = (savedActive && valid.has(savedActive) && this._openTabs.includes(savedActive))
+    this._activeTab = (savedActive && this._isValidTabId(savedActive, valid) && this._openTabs.includes(savedActive))
       ? savedActive
       : (this._openTabs[0] ?? null);
+  }
+
+  /** Left-pane width fraction (0.25–0.75) for a split tab, persisted per id. */
+  _getSplitRatio(id) {
+    const r = this.actor.flags?.[MODULE_ID]?.splitRatios?.[id];
+    return (typeof r === 'number') ? Math.min(0.75, Math.max(0.25, r)) : 0.5;
+  }
+
+  _saveSplitRatio(id, ratio) {
+    const ratios = { ...(this.actor.flags?.[MODULE_ID]?.splitRatios ?? {}) };
+    ratios[id] = Math.min(0.75, Math.max(0.25, ratio));
+    this.actor.setFlag(MODULE_ID, 'splitRatios', ratios);
   }
 
   _saveTabState() {
@@ -98,11 +134,20 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     switch (partId) {
       case 'nav':
         return Object.assign(context, {
-          openTabs: this._openTabs.map(id => ({
-            id,
-            label:  DC20AltCharacterSheet.PAGE_DEFS.find(p => p.id === id)?.label ?? id,
-            active: id === this._activeTab,
-          })),
+          openTabs: this._openTabs.map(id => {
+            if (this._isSplitId(id)) {
+              const [leftId, rightId] = id.split('+');
+              return {
+                id,
+                isSplit: true,
+                leftId,
+                rightId,
+                label:  `${this._labelOf(leftId)} | ${this._labelOf(rightId)}`,
+                active: id === this._activeTab,
+              };
+            }
+            return { id, isSplit: false, label: this._labelOf(id), active: id === this._activeTab };
+          }),
           pageDefs: DC20AltCharacterSheet.PAGE_DEFS,
         });
       case 'page-core':      return Object.assign(context, await prepareCore(this.actor));
@@ -110,8 +155,53 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       case 'page-features':  return Object.assign(context, await prepareFeatures(this.actor));
       case 'page-inventory': return Object.assign(context, await prepareInventory(this.actor));
       case 'page-biography': return Object.assign(context, await prepareBiography(this.actor));
+      case 'page-split':     return Object.assign(context, await this._prepareSplitContext());
     }
     return context;
+  }
+
+  /** Per-page data preparation, keyed by single-page id. */
+  async _preparePageData(id) {
+    switch (id) {
+      case 'core':      return prepareCore(this.actor);
+      case 'combat':    return prepareCombat(this.actor);
+      case 'features':  return prepareFeatures(this.actor);
+      case 'inventory': return prepareInventory(this.actor);
+      case 'biography': return prepareBiography(this.actor);
+    }
+    return {};
+  }
+
+  /** Builds context for the active split tab (or an empty container). */
+  async _prepareSplitContext() {
+    if (!this._isSplitId(this._activeTab)) return { split: null };
+
+    const id = this._activeTab;
+    const [left, right] = id.split('+');
+    const ratio = this._getSplitRatio(id);
+    const common = {
+      isEditable: this.isEditable,
+      moduleId:   MODULE_ID,
+      actor:      this.actor,
+      system:     this.actor.system,
+    };
+
+    const [leftData, rightData] = await Promise.all([
+      this._preparePageData(left),
+      this._preparePageData(right),
+    ]);
+
+    return {
+      split: {
+        id,
+        left,
+        right,
+        leftGrow:  Math.round(ratio * 100),
+        rightGrow: Math.round((1 - ratio) * 100),
+      },
+      leftCtx:  { ...common, ...leftData },
+      rightCtx: { ...common, ...rightData },
+    };
   }
 
   /* -------------------------------------------- */
@@ -141,6 +231,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindBrowserTabs();
     this._bindCombatFilter();
     this._bindApPips();
+    this._bindSplitBuilder();
+    this._bindSplitDivider();
     this._registerContextMenu();
   }
 
@@ -215,6 +307,11 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   _switchToTab(pageId) {
     if (!this._openTabs.includes(pageId)) return;
     this._activeTab = pageId;
+    // Split tabs need fresh per-half data, so re-render rather than toggle.
+    if (this._isSplitId(pageId)) {
+      this.render();
+      return;
+    }
     // Update active class on tabs without a full re-render
     this.element.querySelectorAll('.browser-tab').forEach(t =>
       t.classList.toggle('active', t.dataset.page === pageId));
@@ -222,8 +319,31 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   }
 
   _applyPageVisibility() {
-    this.element.querySelectorAll('.page-scroll[data-page]').forEach(el =>
-      el.classList.toggle('active', el.dataset.page === this._activeTab));
+    const active  = this._activeTab;
+    const isSplit = this._isSplitId(active);
+
+    this.element.querySelectorAll('.page-scroll[data-page]').forEach(el => {
+      const show = !isSplit && el.dataset.page === active;
+      el.classList.toggle('active', show);
+      if (this.isEditable) this._setControlsDisabled(el, !show);
+    });
+
+    const splitView = this.element.querySelector('.split-view');
+    if (splitView) {
+      splitView.classList.toggle('active', isSplit);
+      if (this.isEditable) this._setControlsDisabled(splitView, !isSplit);
+    }
+  }
+
+  /**
+   * Disable/enable form controls inside a hidden/visible container so that
+   * duplicate field names across pages and split variants don't clobber each
+   * other on submit (only the visible container's controls participate).
+   */
+  _setControlsDisabled(container, disabled) {
+    container?.querySelectorAll('input, select, textarea').forEach(el => {
+      el.disabled = disabled;
+    });
   }
 
   _togglePicker() {
@@ -232,6 +352,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   _closePicker() {
     this.element.querySelector('.tab-picker')?.classList.add('hidden');
+    this._resetPendingSplit();
   }
 
   _bindTabDragDrop() {
@@ -242,6 +363,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     tabBar.querySelectorAll('.browser-tab[draggable]').forEach(tab => {
       tab.addEventListener('dragstart', e => {
         dragSrcPage = tab.dataset.page;
+        this._dragPageId = tab.dataset.page;
         tab.classList.add('dragging');
         e.dataTransfer.effectAllowed = 'move';
       });
@@ -270,6 +392,114 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         this._saveTabState();
         this.render();
       });
+    });
+  }
+
+  /* -------------------------------------------- */
+  /*  Split Tab Builder                            */
+  /* -------------------------------------------- */
+
+  _bindSplitBuilder() {
+    // Picker entries become drag sources for the split drop zones.
+    this.element.querySelectorAll('.picker-item').forEach(btn => {
+      btn.setAttribute('draggable', 'true');
+      btn.addEventListener('dragstart', e => {
+        this._dragPageId = btn.dataset.openPage;
+        e.dataTransfer.effectAllowed = 'copy';
+        e.dataTransfer.setData('text/plain', this._dragPageId);
+      });
+    });
+
+    // The two drop zones in the picker that compose a split tab.
+    this.element.querySelectorAll('.split-zone').forEach(zone => {
+      zone.addEventListener('dragover', e => {
+        e.preventDefault();
+        zone.classList.add('drag-over');
+      });
+      zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+        const pageId = this._dragPageId;
+        // Only single pages can fill a zone; splits can't be nested.
+        if (!pageId || this._isSplitId(pageId)) return;
+        const side = zone.dataset.splitSide;
+        this._pendingSplit[side] = pageId;
+        this._fillZone(zone, pageId);
+        if (this._pendingSplit.left && this._pendingSplit.right) {
+          this._createSplitTab(this._pendingSplit.left, this._pendingSplit.right);
+        }
+      });
+    });
+  }
+
+  _fillZone(zone, pageId) {
+    zone.classList.add('filled');
+    zone.innerHTML =
+      `<span class="btab-icon btab-icon-${pageId}"></span>` +
+      `<span class="split-zone-label">${this._labelOf(pageId)}</span>`;
+  }
+
+  _resetPendingSplit() {
+    this._pendingSplit = { left: null, right: null };
+    this.element?.querySelectorAll('.split-zone').forEach(z => {
+      z.classList.remove('filled');
+      z.innerHTML = '<span class="split-zone-hint">put the tab here…</span>';
+    });
+  }
+
+  _createSplitTab(left, right) {
+    const id = `${left}+${right}`;
+    if (!this._openTabs.includes(id)) this._openTabs.push(id);
+    this._activeTab = id;
+    this._resetPendingSplit();
+    this._closePicker();
+    this._saveTabState();
+    this.render();
+  }
+
+  /* -------------------------------------------- */
+  /*  Split Divider (resize)                       */
+  /* -------------------------------------------- */
+
+  _bindSplitDivider() {
+    const divider = this.element.querySelector('.split-divider');
+    const view    = this.element.querySelector('.split-view');
+    if (!divider || !view) return;
+
+    const left  = view.querySelector('.split-pane-left');
+    const right = view.querySelector('.split-pane-right');
+    const id    = view.dataset.splitId;
+    if (!left || !right || !id) return;
+
+    let dragging = false;
+    let lastRatio = null;
+
+    const onMove = (e) => {
+      if (!dragging) return;
+      const rect = view.getBoundingClientRect();
+      let ratio = (e.clientX - rect.left) / rect.width;
+      ratio = Math.min(0.75, Math.max(0.25, ratio));
+      lastRatio = ratio;
+      left.style.flexGrow  = String(Math.round(ratio * 100));
+      right.style.flexGrow = String(Math.round((1 - ratio) * 100));
+    };
+
+    const onUp = () => {
+      if (!dragging) return;
+      dragging = false;
+      divider.classList.remove('dragging');
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      if (lastRatio != null) this._saveSplitRatio(id, lastRatio);
+    };
+
+    divider.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      dragging = true;
+      divider.classList.add('dragging');
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
     });
   }
 
