@@ -435,6 +435,35 @@
   color: var(--p-light);
 }
 
+/* ── Create button shown when a specific filter is active ── */
+.dc20-alt-sheet .combat-create-bar {
+  margin-bottom: var(--gap-sm);
+  min-height: 0;
+}
+.dc20-alt-sheet .combat-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-xs);
+  padding: 4px var(--gap-md);
+  background: var(--p-bg-card);
+  border: 1px dashed var(--p-border-light);
+  border-radius: var(--r-md);
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--p-ink-muted);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.dc20-alt-sheet .combat-create-btn:hover {
+  background: var(--p-hover);
+  border-color: var(--p-accent);
+  color: var(--p-accent);
+}
+.dc20-alt-sheet .combat-create-btn.hidden { display: none; }
+
 /* ════════════════════════════════════════
    COMBAT ACTION ROWS
 ═══════════════════════════════════════ */

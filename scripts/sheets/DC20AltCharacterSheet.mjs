@@ -291,6 +291,9 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this.element.querySelectorAll('.combat-action-row').forEach(row => {
       row.classList.toggle('hidden', filter !== 'all' && row.dataset.filterType !== filter);
     });
+    this.element.querySelectorAll('.combat-create-btn').forEach(btn => {
+      btn.classList.toggle('hidden', filter === 'all' || btn.dataset.createFilter !== filter);
+    });
   }
 
   /* -------------------------------------------- */

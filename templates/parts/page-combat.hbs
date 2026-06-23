@@ -174,6 +174,27 @@
       data-filter="feature">Features</button>
   </div>
 
+  {{!-- Per-filter Create buttons (shown only when a specific filter is active) --}}
+  {{#if isEditable}}
+  <div class="combat-create-bar">
+    <button type="button" class="combat-create-btn hidden" data-create-filter="weapon"   data-action="createItem" data-type="weapon">
+      <i class="fas fa-plus"></i> Create Weapon
+    </button>
+    <button type="button" class="combat-create-btn hidden" data-create-filter="equipment" data-action="createItem" data-type="equipment">
+      <i class="fas fa-plus"></i> Create Equipment
+    </button>
+    <button type="button" class="combat-create-btn hidden" data-create-filter="spell"    data-action="createItem" data-type="spell">
+      <i class="fas fa-plus"></i> Create Spell
+    </button>
+    <button type="button" class="combat-create-btn hidden" data-create-filter="maneuver" data-action="createItem" data-type="maneuver">
+      <i class="fas fa-plus"></i> Create Maneuver
+    </button>
+    <button type="button" class="combat-create-btn hidden" data-create-filter="feature"  data-action="createItem" data-type="feature">
+      <i class="fas fa-plus"></i> Create Feature
+    </button>
+  </div>
+  {{/if}}
+
   {{!-- Combat Actions --}}
   <div class="combat-actions">
     {{#each combatActions}}

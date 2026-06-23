@@ -79,7 +79,7 @@
   background: transparent;
   border: none;
   border-bottom: 1px solid transparent;
-  color: var(--p-bg);
+  color: var(--p-border-faint);
   font-family: var(--font-body);
   font-size: var(--fs-md);
   font-weight: 600;
@@ -204,7 +204,7 @@
   flex-shrink: 0;
   width: 28px;
   height: 28px;
-  margin-bottom: 4px;
+  margin-bottom: 0;
   font-size: 20px;
   line-height: 1;
   color: var(--p-ink-muted);

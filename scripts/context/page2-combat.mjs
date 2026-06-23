@@ -10,6 +10,9 @@ const TYPE_TO_FILTER = {
   infusion:    'feature',
 };
 
+// These types always appear in combat regardless of cost structure
+const ALWAYS_COMBAT_TYPES = new Set(['weapon', 'spell', 'maneuver']);
+
 export async function prepareCombat(actor) {
   const system = actor.system;
   const systemConditions = system.conditions ?? {};
@@ -59,19 +62,19 @@ export async function prepareCombat(actor) {
     else passiveEffects.push(entry);
   }
 
-  /* ── Combat actions (usable items with resource costs + all weapons) ── */
+  /* ── Combat actions (usable items with resource costs + weapons/spells/maneuvers) ── */
   const combatActions = [];
   for (const item of actor.items) {
     const costs = item.system.costs ?? item.system.usable?.costs;
-    const isWeapon = item.type === 'weapon';
     const filterType = TYPE_TO_FILTER[item.type];
     if (!filterType) continue;
 
     const hasResourceCost = costs
-      ? Object.entries(costs).some(([k, v]) => ['ap','sp','sta','stamina','mp','mana','map','grit','health'].includes(k) && v)
+      ? Object.entries(costs).some(([k, v]) =>
+          ['ap','sp','sta','stamina','mp','mana','map','grit','health','actionPoint','manaPoint','staminaPoint'].includes(k) && v)
       : false;
 
-    if (!isWeapon && !hasResourceCost) continue;
+    if (!ALWAYS_COMBAT_TYPES.has(item.type) && !hasResourceCost) continue;
 
     combatActions.push({
       id:           item.id,
