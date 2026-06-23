@@ -13,15 +13,18 @@
   {{!-- Hit Points --}}
   <div class="hstrip-resource hp-strip">
     <span class="hstrip-label hp-label">HP</span>
-    <span class="hstrip-pair">
-      <input type="number" name="system.resources.health.value"
-        value="{{header.hp.value}}" class="hstrip-input"
-        {{#unless isEditable}}disabled{{/unless}}>
-      <span class="hstrip-sep">/</span>
-      <input type="number" name="system.resources.health.max"
-        value="{{header.hp.max}}" class="hstrip-input"
-        {{#unless isEditable}}disabled{{/unless}}>
-    </span>
+    <div class="hstrip-bar-wrap hp-bar">
+      <div class="hstrip-bar-fill" style="width: {{percent header.hp.value header.hp.max}}%"></div>
+      <div class="hstrip-bar-text">
+        <input type="number" name="system.resources.health.value"
+          value="{{header.hp.value}}" class="hstrip-input"
+          {{#unless isEditable}}disabled{{/unless}}>
+        <span class="hstrip-sep">/</span>
+        <input type="number" name="system.resources.health.max"
+          value="{{header.hp.max}}" class="hstrip-input"
+          {{#unless isEditable}}disabled{{/unless}}>
+      </div>
+    </div>
   </div>
 
   <div class="hstrip-divider"></div>
@@ -29,15 +32,18 @@
   {{!-- Stamina Points --}}
   <div class="hstrip-resource sp-strip">
     <span class="hstrip-label sp-label">SP</span>
-    <span class="hstrip-pair">
-      <input type="number" name="system.resources.stamina.value"
-        value="{{header.stamina.value}}" class="hstrip-input"
-        {{#unless isEditable}}disabled{{/unless}}>
-      <span class="hstrip-sep">/</span>
-      <input type="number" name="system.resources.stamina.max"
-        value="{{header.stamina.max}}" class="hstrip-input"
-        {{#unless isEditable}}disabled{{/unless}}>
-    </span>
+    <div class="hstrip-bar-wrap sp-bar">
+      <div class="hstrip-bar-fill" style="width: {{percent header.stamina.value header.stamina.max}}%"></div>
+      <div class="hstrip-bar-text">
+        <input type="number" name="system.resources.stamina.value"
+          value="{{header.stamina.value}}" class="hstrip-input"
+          {{#unless isEditable}}disabled{{/unless}}>
+        <span class="hstrip-sep">/</span>
+        <input type="number" name="system.resources.stamina.max"
+          value="{{header.stamina.max}}" class="hstrip-input"
+          {{#unless isEditable}}disabled{{/unless}}>
+      </div>
+    </div>
   </div>
 
   <div class="hstrip-divider"></div>
@@ -45,15 +51,18 @@
   {{!-- Mana Points --}}
   <div class="hstrip-resource mp-strip">
     <span class="hstrip-label mp-label">MP</span>
-    <span class="hstrip-pair">
-      <input type="number" name="system.resources.mana.value"
-        value="{{header.mana.value}}" class="hstrip-input"
-        {{#unless isEditable}}disabled{{/unless}}>
-      <span class="hstrip-sep">/</span>
-      <input type="number" name="system.resources.mana.max"
-        value="{{header.mana.max}}" class="hstrip-input"
-        {{#unless isEditable}}disabled{{/unless}}>
-    </span>
+    <div class="hstrip-bar-wrap mp-bar">
+      <div class="hstrip-bar-fill" style="width: {{percent header.mana.value header.mana.max}}%"></div>
+      <div class="hstrip-bar-text">
+        <input type="number" name="system.resources.mana.value"
+          value="{{header.mana.value}}" class="hstrip-input"
+          {{#unless isEditable}}disabled{{/unless}}>
+        <span class="hstrip-sep">/</span>
+        <input type="number" name="system.resources.mana.max"
+          value="{{header.mana.max}}" class="hstrip-input"
+          {{#unless isEditable}}disabled{{/unless}}>
+      </div>
+    </div>
   </div>
 
 </div>
