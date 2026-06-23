@@ -209,14 +209,18 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /* -------------------------------------------- */
 
   _prepareSubmitData(event, form, formData) {
-    // formData.object is a deeply nested object; use foundry.utils helpers to
-    // walk dot-notation paths so number inputs are coerced to integers before
-    // DC20's data model validates them.
     for (const el of form.elements) {
       if (el.type !== 'number' || !el.name) continue;
       const raw = foundry.utils.getProperty(formData.object, el.name);
       if (raw === undefined || raw === null || raw === '') continue;
-      const n = Number(raw);
+      // Duplicate field names (header bar + page both enabled) produce an array.
+      // Prefer the value from the input that triggered the change; fall back to last.
+      const scalar = Array.isArray(raw)
+        ? (event?.target?.name === el.name && event.target.value !== ''
+            ? event.target.value
+            : raw[raw.length - 1])
+        : raw;
+      const n = Number(scalar);
       if (!isNaN(n)) foundry.utils.setProperty(formData.object, el.name, Math.trunc(n));
     }
     return super._prepareSubmitData(event, form, formData);
