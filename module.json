@@ -12,8 +12,8 @@
   "version": "0.1.12",
   "url": "https://github.com/AprilLiar/DC20_Alt_Character_Sheet",
   "manifest": "https://github.com/AprilLiar/DC20_Alt_Character_Sheet/releases/latest/download/module.json",
-  "download": "https://github.com/AprilLiar/DC20_Alt_Character_Sheet/releases/download/v0.1.12/dc20-alt-character-sheet.zip",
-  "changelog": "https://github.com/AprilLiar/DC20_Alt_Character_Sheet/releases/tag/v0.1.12",
+  "download": "https://github.com/AprilLiar/DC20_Alt_Character_Sheet/releases/download/0.1.12/dc20-alt-character-sheet.zip",
+  "changelog": "https://github.com/AprilLiar/DC20_Alt_Character_Sheet/releases/tag/0.1.12",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
