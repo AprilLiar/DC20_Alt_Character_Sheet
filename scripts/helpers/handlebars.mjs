@@ -47,13 +47,17 @@ export function registerHandlebarsHelpers() {
   });
 
   Handlebars.registerHelper('itemCost', (costs) => {
-    if (!costs) return '';
-    const parts = [];
-    if (costs.ap) parts.push(`${costs.ap}AP`);
-    if (costs.stamina) parts.push(`${costs.stamina}STA`);
-    if (costs.mana) parts.push(`${costs.mana}MNA`);
-    if (costs.grit) parts.push(`${costs.grit}GRT`);
-    if (costs.health) parts.push(`${costs.health}HP`);
-    return parts.join(' ');
+    if (!costs) return new Handlebars.SafeString('');
+    const DEFS = [
+      { key: 'ap',      icon: 'fas fa-bolt',       cls: 'cost-ap'  },
+      { key: 'stamina', icon: 'fas fa-fist-raised', cls: 'cost-sta' },
+      { key: 'mana',    icon: 'fas fa-fire',        cls: 'cost-mna' },
+      { key: 'grit',    icon: 'fas fa-shield-alt',  cls: 'cost-grt' },
+      { key: 'health',  icon: 'fas fa-heart',       cls: 'cost-hp'  },
+    ];
+    const parts = DEFS
+      .filter(d => costs[d.key])
+      .map(d => `<span class="cost-badge ${d.cls}"><i class="${d.icon}"></i>${costs[d.key]}</span>`);
+    return new Handlebars.SafeString(parts.join(''));
   });
 }
