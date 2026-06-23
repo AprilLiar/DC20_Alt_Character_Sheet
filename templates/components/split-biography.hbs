@@ -1,0 +1,18 @@
+<div class="split-page split-biography">
+
+  <h4 class="section-heading">Biography</h4>
+  {{#if isEditable}}
+    <textarea class="bio-editor split-bio-editor" name="system.details.biography.value">{{biography}}</textarea>
+  {{else}}
+    <div class="bio-view">{{biography}}</div>
+  {{/if}}
+
+  <h4 class="section-heading mt">Campaign Notes</h4>
+  {{#if isEditable}}
+    <textarea class="campaign-notes-editor" name="flags.{{moduleId}}.campaignNotes"
+      placeholder="Session notes, quest leads, NPC names…">{{campaignNotes}}</textarea>
+  {{else}}
+    <div class="campaign-notes-view">{{#if campaignNotes}}{{campaignNotes}}{{else}}<span class="empty-note">No campaign notes yet.</span>{{/if}}</div>
+  {{/if}}
+
+</div>

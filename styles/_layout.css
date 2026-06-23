@@ -34,7 +34,8 @@
 .dc20-alt-sheet [data-application-part="page-combat"],
 .dc20-alt-sheet [data-application-part="page-features"],
 .dc20-alt-sheet [data-application-part="page-inventory"],
-.dc20-alt-sheet [data-application-part="page-biography"] {
+.dc20-alt-sheet [data-application-part="page-biography"],
+.dc20-alt-sheet [data-application-part="page-split"] {
   grid-column: 1;
   grid-row: 3;
   overflow: hidden;
