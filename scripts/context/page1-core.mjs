@@ -16,10 +16,17 @@ export async function prepareCore(actor) {
     ...(system.attributes?.[key] ?? {}),
   }));
 
-  const skills = Object.entries(system.skills ?? {}).map(([key, skill]) => ({
-    key,
-    ...skill,
-  }));
+  const cm = system.details?.combatMastery ?? 0;
+
+  const skills = Object.entries(system.skills ?? {}).map(([key, skill]) => {
+    const attrCheck = system.attributes?.[skill.attribute]?.check ?? 0;
+    return { key, ...skill, bonus: attrCheck + (skill.mastery ?? 0) * cm };
+  });
+
+  const trades = Object.entries(system.trades ?? {}).map(([key, trade]) => {
+    const attrCheck = system.attributes?.[trade.attribute]?.check ?? 0;
+    return { key, ...trade, bonus: attrCheck + (trade.mastery ?? 0) * cm };
+  });
 
   const languages = Object.entries(system.languages ?? {}).map(([key, lang]) => ({
     key,
@@ -53,6 +60,7 @@ export async function prepareCore(actor) {
   return {
     attributes,
     skills,
+    trades,
     languages,
     movement,
     senses,

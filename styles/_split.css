@@ -141,7 +141,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--gap-xs);
-  margin-bottom: var(--gap-sm);
+  margin-bottom: var(--gap-xs);
 }
 .dc20-alt-sheet .sc-attr {
   display: flex;
@@ -176,24 +176,87 @@
 .dc20-alt-sheet .sc-attr-btn i { font-size: 9px; }
 .dc20-alt-sheet .sc-attr-btn:hover { background: var(--p-bg-aged); border-color: var(--c-ap); }
 
-.dc20-alt-sheet .sc-skills {
+/* Rounded-rectangle panel used for every knowledge/items group */
+.dc20-alt-sheet .sc-panel {
+  background: var(--p-light);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--r-md);
+  padding: var(--gap-xs) var(--gap-sm);
+  min-width: 0;
+}
+.dc20-alt-sheet .sc-panel-heading {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--p-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 3px;
+}
+
+/* Knowledge half (Skills + Trades + Languages) */
+.dc20-alt-sheet .sc-knowledge {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xs);
+  margin-bottom: var(--gap-xs);
+}
+/* Row of two equal panels (Trades | Languages) */
+.dc20-alt-sheet .sc-panel-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1px var(--gap-sm);
-  margin-bottom: var(--gap-sm);
+  gap: var(--gap-xs);
 }
-.dc20-alt-sheet .sc-skill {
+
+/* Skill rows inside panels — 2-column grid */
+.dc20-alt-sheet .sc-skill-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px var(--gap-xs);
+}
+.dc20-alt-sheet .sc-skill-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 0;
+  font-size: var(--fs-xs);
+  cursor: default;
+}
+.dc20-alt-sheet .sc-skill-row.rollable { cursor: pointer; }
+.dc20-alt-sheet .sc-skill-row.rollable:hover .sc-skill-name { color: var(--p-accent); }
+.dc20-alt-sheet .sc-skill-profs { display: flex; gap: 1px; }
+.dc20-alt-sheet .sc-skill-name { flex: 1; color: var(--p-ink); overflow: hidden; }
+.dc20-alt-sheet .sc-skill-attr {
+  font-size: 8px;
+  color: var(--p-ink-muted);
+  text-transform: uppercase;
+  font-family: var(--font-heading);
+}
+.dc20-alt-sheet .sc-skill-bonus { font-weight: 600; color: var(--p-accent); min-width: 20px; text-align: right; }
+
+/* Items half (Favourites + Last Used) — 2-column grid of panels */
+.dc20-alt-sheet .sc-items-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-xs);
+}
+.dc20-alt-sheet .sc-item-row {
   display: flex;
   align-items: center;
   gap: var(--gap-xs);
   padding: 1px 0;
   font-size: var(--fs-xs);
 }
-.dc20-alt-sheet .sc-skill-name { flex: 1; color: var(--p-ink); }
-.dc20-alt-sheet .sc-skill-bonus { font-weight: 600; color: var(--p-accent); }
-
-.dc20-alt-sheet .sc-lists {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap-sm);
+.dc20-alt-sheet .sc-item-img {
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.dc20-alt-sheet .sc-item-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

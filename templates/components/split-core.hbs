@@ -1,6 +1,6 @@
 <div class="split-page split-core">
 
-  {{!-- Compact attribute blocks --}}
+  {{!-- Compact attribute row --}}
   <div class="sc-attrs">
     {{#each attributes}}
     <div class="sc-attr" data-attr="{{key}}">
@@ -15,47 +15,81 @@
     {{/each}}
   </div>
 
-  {{!-- Shortened skill list (3-letter names, no languages) --}}
-  <div class="sc-skills">
-    {{#each skills}}
-    <div class="sc-skill rollable" data-action="rollSkill" data-skill="{{key}}" title="{{label}}">
-      <span class="sc-skill-profs">{{{profDots mastery 2}}}</span>
-      <span class="sc-skill-name">{{abbr3 label}}</span>
-      <span class="sc-skill-bonus">{{signedNum bonus}}</span>
+  {{!-- Knowledge half: Skills + Trades + Languages in rounded panels --}}
+  <div class="sc-knowledge">
+
+    {{!-- Skills panel --}}
+    <div class="sc-panel">
+      <div class="sc-panel-heading">Skills</div>
+      <div class="sc-skill-grid">
+        {{#each skills}}
+        <div class="sc-skill-row rollable" data-action="rollSkill" data-skill="{{key}}" title="{{label}}">
+          <span class="sc-skill-profs">{{{profDots mastery 2}}}</span>
+          <span class="sc-skill-name">{{abbr3 label}}</span>
+          <span class="sc-skill-attr">{{abbr3 attribute}}</span>
+          <span class="sc-skill-bonus">{{signedNum bonus}}</span>
+        </div>
+        {{else}}
+        <p class="empty-note">No skills.</p>
+        {{/each}}
+      </div>
     </div>
-    {{else}}
-    <p class="empty-note">No skills.</p>
-    {{/each}}
+
+    {{!-- Trades + Languages side by side --}}
+    {{#if (or trades.length languages.length)}}
+    <div class="sc-panel-row">
+      {{#if trades.length}}
+      <div class="sc-panel">
+        <div class="sc-panel-heading">Trades</div>
+        {{#each trades}}
+        <div class="sc-skill-row">
+          <span class="sc-skill-profs">{{{profDots mastery 2}}}</span>
+          <span class="sc-skill-name">{{abbr3 label}}</span>
+          <span class="sc-skill-bonus">{{signedNum bonus}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+      {{#if languages.length}}
+      <div class="sc-panel">
+        <div class="sc-panel-heading">Languages</div>
+        {{#each languages}}
+        <div class="sc-skill-row">
+          <span class="sc-skill-profs">{{{profDots mastery 2}}}</span>
+          <span class="sc-skill-name">{{label}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
   </div>
 
-  {{!-- Quick-access lists --}}
-  <div class="sc-lists">
-    <div class="sc-list">
-      <h4 class="subsection-heading">Last Used</h4>
-      {{#if lastUsed.length}}
-        <ul class="qol-list">
-          {{#each lastUsed}}
-          <li class="qol-row" data-item-id="{{id}}">
-            <img class="qol-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
-            <span class="qol-name">{{name}}</span>
-          </li>
-          {{/each}}
-        </ul>
+  {{!-- Items half: Favourites + Last Used in rounded panels --}}
+  <div class="sc-items-grid">
+    <div class="sc-panel">
+      <div class="sc-panel-heading">Favourites</div>
+      {{#if favourites.length}}
+        {{#each favourites}}
+        <div class="sc-item-row" data-item-id="{{id}}">
+          <img class="sc-item-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+          <span class="sc-item-name">{{name}}</span>
+        </div>
+        {{/each}}
       {{else}}
         <p class="empty-note">—</p>
       {{/if}}
     </div>
-    <div class="sc-list">
-      <h4 class="subsection-heading">Favourites</h4>
-      {{#if favourites.length}}
-        <ul class="qol-list">
-          {{#each favourites}}
-          <li class="qol-row" data-item-id="{{id}}">
-            <img class="qol-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
-            <span class="qol-name">{{name}}</span>
-          </li>
-          {{/each}}
-        </ul>
+    <div class="sc-panel">
+      <div class="sc-panel-heading">Last Used</div>
+      {{#if lastUsed.length}}
+        {{#each lastUsed}}
+        <div class="sc-item-row" data-item-id="{{id}}">
+          <img class="sc-item-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+          <span class="sc-item-name">{{name}}</span>
+        </div>
+        {{/each}}
       {{else}}
         <p class="empty-note">—</p>
       {{/if}}
