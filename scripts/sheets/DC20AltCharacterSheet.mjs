@@ -140,6 +140,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     super._onRender(context, options);
     this._bindBrowserTabs();
     this._bindCombatFilter();
+    this._bindApPips();
     this._registerContextMenu();
   }
 
@@ -294,6 +295,27 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     });
     this.element.querySelectorAll('.combat-create-btn').forEach(btn => {
       btn.classList.toggle('hidden', filter === 'all' || btn.dataset.createFilter !== filter);
+    });
+  }
+
+  /* -------------------------------------------- */
+  /*  AP Pips                                      */
+  /* -------------------------------------------- */
+
+  _bindApPips() {
+    if (!this.isEditable) return;
+    this.element.querySelectorAll('.ap-pip[data-pip-index]').forEach(pip => {
+      pip.addEventListener('click', (e) => {
+        e.preventDefault();
+        const idx = parseInt(pip.dataset.pipIndex, 10);
+        this.actor.update({ 'system.resources.ap.value': idx + 1 });
+      });
+      pip.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const idx = parseInt(pip.dataset.pipIndex, 10);
+        this.actor.update({ 'system.resources.ap.value': idx });
+      });
     });
   }
 

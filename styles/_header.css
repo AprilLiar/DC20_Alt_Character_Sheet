@@ -57,12 +57,21 @@
   border-radius: 50%;
   border: 1.5px solid rgba(180, 200, 255, 0.5);
   background: transparent;
-  transition: background var(--t-fast);
+  transition: background var(--t-fast), box-shadow var(--t-fast);
+  cursor: pointer;
+  user-select: none;
+}
+.dc20-alt-sheet .ap-pip:hover {
+  border-color: #99bbff;
+  box-shadow: 0 0 5px rgba(100, 150, 255, 0.4);
 }
 .dc20-alt-sheet .ap-pip.filled {
   background: #6699dd;
   border-color: #99bbff;
   box-shadow: 0 0 4px rgba(100, 150, 255, 0.6);
+}
+.dc20-alt-sheet .ap-pip.filled:hover {
+  box-shadow: 0 0 8px rgba(100, 150, 255, 0.9);
 }
 
 /* xx/yy pair */
