@@ -32,9 +32,6 @@
   --fs-2xl:  24px;
   --fs-3xl:  32px;
 
-  /* ── Layout ── */
-  --nav-width: 72px;
-
   /* ── Transitions ── */
   --t-fast: 0.12s ease;
   --t-mid:  0.2s ease;

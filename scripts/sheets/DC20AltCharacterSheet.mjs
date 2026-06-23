@@ -37,28 +37,74 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     'page-biography': { template: `modules/${MODULE_ID}/templates/parts/page-biography.hbs`, scrollable: ['.page-scroll'] },
   };
 
-  /** Tracks which page is currently active — persists across re-renders */
-  _currentPage = 'core';
-  /** Tracks which combat filter is active */
+  /** All pages the user can open, in display order */
+  static PAGE_DEFS = [
+    { id: 'core',      label: 'Core Stats'  },
+    { id: 'combat',    label: 'Combat'      },
+    { id: 'features',  label: 'Features'    },
+    { id: 'inventory', label: 'Inventory'   },
+    { id: 'biography', label: 'Biography'   },
+  ];
+
+  /** Ordered list of currently-open tab page ids */
+  _openTabs = [];
+  /** Which page id is actively displayed (or null if none open) */
+  _activeTab = null;
+  /** Whether tab state has been loaded from actor flags */
+  _tabsInitialized = false;
+  /** Active combat filter */
   _combatFilter = 'all';
+
+  /* -------------------------------------------- */
+  /*  Tab State Persistence                        */
+  /* -------------------------------------------- */
+
+  _loadTabState() {
+    const state  = this.actor.flags?.[MODULE_ID]?.tabState;
+    const valid  = new Set(DC20AltCharacterSheet.PAGE_DEFS.map(p => p.id));
+    this._openTabs  = (state?.openTabs ?? []).filter(id => valid.has(id));
+    const savedActive = state?.activeTab;
+    this._activeTab = (savedActive && valid.has(savedActive) && this._openTabs.includes(savedActive))
+      ? savedActive
+      : (this._openTabs[0] ?? null);
+  }
+
+  _saveTabState() {
+    this.actor.setFlag(MODULE_ID, 'tabState', {
+      openTabs:  [...this._openTabs],
+      activeTab: this._activeTab,
+    });
+  }
 
   /* -------------------------------------------- */
   /*  Context Preparation                          */
   /* -------------------------------------------- */
 
   async _prepareContext(options) {
+    if (!this._tabsInitialized) {
+      this._loadTabState();
+      this._tabsInitialized = true;
+    }
     const context = await super._prepareContext(options);
-    context.actor       = this.actor;
-    context.system      = this.actor.system;
-    context.isEditable  = this.isEditable;
-    context.currentPage = this._currentPage;
-    context.header      = prepareHeader(this.actor);
+    context.actor      = this.actor;
+    context.system     = this.actor.system;
+    context.isEditable = this.isEditable;
+    context.header     = prepareHeader(this.actor);
     return context;
   }
 
   async _preparePartContext(partId, context, options) {
     context = await super._preparePartContext(partId, context, options);
     switch (partId) {
+      case 'nav':
+        return Object.assign(context, {
+          openTabs: this._openTabs.map(id => ({
+            id,
+            label:  DC20AltCharacterSheet.PAGE_DEFS.find(p => p.id === id)?.label ?? id,
+            active: id === this._activeTab,
+          })),
+          pageDefs: DC20AltCharacterSheet.PAGE_DEFS,
+        });
       case 'page-core':      return Object.assign(context, await prepareCore(this.actor));
       case 'page-combat':    return Object.assign(context, await prepareCombat(this.actor), { combatFilter: this._combatFilter });
       case 'page-features':  return Object.assign(context, await prepareFeatures(this.actor));
@@ -74,33 +120,144 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   _onRender(context, options) {
     super._onRender(context, options);
-    this._bindPageTabs();
+    this._bindBrowserTabs();
     this._bindCombatFilter();
     this._registerContextMenu();
   }
 
-  /** Wire up right-side bookmark tabs (DOM-level, no re-render) */
-  _bindPageTabs() {
-    this.element.querySelectorAll('.page-tab').forEach(btn => {
-      btn.addEventListener('click', () => this._switchPage(btn.dataset.page));
+  /* -------------------------------------------- */
+  /*  Browser Tab Logic                            */
+  /* -------------------------------------------- */
+
+  _bindBrowserTabs() {
+    const el = this.element;
+
+    // Click on tab body → switch to that tab
+    el.querySelectorAll('.browser-tab').forEach(tab => {
+      tab.addEventListener('click', e => {
+        if (e.target.closest('.btab-close')) return;
+        this._switchToTab(tab.dataset.page);
+      });
     });
-    // Restore the correct page after every render
-    this._applyPageVisibility(this._currentPage);
+
+    // × close button
+    el.querySelectorAll('.btab-close').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        this._closeTab(btn.dataset.closePage);
+      });
+    });
+
+    // + button → toggle picker
+    el.querySelector('.btab-add')?.addEventListener('click', e => {
+      e.stopPropagation();
+      this._togglePicker();
+    });
+
+    // Picker item → open (or switch to) a tab
+    el.querySelectorAll('.picker-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this._openTab(btn.dataset.openPage);
+        this._closePicker();
+      });
+    });
+
+    // Click anywhere outside picker → close it
+    el.addEventListener('click', e => {
+      if (!e.target.closest('.tab-picker') && !e.target.closest('.btab-add')) {
+        this._closePicker();
+      }
+    });
+
+    this._bindTabDragDrop();
+    this._applyPageVisibility();
   }
 
-  _switchPage(page) {
-    this._currentPage = page;
-    this._applyPageVisibility(page);
+  _openTab(pageId) {
+    if (!this._openTabs.includes(pageId)) {
+      this._openTabs.push(pageId);
+    }
+    this._activeTab = pageId;
+    this._saveTabState();
+    this.render();
   }
 
-  _applyPageVisibility(page) {
-    this.element.querySelectorAll('.page-tab').forEach(btn =>
-      btn.classList.toggle('active', btn.dataset.page === page));
-    this.element.querySelectorAll('[data-page]').forEach(el =>
-      el.classList.toggle('active', el.dataset.page === page));
+  _closeTab(pageId) {
+    const idx = this._openTabs.indexOf(pageId);
+    if (idx === -1) return;
+    this._openTabs.splice(idx, 1);
+    if (this._activeTab === pageId) {
+      this._activeTab = this._openTabs[Math.max(0, idx - 1)] ?? this._openTabs[0] ?? null;
+    }
+    this._saveTabState();
+    this.render();
   }
 
-  /** Wire up combat filter tabs (All / Weapons / Spells / Maneuvers / Features) */
+  _switchToTab(pageId) {
+    if (!this._openTabs.includes(pageId)) return;
+    this._activeTab = pageId;
+    // Update active class on tabs without a full re-render
+    this.element.querySelectorAll('.browser-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.page === pageId));
+    this._applyPageVisibility();
+  }
+
+  _applyPageVisibility() {
+    this.element.querySelectorAll('.page-scroll[data-page]').forEach(el =>
+      el.classList.toggle('active', el.dataset.page === this._activeTab));
+  }
+
+  _togglePicker() {
+    this.element.querySelector('.tab-picker')?.classList.toggle('hidden');
+  }
+
+  _closePicker() {
+    this.element.querySelector('.tab-picker')?.classList.add('hidden');
+  }
+
+  _bindTabDragDrop() {
+    const tabBar = this.element.querySelector('.browser-tab-bar');
+    if (!tabBar) return;
+    let dragSrcPage = null;
+
+    tabBar.querySelectorAll('.browser-tab[draggable]').forEach(tab => {
+      tab.addEventListener('dragstart', e => {
+        dragSrcPage = tab.dataset.page;
+        tab.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+
+      tab.addEventListener('dragend', () => {
+        tab.classList.remove('dragging');
+        tabBar.querySelectorAll('.browser-tab').forEach(t => t.classList.remove('drag-over'));
+      });
+
+      tab.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        tabBar.querySelectorAll('.browser-tab').forEach(t => t.classList.remove('drag-over'));
+        if (tab.dataset.page !== dragSrcPage) tab.classList.add('drag-over');
+      });
+
+      tab.addEventListener('drop', e => {
+        e.preventDefault();
+        const tgtPage = tab.dataset.page;
+        if (!dragSrcPage || dragSrcPage === tgtPage) return;
+        const srcIdx = this._openTabs.indexOf(dragSrcPage);
+        const tgtIdx = this._openTabs.indexOf(tgtPage);
+        if (srcIdx === -1 || tgtIdx === -1) return;
+        this._openTabs.splice(srcIdx, 1);
+        this._openTabs.splice(tgtIdx, 0, dragSrcPage);
+        this._saveTabState();
+        this.render();
+      });
+    });
+  }
+
+  /* -------------------------------------------- */
+  /*  Combat Filter                                */
+  /* -------------------------------------------- */
+
   _bindCombatFilter() {
     this.element.querySelectorAll('.combat-filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -115,12 +272,14 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   _applyCombatFilter(filter) {
     this.element.querySelectorAll('.combat-action-row').forEach(row => {
-      const show = filter === 'all' || row.dataset.filterType === filter;
-      row.classList.toggle('hidden', !show);
+      row.classList.toggle('hidden', filter !== 'all' && row.dataset.filterType !== filter);
     });
   }
 
-  /** Right-click context menu for Favourites on any item row */
+  /* -------------------------------------------- */
+  /*  Context Menu                                 */
+  /* -------------------------------------------- */
+
   _registerContextMenu() {
     new ContextMenu(this.element, '[data-item-id]', [
       {
@@ -183,7 +342,9 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   static async _onCreateItem(event, target) {
     const type = target.dataset.type ?? 'feature';
-    const [item] = await this.actor.createEmbeddedDocuments('Item', [{ name: game.i18n.format('DC20AltSheet.newItem', { type }), type }]);
+    const [item] = await this.actor.createEmbeddedDocuments('Item', [{
+      name: game.i18n.format('DC20AltSheet.newItem', { type }), type,
+    }]);
     item?.sheet?.render(true);
   }
 
@@ -210,7 +371,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   static async _onUseItem(event, target) {
     const itemId = target.closest('[data-item-id]').dataset.itemId;
-    const item = this.actor.items.get(itemId);
+    const item   = this.actor.items.get(itemId);
     if (!item) return;
     await recordItemUse(this.actor, itemId);
     return item.roll();

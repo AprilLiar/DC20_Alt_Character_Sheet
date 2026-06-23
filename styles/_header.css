@@ -92,51 +92,64 @@
 .dc20-alt-sheet .hstrip-input:focus  { border-bottom-color: var(--p-gold-light); outline: none; }
 .dc20-alt-sheet .hstrip-input:disabled { opacity: 0.7; cursor: default; }
 
-/* ── Right-side bookmark nav ── */
-.dc20-alt-sheet .page-nav {
+/* ── Horizontal browser-style tab bar ── */
+.dc20-alt-sheet .browser-tabs-container {
+  position: relative;
+}
+
+.dc20-alt-sheet .browser-tab-bar {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 2px;
-  padding: var(--gap-sm) 0 var(--gap-sm) var(--gap-xs);
+  align-items: flex-end;
+  gap: 3px;
+  padding: 6px var(--gap-md) 0 var(--gap-md);
   background: var(--p-bg-aged);
-  border-left: 2px solid var(--p-border);
-  height: 100%;
+  border-bottom: 2px solid var(--p-border);
+  min-height: 44px;
   box-sizing: border-box;
 }
 
-.dc20-alt-sheet .page-tab {
-  position: relative;
+/* Individual tab */
+.dc20-alt-sheet .browser-tab {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 5px;
+  padding: 5px var(--gap-sm) 7px;
   background: var(--tab-inactive-bg);
   border: 1.5px solid var(--p-border-light);
-  border-left: none;
-  border-radius: 0 var(--r-md) var(--r-md) 0;
-  padding: var(--gap-sm) var(--gap-xs);
+  border-bottom: none;
+  border-radius: var(--r-md) var(--r-md) 0 0;
   cursor: pointer;
-  transition: background var(--t-fast), border-color var(--t-fast);
-  text-align: center;
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.05em;
+  color: var(--tab-inactive-text);
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  max-width: 150px;
+  white-space: nowrap;
+  user-select: none;
 }
-.dc20-alt-sheet .page-tab:hover {
+.dc20-alt-sheet .browser-tab:hover {
   background: var(--p-hover);
-  border-color: var(--p-border);
+  color: var(--p-ink);
 }
-.dc20-alt-sheet .page-tab.active {
-  background: var(--tab-active-bg);
-  border-color: var(--tab-active-border);
-  border-left: none;
-  /* Extend tab into page area to look attached */
-  margin-left: -2px;
-  padding-left: calc(var(--gap-xs) + 2px);
+.dc20-alt-sheet .browser-tab.active {
+  background: var(--p-bg);
+  border-color: var(--p-border);
+  color: var(--p-accent);
+  /* Sink the bottom edge 2px to merge visually with the content border */
+  margin-bottom: -2px;
+  padding-bottom: 9px;
   z-index: 1;
 }
+.dc20-alt-sheet .browser-tab.dragging  { opacity: 0.45; }
+.dc20-alt-sheet .browser-tab.drag-over { border-color: var(--p-accent); }
 
-.dc20-alt-sheet .tab-icon {
+/* Tab icon (mask-image tint) */
+.dc20-alt-sheet .btab-icon {
   display: block;
-  width: 26px;
-  height: 26px;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
   background-color: var(--tab-inactive-text);
   mask-repeat: no-repeat;
   mask-size: contain;
@@ -146,11 +159,115 @@
   -webkit-mask-position: center;
   transition: background-color var(--t-fast);
 }
-.dc20-alt-sheet .page-tab.active .tab-icon {
-  background-color: var(--p-accent);
+.dc20-alt-sheet .browser-tab.active .btab-icon { background-color: var(--p-accent); }
+
+.dc20-alt-sheet .btab-icon-core      { mask-image: url('../assets/icons/tab-core.svg');      -webkit-mask-image: url('../assets/icons/tab-core.svg'); }
+.dc20-alt-sheet .btab-icon-combat    { mask-image: url('../assets/icons/tab-combat.svg');    -webkit-mask-image: url('../assets/icons/tab-combat.svg'); }
+.dc20-alt-sheet .btab-icon-features  { mask-image: url('../assets/icons/tab-features.svg');  -webkit-mask-image: url('../assets/icons/tab-features.svg'); }
+.dc20-alt-sheet .btab-icon-inventory { mask-image: url('../assets/icons/tab-inventory.svg'); -webkit-mask-image: url('../assets/icons/tab-inventory.svg'); }
+.dc20-alt-sheet .btab-icon-biography { mask-image: url('../assets/icons/tab-biography.svg'); -webkit-mask-image: url('../assets/icons/tab-biography.svg'); }
+
+/* Tab label */
+.dc20-alt-sheet .btab-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.dc20-alt-sheet .tab-icon-core      { mask-image: url('../assets/icons/tab-core.svg');      -webkit-mask-image: url('../assets/icons/tab-core.svg'); }
-.dc20-alt-sheet .tab-icon-combat    { mask-image: url('../assets/icons/tab-combat.svg');    -webkit-mask-image: url('../assets/icons/tab-combat.svg'); }
-.dc20-alt-sheet .tab-icon-features  { mask-image: url('../assets/icons/tab-features.svg');  -webkit-mask-image: url('../assets/icons/tab-features.svg'); }
-.dc20-alt-sheet .tab-icon-inventory { mask-image: url('../assets/icons/tab-inventory.svg'); -webkit-mask-image: url('../assets/icons/tab-inventory.svg'); }
-.dc20-alt-sheet .tab-icon-biography { mask-image: url('../assets/icons/tab-biography.svg'); -webkit-mask-image: url('../assets/icons/tab-biography.svg'); }
+
+/* × close button */
+.dc20-alt-sheet .btab-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--p-ink-muted);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  transition: color var(--t-fast), background var(--t-fast);
+}
+.dc20-alt-sheet .btab-close:hover {
+  color: var(--p-ink);
+  background: rgba(0,0,0,0.12);
+}
+
+/* + add tab button */
+.dc20-alt-sheet .btab-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 4px;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--p-ink-muted);
+  background: none;
+  border: 1.5px solid var(--p-border-light);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.dc20-alt-sheet .btab-add:hover {
+  color: var(--p-accent);
+  border-color: var(--p-accent);
+  background: var(--p-hover);
+}
+
+/* ── Page picker overlay ── */
+.dc20-alt-sheet .tab-picker {
+  position: absolute;
+  top: calc(100% - 2px);
+  left: var(--gap-md);
+  z-index: 200;
+  background: var(--p-bg);
+  border: 2px solid var(--p-border);
+  border-radius: 0 var(--r-md) var(--r-md) var(--r-md);
+  padding: var(--gap-sm);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+}
+.dc20-alt-sheet .tab-picker.hidden { display: none; }
+
+.dc20-alt-sheet .tab-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap-sm);
+}
+
+.dc20-alt-sheet .picker-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-xs);
+  padding: var(--gap-sm) var(--gap-md);
+  min-width: 80px;
+  background: var(--p-bg-aged);
+  border: 1.5px solid var(--p-border-light);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.dc20-alt-sheet .picker-item:hover {
+  background: var(--p-hover);
+  border-color: var(--p-accent);
+}
+.dc20-alt-sheet .picker-item .btab-icon {
+  width: 28px;
+  height: 28px;
+  background-color: var(--p-ink);
+}
+.dc20-alt-sheet .picker-item:hover .btab-icon { background-color: var(--p-accent); }
+
+.dc20-alt-sheet .picker-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  color: var(--p-ink);
+  text-align: center;
+  white-space: nowrap;
+}
