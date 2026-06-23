@@ -5,9 +5,10 @@ export async function prepareBiography(actor) {
   const flags = actor.flags?.[MODULE_ID] ?? {};
 
   return {
-    biography:  system.details?.biography?.value ?? '',
-    details:    system.details ?? {},
-    appearance: flags.appearance ?? {},
-    moduleId:   MODULE_ID,
+    biography:       system.details?.biography?.value ?? '',
+    details:         system.details ?? {},
+    appearance:      flags.appearance ?? {},
+    campaignNotes:   flags.campaignNotes ?? '',
+    moduleId:        MODULE_ID,
   };
 }
