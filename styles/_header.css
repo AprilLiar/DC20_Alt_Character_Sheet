@@ -72,14 +72,14 @@
   gap: 1px;
 }
 .dc20-alt-sheet .hstrip-sep {
-  color: var(--p-border-faint);
+  color: var(--p-light);
   font-size: var(--fs-sm);
 }
 .dc20-alt-sheet .hstrip-input {
   background: transparent;
   border: none;
   border-bottom: 1px solid transparent;
-  color: var(--p-border-faint);
+  color: var(--p-light);
   font-family: var(--font-body);
   font-size: var(--fs-md);
   font-weight: 600;
