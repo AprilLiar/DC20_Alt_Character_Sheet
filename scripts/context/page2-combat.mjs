@@ -65,16 +65,18 @@ export async function prepareCombat(actor) {
   /* ── Combat actions (usable items with resource costs + weapons/spells/maneuvers) ── */
   const combatActions = [];
   for (const item of actor.items) {
-    const costs = item.system.costs ?? item.system.usable?.costs;
     const filterType = TYPE_TO_FILTER[item.type];
     if (!filterType) continue;
 
-    const hasResourceCost = costs
-      ? Object.entries(costs).some(([k, v]) =>
-          ['ap','sp','sta','stamina','mp','mana','map','grit','health','actionPoint','manaPoint','staminaPoint'].includes(k) && v)
-      : false;
-
-    if (!ALWAYS_COMBAT_TYPES.has(item.type) && !hasResourceCost) continue;
+    if (ALWAYS_COMBAT_TYPES.has(item.type)) {
+      // Weapons, spells, maneuvers: always include
+    } else {
+      // Features/equipment/techniques: include only when they consume a resource.
+      // Mirror the same cost check used in page3-features to stay consistent.
+      const costs = item.system.costs ?? {};
+      const hasResourceCost = ['ap', 'stamina', 'mana', 'grit', 'health'].some(k => costs[k]);
+      if (!hasResourceCost) continue;
+    }
 
     combatActions.push({
       id:           item.id,
@@ -82,7 +84,7 @@ export async function prepareCombat(actor) {
       img:          item.img,
       type:         item.type,
       filterType,
-      costs:        costs ?? {},
+      costs:        item.system.costs ?? {},
       rangeType:    item.system.attackFormula?.rangeType ?? '',
       attackBonus:  item.system.attackFormula?.rollBonus ?? 0,
       checkType:    item.system.attackFormula?.checkType ?? item.system.check?.checkKey ?? '',
