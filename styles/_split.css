@@ -145,35 +145,42 @@
 }
 .dc20-alt-sheet .sc-attr {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--gap-xs);
-  padding: 3px var(--gap-xs);
+  padding: var(--gap-xs);
   background: var(--p-light);
   border: 1px solid var(--p-border-light);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-md);
 }
 .dc20-alt-sheet .sc-attr-name {
   font-family: var(--font-heading);
   font-size: var(--fs-xs);
   font-weight: 700;
-  color: var(--p-ink-muted);
-  min-width: 26px;
+  color: var(--p-ink);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+.dc20-alt-sheet .sc-attr-buttons {
+  display: flex;
+  gap: var(--gap-xs);
 }
 .dc20-alt-sheet .sc-attr-btn {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  flex: 1;
   justify-content: center;
+  gap: 3px;
+  flex: 1;
   background: var(--p-bg-card);
   border: 1px solid var(--p-border-faint);
   border-radius: var(--r-sm);
-  padding: 2px 3px;
-  font-size: var(--fs-xs);
+  padding: 4px 2px;
+  font-size: var(--fs-sm);
+  font-family: var(--font-body);
   color: var(--p-ink);
   cursor: pointer;
+  font-weight: 600;
 }
-.dc20-alt-sheet .sc-attr-btn i { font-size: 9px; }
+.dc20-alt-sheet .sc-attr-btn i { font-size: var(--fs-xs); }
 .dc20-alt-sheet .sc-attr-btn:hover { background: var(--p-bg-aged); border-color: var(--c-ap); }
 
 /* Rounded-rectangle panel used for every knowledge/items group */
@@ -224,7 +231,9 @@
 }
 .dc20-alt-sheet .sc-skill-row.rollable { cursor: pointer; }
 .dc20-alt-sheet .sc-skill-row.rollable:hover .sc-skill-name { color: var(--p-accent); }
+/* 5 tiny dots (5×4px + 4×1px = 24px) for the split-core panels */
 .dc20-alt-sheet .sc-skill-profs { display: flex; gap: 1px; }
+.dc20-alt-sheet .sc-skill-profs .prof-dot { width: 4px; height: 4px; }
 .dc20-alt-sheet .sc-skill-name { flex: 1; color: var(--p-ink); overflow: hidden; }
 .dc20-alt-sheet .sc-skill-attr {
   font-size: 8px;
