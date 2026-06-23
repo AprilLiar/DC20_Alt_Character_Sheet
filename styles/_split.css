@@ -61,13 +61,111 @@
   background: var(--p-accent);
 }
 
+/* ── 3-pane split view ── */
+.dc20-alt-sheet .split-view-3 {
+  display: none;
+  height: 100%;
+  min-height: 0;
+}
+.dc20-alt-sheet .split-view-3.active {
+  display: flex;
+  flex-direction: column;
+}
+.dc20-alt-sheet .split-row-top {
+  display: flex;
+  flex-direction: row;
+  flex-basis: 0;
+  flex-shrink: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.dc20-alt-sheet .split-row-bottom {
+  display: flex;
+  flex-direction: row;
+  flex-basis: 0;
+  flex-shrink: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.dc20-alt-sheet .split-pane-bottom {
+  flex: 1 1 0;
+}
+
+/* Horizontal draggable divider (top row ↔ bottom pane) */
+.dc20-alt-sheet .split-divider-h {
+  flex: 0 0 7px;
+  align-self: stretch;
+  cursor: row-resize;
+  background: var(--p-border-light);
+  border-top: 1px solid var(--p-border);
+  border-bottom: 1px solid var(--p-border);
+  transition: background var(--t-fast);
+  position: relative;
+}
+.dc20-alt-sheet .split-divider-h::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--p-border);
+  opacity: 0.7;
+}
+.dc20-alt-sheet .split-divider-h:hover,
+.dc20-alt-sheet .split-divider-h.dragging {
+  background: var(--p-accent);
+}
+
 /* ── Picker split builder ── */
 .dc20-alt-sheet .split-builder {
   display: flex;
-  gap: var(--gap-md);
+  flex-direction: column;
+  gap: var(--gap-xs);
   margin-top: var(--gap-sm);
   padding-top: var(--gap-sm);
   border-top: 1px solid var(--p-border-faint);
+}
+.dc20-alt-sheet .split-builder-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--p-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.dc20-alt-sheet .split-zones-top-row {
+  display: flex;
+  gap: var(--gap-md);
+}
+.dc20-alt-sheet .split-bottom-wrap {
+  /* shown via JS when left+right are filled */
+}
+.dc20-alt-sheet .split-zone-full {
+  width: 100%;
+}
+.dc20-alt-sheet .split-create-btn {
+  display: block;
+  width: 100%;
+  padding: var(--gap-xs) var(--gap-sm);
+  background: var(--p-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-sm);
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--t-fast);
+}
+.dc20-alt-sheet .split-create-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.dc20-alt-sheet .split-create-btn:not(:disabled):hover {
+  background: var(--p-gold);
 }
 .dc20-alt-sheet .split-zone {
   flex: 1 1 0;
