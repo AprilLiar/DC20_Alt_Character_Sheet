@@ -115,6 +115,23 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   }
 
   /* -------------------------------------------- */
+  /*  Form Submission                               */
+  /* -------------------------------------------- */
+
+  _prepareSubmitData(event, form, formData) {
+    // Foundry v13 FormDataExtended doesn't reliably coerce type="number" inputs
+    // to JS numbers before the DC20 data model validates them as integers.
+    for (const el of form.elements) {
+      if (el.type !== 'number' || !el.name) continue;
+      const raw = formData.object[el.name];
+      if (raw === undefined || raw === null || raw === '') continue;
+      const n = Number(raw);
+      if (!isNaN(n)) formData.object[el.name] = Math.trunc(n);
+    }
+    return super._prepareSubmitData(event, form, formData);
+  }
+
+  /* -------------------------------------------- */
   /*  Rendering                                    */
   /* -------------------------------------------- */
 
