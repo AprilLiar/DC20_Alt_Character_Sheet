@@ -20,20 +20,17 @@
   {{!-- Knowledge half: Skills + Trades + Languages in rounded panels --}}
   <div class="sc-knowledge">
 
-    {{!-- Skills panel --}}
+    {{!-- Skills panel: only proficient (mastery > 0), no dots, modifier only --}}
     <div class="sc-panel">
       <div class="sc-panel-heading">Skills</div>
       <div class="sc-skill-grid">
-        {{#each skills}}
+        {{#each skills}}{{#if mastery}}
         <div class="sc-skill-row rollable" data-action="rollSkill" data-skill="{{key}}" title="{{label}}">
-          <span class="sc-skill-profs">{{{profDots mastery 5}}}</span>
           <span class="sc-skill-name">{{label}}</span>
           <span class="sc-skill-attr">{{abbr3 attribute}}</span>
           <span class="sc-skill-bonus">{{signedNum bonus}}</span>
         </div>
-        {{else}}
-        <p class="empty-note">No skills.</p>
-        {{/each}}
+        {{/if}}{{/each}}
       </div>
     </div>
 
@@ -43,13 +40,12 @@
       {{#if trades.length}}
       <div class="sc-panel">
         <div class="sc-panel-heading">Trades</div>
-        {{#each trades}}
+        {{#each trades}}{{#if mastery}}
         <div class="sc-skill-row">
-          <span class="sc-skill-profs">{{{profDots mastery 5}}}</span>
           <span class="sc-skill-name">{{label}}</span>
           <span class="sc-skill-bonus">{{signedNum bonus}}</span>
         </div>
-        {{/each}}
+        {{/if}}{{/each}}
       </div>
       {{/if}}
       {{#if languages.length}}
@@ -57,7 +53,6 @@
         <div class="sc-panel-heading">Languages</div>
         {{#each languages}}
         <div class="sc-skill-row">
-          <span class="sc-skill-profs">{{{profDots mastery 5}}}</span>
           <span class="sc-skill-name">{{label}}</span>
         </div>
         {{/each}}

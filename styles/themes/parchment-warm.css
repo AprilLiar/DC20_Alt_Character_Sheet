@@ -1,30 +1,35 @@
 /* ============================================================
-   DC20 Alt Sheet — Parchment Warm Theme
-   Swap this file to change the entire visual identity.
+   DC20 Alt Sheet — DC20 Native Theme
+   Purple primary accents on silver/grey backgrounds,
+   matching the original DC20 character sheet palette.
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
 
 .dc20-alt-sheet {
-  /* ── Parchment Palette ── */
-  --p-bg:           #f0e2b6;   /* main parchment */
-  --p-bg-card:      #e8d5a0;   /* card/inset areas */
-  --p-bg-aged:      #d4b483;   /* darker aged parchment */
-  --p-light:        #f8f0d8;   /* lightest parchment */
-  --p-hover:        #ecddb0;   /* hover state */
+  /* ── Silver/Grey Background Palette ── */
+  --p-bg:           #e4e4e4;   /* main background  (#dfdfdf secondary-lighter) */
+  --p-bg-card:      #d2d2d2;   /* card / inset areas */
+  --p-bg-aged:      #bdbdbd;   /* darker sections (inactive tabs etc.) */
+  --p-light:        #f2f2f2;   /* lightest panels */
+  --p-hover:        #d8d8d8;   /* hover state */
 
-  --p-border:       #5c3a1e;   /* dark brown ink border */
-  --p-border-light: #8b6347;   /* medium brown */
-  --p-border-faint: #c4a97a;   /* faint ruled line */
+  /* ── Purple Border Palette ── */
+  --p-border:       #3f0344;   /* --primary-darker: dark purple (header strip, main borders) */
+  --p-border-light: #5a265f;   /* --primary-dark:   medium purple */
+  --p-border-faint: #917996;   /* --primary-light:  faint purple/grey ruled lines */
 
-  --p-ink:          #2c1a0e;   /* primary text */
-  --p-ink-muted:    #7a5535;   /* muted/secondary text */
-  --p-accent:       #8b4513;   /* saddle brown accent */
-  --p-gold:         #b8860b;   /* dark goldenrod */
-  --p-gold-light:   #daa520;   /* goldenrod highlight */
+  /* ── Ink / Text ── */
+  --p-ink:          #262626;   /* --secondary-darker: near-black text */
+  --p-ink-muted:    #646464;   /* --secondary-dark:   muted/secondary text */
+
+  /* ── Accent ── */
+  --p-accent:       #741a89;   /* --primary-color: main purple accent */
+  --p-gold:         #5a265f;   /* --primary-dark: secondary highlight */
+  --p-gold-light:   #c490d1;   /* light lavender: focus / active highlight */
   --p-red:          #8b0000;   /* dark red (HP) */
 
-  /* ── Resource accent colors (ink-toned) ── */
+  /* ── Resource accent colors ── */
   --c-hp:       #8b0000;
   --c-hp-light: #c0392b;
   --c-ap:       #1a3a6b;
@@ -39,8 +44,8 @@
   --c-rest-light:#555580;
 
   /* ── Condition glow ── */
-  --cond-glow:  0 0 8px 2px rgba(180, 60, 20, 0.7);
-  --cond-bg:    rgba(180, 60, 20, 0.15);
+  --cond-glow:  0 0 8px 2px rgba(116, 26, 137, 0.6);
+  --cond-bg:    rgba(116, 26, 137, 0.12);
 
   /* ── Active tab indicator ── */
   --tab-active-bg:     var(--p-bg);

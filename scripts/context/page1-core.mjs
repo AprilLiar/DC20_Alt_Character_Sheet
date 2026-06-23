@@ -7,6 +7,16 @@ const ATTR_CONFIG = {
   int: { label: 'INTELLIGENCE', abbr: 'INT' },
 };
 
+function groupByAttr(items) {
+  const groups = {};
+  for (const item of items) {
+    const a = item.attribute;
+    if (!groups[a]) groups[a] = { attr: a, label: ATTR_CONFIG[a]?.label ?? a, items: [] };
+    groups[a].items.push(item);
+  }
+  return Object.keys(ATTR_CONFIG).filter(k => groups[k]).map(k => groups[k]);
+}
+
 export async function prepareCore(actor) {
   const system = actor.system;
 
@@ -61,6 +71,8 @@ export async function prepareCore(actor) {
     attributes,
     skills,
     trades,
+    skillGroups: groupByAttr(skills),
+    tradeGroups: groupByAttr(trades),
     languages,
     movement,
     senses,
