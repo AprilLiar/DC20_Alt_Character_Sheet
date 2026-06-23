@@ -88,7 +88,7 @@
 /* 5 dots at 5px × 5px, 1px gap = 5×5+4×1 = 29px → column 32px */
 .dc20-alt-sheet .skill-row {
   display: grid;
-  grid-template-columns: 32px 1fr 24px 32px;
+  grid-template-columns: 32px 1fr 32px;
   align-items: center;
   gap: var(--gap-xs);
   padding: 2px 4px;

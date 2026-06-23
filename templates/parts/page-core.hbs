@@ -73,38 +73,38 @@
       </div>
     </div>
 
-    {{!-- MIDDLE: Skills + Languages --}}
+    {{!-- MIDDLE: Skills (grouped by attribute) + Trades + Languages --}}
     <div class="core-col col-skills">
       <h3 class="section-heading">Skills</h3>
-      <div class="skills-list">
-        {{#each skills}}
-        <div class="skill-row" data-skill="{{key}}">
-          <span class="skill-profs">{{{profDots mastery 5}}}</span>
-          <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">
-            {{label}}
-          </span>
-          <span class="skill-attr muted">{{attribute}}</span>
-          <span class="skill-bonus rollable" data-action="rollSkill" data-skill="{{key}}">
-            {{signedNum bonus}}
-          </span>
-        </div>
-        {{else}}
-        <p class="empty-note">No skills defined.</p>
-        {{/each}}
-      </div>
-
-      {{#if trades.length}}
-        <h3 class="section-heading mt">Trades</h3>
+      {{#each skillGroups}}
+        <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
         <div class="skills-list">
-          {{#each trades}}
-          <div class="skill-row">
+          {{#each items}}
+          <div class="skill-row" data-skill="{{key}}">
             <span class="skill-profs">{{{profDots mastery 5}}}</span>
-            <span class="skill-name">{{label}}</span>
-            <span class="skill-attr muted">{{attribute}}</span>
-            <span class="skill-bonus">{{signedNum bonus}}</span>
+            <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">{{label}}</span>
+            <span class="skill-bonus rollable" data-action="rollSkill" data-skill="{{key}}">{{signedNum bonus}}</span>
           </div>
           {{/each}}
         </div>
+      {{else}}
+        <p class="empty-note">No skills defined.</p>
+      {{/each}}
+
+      {{#if tradeGroups.length}}
+        <h3 class="section-heading mt">Trades</h3>
+        {{#each tradeGroups}}
+          <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
+          <div class="skills-list">
+            {{#each items}}
+            <div class="skill-row">
+              <span class="skill-profs">{{{profDots mastery 5}}}</span>
+              <span class="skill-name">{{label}}</span>
+              <span class="skill-bonus">{{signedNum bonus}}</span>
+            </div>
+            {{/each}}
+          </div>
+        {{/each}}
       {{/if}}
 
       {{#if languages.length}}
