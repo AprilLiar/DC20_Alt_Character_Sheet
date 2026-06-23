@@ -202,10 +202,10 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  margin-bottom: 0;
-  font-size: 20px;
+  align-self: center;   /* center vertically relative to the tab buttons */
+  width: 20px;
+  height: 20px;
+  font-size: 18px;
   line-height: 1;
   color: var(--p-ink-muted);
   background: none;
