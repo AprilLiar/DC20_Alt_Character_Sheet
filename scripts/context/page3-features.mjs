@@ -1,27 +1,32 @@
-const SOURCE_ORDER = ['class', 'subclass', 'ancestry', 'background', 'other'];
+const RESOURCE_KEYS = ['ap', 'stamina', 'mana', 'grit'];
 
 export async function prepareFeatures(actor) {
-  // Collect passive features (features without resource costs, or explicit passive flag)
-  const groups = Object.fromEntries(SOURCE_ORDER.map(k => [k, []]));
+  const typeGroups = new Map(); // featureType label → items[]
 
   for (const item of actor.items) {
     if (item.type !== 'feature') continue;
     const costs = item.system.costs ?? {};
-    const hasResourceCost = ['ap','stamina','mana','grit'].some(k => costs[k]);
-    if (hasResourceCost) continue; // active features live on the combat page
+    if (RESOURCE_KEYS.some(k => costs[k])) continue; // active features live on combat page
 
-    const origin = (item.system.featureOrigin ?? item.system.featureType ?? 'other').toLowerCase();
-    const bucket = SOURCE_ORDER.includes(origin) ? origin : 'other';
+    const rawType  = item.system.featureType ?? '';
+    const label    = rawType ? rawType.charAt(0).toUpperCase() + rawType.slice(1) : 'Other';
 
-    groups[bucket].push({
-      id:          item.id,
-      name:        item.name,
-      img:         item.img,
-      type:        item.type,
-      featureType: item.system.featureType ?? '',
-      description: item.system.description ?? '',
+    if (!typeGroups.has(label)) typeGroups.set(label, []);
+    typeGroups.get(label).push({
+      id:   item.id,
+      name: item.name,
+      img:  item.img,
     });
   }
 
-  return { featureGroups: groups, sourceOrder: SOURCE_ORDER };
+  // Sort groups alphabetically; 'Other' always last
+  const featureGroups = [...typeGroups.entries()]
+    .sort(([a], [b]) => {
+      if (a === 'Other') return 1;
+      if (b === 'Other') return -1;
+      return a.localeCompare(b);
+    })
+    .map(([label, items]) => ({ label, items }));
+
+  return { featureGroups };
 }
