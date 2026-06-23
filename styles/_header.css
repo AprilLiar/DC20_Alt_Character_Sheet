@@ -74,32 +74,62 @@
   box-shadow: 0 0 8px rgba(100, 150, 255, 0.9);
 }
 
-/* xx/yy pair */
-.dc20-alt-sheet .hstrip-pair {
+/* ── HP / SP / MP resource bars ── */
+.dc20-alt-sheet .hstrip-bar-wrap {
+  position: relative;
+  width: 110px;
+  height: 26px;
+  background: rgba(0, 0, 0, 0.30);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.dc20-alt-sheet .hstrip-bar-fill {
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  min-width: 0;
+  transition: width var(--t-mid);
+}
+.dc20-alt-sheet .hp-bar .hstrip-bar-fill { background: rgba(180, 40,  40,  0.72); }
+.dc20-alt-sheet .sp-bar .hstrip-bar-fill { background: rgba(176, 100, 30,  0.72); }
+.dc20-alt-sheet .mp-bar .hstrip-bar-fill { background: rgba(90,  55,  160, 0.72); }
+
+.dc20-alt-sheet .hstrip-bar-text {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1px;
+  z-index: 1;
 }
+
 .dc20-alt-sheet .hstrip-sep {
-  color: var(--p-light);
+  color: rgba(255, 255, 255, 0.75);
   font-size: var(--fs-sm);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
 }
 .dc20-alt-sheet .hstrip-input {
   background: transparent;
   border: none;
-  border-bottom: 1px solid transparent;
-  color: var(--p-light);
+  color: #fff;
   font-family: var(--font-body);
   font-size: var(--fs-md);
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
-  width: 38px;
-  padding: 1px 2px;
-  transition: border-color var(--t-fast);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  width: 34px;
+  padding: 0;
+  outline: none;
+  -moz-appearance: textfield;
 }
-.dc20-alt-sheet .hstrip-input:hover  { border-bottom-color: var(--p-border-faint); }
-.dc20-alt-sheet .hstrip-input:focus  { border-bottom-color: var(--p-gold-light); outline: none; }
-.dc20-alt-sheet .hstrip-input:disabled { opacity: 0.7; cursor: default; }
+.dc20-alt-sheet .hstrip-input::-webkit-inner-spin-button,
+.dc20-alt-sheet .hstrip-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.dc20-alt-sheet .hstrip-input:focus { color: var(--p-gold-light); text-shadow: 0 0 6px rgba(200, 160, 0, 0.7); }
+.dc20-alt-sheet .hstrip-input:disabled { opacity: 0.75; cursor: default; }
 
 /* ── Horizontal browser-style tab bar ── */
 .dc20-alt-sheet .browser-tabs-container {
