@@ -6,8 +6,7 @@
       <h3 class="section-heading">Biography</h3>
       {{#if isEditable}}
         <textarea class="bio-editor"
-          name="system.details.biography.value"
-          rows="18">{{biography}}</textarea>
+          name="system.details.biography.value">{{biography}}</textarea>
       {{else}}
         <div class="bio-view">{{biography}}</div>
       {{/if}}
@@ -151,4 +150,17 @@
 
     </div>
   </div>
+
+  {{!-- Campaign Notes (full-width below the two columns) --}}
+  <div class="campaign-notes-section">
+    <h3 class="section-heading mt">Campaign Notes</h3>
+    {{#if isEditable}}
+      <textarea class="campaign-notes-editor"
+        name="flags.{{moduleId}}.campaignNotes"
+        placeholder="Session notes, quest leads, NPC names, loot to spend…">{{campaignNotes}}</textarea>
+    {{else}}
+      <div class="campaign-notes-view">{{#if campaignNotes}}{{campaignNotes}}{{else}}<span class="empty-note">No campaign notes yet.</span>{{/if}}</div>
+    {{/if}}
+  </div>
+
 </section>

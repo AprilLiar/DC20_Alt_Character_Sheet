@@ -43,7 +43,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     { id: 'combat',    label: 'Combat'      },
     { id: 'features',  label: 'Features'    },
     { id: 'inventory', label: 'Inventory'   },
-    { id: 'biography', label: 'Biography'   },
+    { id: 'biography', label: 'Info'        },
   ];
 
   /** Ordered list of currently-open tab page ids */

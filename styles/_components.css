@@ -741,7 +741,11 @@
   padding: var(--gap-md);
   font-size: var(--fs-md);
   line-height: 1.7;
-  min-height: 180px;
+  flex: 1;
+  min-height: 0;
+  resize: vertical;
+  box-sizing: border-box;
+  width: 100%;
 }
 .dc20-alt-sheet .bio-editor [contenteditable] {
   outline: none;
@@ -792,6 +796,31 @@
 .dc20-alt-sheet .points-row:last-child { border-bottom: none; }
 .dc20-alt-sheet .pt-label { color: var(--p-ink-muted); }
 .dc20-alt-sheet .pt-val   { font-weight: 700; font-family: var(--font-heading); color: var(--p-ink); }
+
+/* ── Campaign Notes ── */
+.dc20-alt-sheet .campaign-notes-editor,
+.dc20-alt-sheet .campaign-notes-view {
+  width: 100%;
+  background: var(--p-light);
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-md);
+  padding: var(--gap-md);
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  line-height: 1.7;
+  color: var(--p-ink);
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 120px;
+}
+.dc20-alt-sheet .campaign-notes-editor:focus {
+  border-color: var(--p-border);
+  outline: none;
+}
+.dc20-alt-sheet .campaign-notes-editor:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
 
 /* ════════════════════════════════════════
    APPEARANCE FORM (Biography page)
