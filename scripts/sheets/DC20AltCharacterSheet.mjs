@@ -119,14 +119,15 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /* -------------------------------------------- */
 
   _prepareSubmitData(event, form, formData) {
-    // Foundry v13 FormDataExtended doesn't reliably coerce type="number" inputs
-    // to JS numbers before the DC20 data model validates them as integers.
+    // formData.object is a deeply nested object; use foundry.utils helpers to
+    // walk dot-notation paths so number inputs are coerced to integers before
+    // DC20's data model validates them.
     for (const el of form.elements) {
       if (el.type !== 'number' || !el.name) continue;
-      const raw = formData.object[el.name];
+      const raw = foundry.utils.getProperty(formData.object, el.name);
       if (raw === undefined || raw === null || raw === '') continue;
       const n = Number(raw);
-      if (!isNaN(n)) formData.object[el.name] = Math.trunc(n);
+      if (!isNaN(n)) foundry.utils.setProperty(formData.object, el.name, Math.trunc(n));
     }
     return super._prepareSubmitData(event, form, formData);
   }
@@ -301,35 +302,36 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /* -------------------------------------------- */
 
   _registerContextMenu() {
-    new ContextMenu(this.element, '[data-item-id]', [
+    const CM = foundry.applications.ux.ContextMenu.implementation;
+    new CM(this.element, '[data-item-id]', [
       {
         name: game.i18n.localize('DC20AltSheet.ctx.addFavourite'),
         icon: '<i class="fas fa-star"></i>',
-        condition: (li) => !isFavourite(this.actor, li[0]?.dataset?.itemId),
-        callback: async (li) => {
-          await addFavourite(this.actor, li[0]?.dataset?.itemId);
+        condition: (el) => !isFavourite(this.actor, el?.dataset?.itemId),
+        callback: async (el) => {
+          await addFavourite(this.actor, el?.dataset?.itemId);
           this.render();
         },
       },
       {
         name: game.i18n.localize('DC20AltSheet.ctx.removeFavourite'),
         icon: '<i class="far fa-star"></i>',
-        condition: (li) => isFavourite(this.actor, li[0]?.dataset?.itemId),
-        callback: async (li) => {
-          await removeFavourite(this.actor, li[0]?.dataset?.itemId);
+        condition: (el) => isFavourite(this.actor, el?.dataset?.itemId),
+        callback: async (el) => {
+          await removeFavourite(this.actor, el?.dataset?.itemId);
           this.render();
         },
       },
       {
         name: game.i18n.localize('DC20AltSheet.ctx.editItem'),
         icon: '<i class="fas fa-pencil-alt"></i>',
-        callback: (li) => this.actor.items.get(li[0]?.dataset?.itemId)?.sheet?.render(true),
+        callback: (el) => this.actor.items.get(el?.dataset?.itemId)?.sheet?.render(true),
       },
       {
         name: game.i18n.localize('DC20AltSheet.ctx.deleteItem'),
         icon: '<i class="fas fa-trash"></i>',
-        callback: async (li) => {
-          const item = this.actor.items.get(li[0]?.dataset?.itemId);
+        callback: async (el) => {
+          const item = this.actor.items.get(el?.dataset?.itemId);
           if (!item) return;
           const ok = await foundry.applications.api.DialogV2.confirm({
             window: { title: game.i18n.localize('DC20AltSheet.deleteConfirm.title') },
@@ -338,7 +340,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
           if (ok) item.delete();
         },
       },
-    ]);
+    ], { jQuery: false });
   }
 
   /* -------------------------------------------- */

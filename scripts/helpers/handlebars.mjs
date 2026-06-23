@@ -1,7 +1,7 @@
 export function registerHandlebarsHelpers() {
   Handlebars.registerHelper('percent', (value, max) => {
     if (!max || max === 0) return 0;
-    return Math.clamped(Math.round((value / max) * 100), 0, 100);
+    return Math.clamp(Math.round((value / max) * 100), 0, 100);
   });
 
   Handlebars.registerHelper('signedNum', (value) => {
