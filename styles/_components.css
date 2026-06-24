@@ -675,6 +675,14 @@
   object-fit: cover;
   border: 1px solid var(--p-border-faint);
 }
+.dc20-alt-sheet .item-img-rollable {
+  cursor: pointer;
+  transition: box-shadow var(--t-fast), border-color var(--t-fast);
+}
+.dc20-alt-sheet .item-img-rollable:hover {
+  border-color: var(--p-accent);
+  box-shadow: 0 0 5px rgba(100, 150, 255, 0.4);
+}
 .dc20-alt-sheet .item-name {
   font-size: var(--fs-md);
   white-space: nowrap;

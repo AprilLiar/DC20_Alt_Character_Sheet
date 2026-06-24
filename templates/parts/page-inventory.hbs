@@ -39,7 +39,7 @@
     <ul class="items-list">
       {{#each itemGroups.weapons}}
       <li class="item-row {{#if equipped}}equipped{{/if}}" data-item-id="{{id}}">
-        <img class="item-img" src="{{img}}" alt="{{name}}">
+        <img class="item-img item-img-rollable" src="{{img}}" alt="{{name}}" data-action="useItem" title="Use {{name}}">
         <span class="item-name">{{name}}</span>
         <span class="item-tag muted">{{weaponType}}{{#if rangeType}} · {{rangeType}}{{/if}}</span>
         <span class="item-qty muted">×{{quantity}}</span>
@@ -47,10 +47,6 @@
           <button type="button" class="{{#if equipped}}active{{/if}}"
             data-action="toggleEquip" data-item-id="{{id}}" title="Equip/Unequip">
             <i class="fas fa-shield-alt"></i>
-          </button>
-          <button type="button"
-            data-action="useItem" data-item-id="{{id}}" title="Use">
-            <i class="fas fa-play"></i>
           </button>
           {{#if ../isEditable}}
           <button type="button"
@@ -121,15 +117,11 @@
     <ul class="items-list">
       {{#each itemGroups.consumables}}
       <li class="item-row" data-item-id="{{id}}">
-        <img class="item-img" src="{{img}}" alt="{{name}}">
+        <img class="item-img item-img-rollable" src="{{img}}" alt="{{name}}" data-action="useItem" title="Use {{name}}">
         <span class="item-name">{{name}}</span>
         <span class="item-tag muted">{{consumableType}}</span>
         <span class="item-qty muted">×{{quantity}}</span>
         <div class="item-controls">
-          <button type="button"
-            data-action="useItem" data-item-id="{{id}}" title="Use">
-            <i class="fas fa-play"></i>
-          </button>
           {{#if ../isEditable}}
           <button type="button"
             data-action="deleteItem" data-item-id="{{id}}" title="Delete">

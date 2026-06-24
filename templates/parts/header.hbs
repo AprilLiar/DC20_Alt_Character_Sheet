@@ -72,13 +72,15 @@
     {{#each header.quickSlots}}
     <div class="quick-slot{{#if this}} filled{{/if}}" data-slot-index="{{@index}}">
       {{#if this}}
-        {{#if img}}<img class="qs-img" src="{{img}}" alt="{{label}}" title="{{label}}">
+        {{#if abbr}}<span class="qs-abbr" title="{{label}}">{{abbr}}</span>
+        {{else if img}}<img class="qs-img" src="{{img}}" alt="{{label}}" title="{{label}}">
         {{else}}<span class="qs-label" title="{{label}}">{{label}}</span>{{/if}}
       {{else}}
         <span class="qs-empty-hint">+</span>
       {{/if}}
     </div>
     {{/each}}
+    <button type="button" class="qs-add-btn" data-action="addQuickSlot" title="Add quick-access slot">+</button>
   </div>
 
 </div>

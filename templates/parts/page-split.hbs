@@ -1,5 +1,15 @@
 {{#if split}}
-  {{#if split.bottom}}
+  {{#if split.isHorizontal}}
+  <div class="split-view-h active" data-split-id="{{split.id}}">
+    <div class="split-pane split-pane-left" style="flex-grow: {{split.leftGrow}}">
+      {{> (concat "dc20-split-" split.left) leftCtx}}
+    </div>
+    <div class="split-divider split-divider-h" title="Drag to resize"></div>
+    <div class="split-pane split-pane-right" style="flex-grow: {{split.rightGrow}}">
+      {{> (concat "dc20-split-" split.right) rightCtx}}
+    </div>
+  </div>
+  {{else if split.bottom}}
   <div class="split-view-3 active" data-split-id="{{split.id}}">
     <div class="split-row-top" style="flex-grow: {{split.topGrow}}">
       <div class="split-pane split-pane-left" style="flex-grow: {{split.leftGrow}}">

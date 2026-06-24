@@ -27,6 +27,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       toggleAttune:  DC20AltCharacterSheet._onToggleAttune,
       useItem:       DC20AltCharacterSheet._onUseItem,
       resetStats:    DC20AltCharacterSheet._onResetStats,
+      addQuickSlot:  DC20AltCharacterSheet._onAddQuickSlot,
     },
     form: { submitOnChange: true, closeOnSubmit: false },
   };
@@ -63,6 +64,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   _combatFilter = 'all';
   /** Pending split-tab builder selection (left/right/bottom page ids) */
   _pendingSplit = { left: null, right: null, bottom: null };
+  /** Orientation for the pending split ('vertical' or 'horizontal') */
+  _splitOrientation = 'vertical';
   /** Page id currently being dragged (from a tab or the picker) */
   _dragPageId = null;
 
@@ -70,15 +73,21 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /*  Tab State Persistence                        */
   /* -------------------------------------------- */
 
-  /** True when an id refers to a split tab (two page ids joined by '+'). */
+  /** True when an id refers to a split tab ('+' = vertical, '~' = horizontal). */
   _isSplitId(id) {
-    return typeof id === 'string' && id.includes('+');
+    return typeof id === 'string' && (id.includes('+') || id.includes('~'));
+  }
+
+  /** Parse a split id into { parts, isHorizontal }. */
+  _parseSplitId(id) {
+    if (id.includes('~')) return { parts: id.split('~'), isHorizontal: true };
+    return { parts: id.split('+'), isHorizontal: false };
   }
 
   /** Validate a tab id — a single known page, or a split of two or three known pages. */
   _isValidTabId(id, valid) {
     if (this._isSplitId(id)) {
-      const parts = id.split('+');
+      const { parts } = this._parseSplitId(id);
       return (parts.length === 2 || parts.length === 3) && parts.every(p => valid.has(p));
     }
     return valid.has(id);
@@ -150,18 +159,19 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         return Object.assign(context, {
           openTabs: this._openTabs.map(id => {
             if (this._isSplitId(id)) {
-              const parts = id.split('+');
+              const { parts, isHorizontal } = this._parseSplitId(id);
               const [leftId, rightId, bottomId] = parts;
+              const sep = isHorizontal ? '⇕' : '|';
               if (bottomId) {
                 return {
                   id, isSplit: true, is3Pane: true, leftId, rightId, bottomId,
-                  label: `${this._labelOf(leftId)} | ${this._labelOf(rightId)} + ${this._labelOf(bottomId)}`,
+                  label: `${this._labelOf(leftId)} ${sep} ${this._labelOf(rightId)} + ${this._labelOf(bottomId)}`,
                   active: id === this._activeTab,
                 };
               }
               return {
                 id, isSplit: true, is3Pane: false, leftId, rightId,
-                label: `${this._labelOf(leftId)} | ${this._labelOf(rightId)}`,
+                label: `${this._labelOf(leftId)} ${sep} ${this._labelOf(rightId)}`,
                 active: id === this._activeTab,
               };
             }
@@ -198,7 +208,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     if (!this._isSplitId(this._activeTab)) return { split: null };
 
     const id = this._activeTab;
-    const parts = id.split('+');
+    const { parts, isHorizontal } = this._parseSplitId(id);
     const [left, right, bottom] = parts;
     const ratio = this._getSplitRatio(id);
     const common = {
@@ -216,7 +226,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       ]);
       return {
         split: {
-          id, left, right, bottom,
+          id, left, right, bottom, isHorizontal: false,
           leftGrow:   Math.round(ratio.lr * 100),
           rightGrow:  Math.round((1 - ratio.lr) * 100),
           topGrow:    Math.round(ratio.tb * 100),
@@ -234,9 +244,9 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     ]);
     return {
       split: {
-        id, left, right,
-        leftGrow:  Math.round(ratio.lr * 100),
-        rightGrow: Math.round((1 - ratio.lr) * 100),
+        id, left, right, isHorizontal,
+        leftGrow:  Math.round((isHorizontal ? ratio.tb : ratio.lr) * 100),
+        rightGrow: Math.round((1 - (isHorizontal ? ratio.tb : ratio.lr)) * 100),
       },
       leftCtx:  { ...common, ...leftData },
       rightCtx: { ...common, ...rightData },
@@ -382,8 +392,9 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       if (this.isEditable) this._setControlsDisabled(el, !show);
     });
 
-    // Support both 2-pane (.split-view) and 3-pane (.split-view-3) containers
+    // Support 2-pane vertical, 2-pane horizontal, and 3-pane containers
     const splitContainer = this.element.querySelector('.split-view')
+      ?? this.element.querySelector('.split-view-h')
       ?? this.element.querySelector('.split-view-3');
     if (splitContainer) {
       splitContainer.classList.toggle('active', isSplit);
@@ -466,8 +477,38 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       });
     });
 
+    // Orientation toggle (vertical / horizontal).
+    this.element.querySelectorAll('.split-orient-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this._splitOrientation = btn.dataset.orient;
+        this.element.querySelectorAll('.split-orient-btn').forEach(b =>
+          b.classList.toggle('active', b.dataset.orient === this._splitOrientation));
+        // Horizontal splits can't have a 3rd pane — hide bottom zone.
+        const bottomWrap = this.element.querySelector('.split-bottom-wrap');
+        if (bottomWrap) {
+          if (this._splitOrientation === 'horizontal') {
+            bottomWrap.classList.add('hidden');
+            this._pendingSplit.bottom = null;
+          } else {
+            const { left, right } = this._pendingSplit;
+            bottomWrap.classList.toggle('hidden', !(left && right));
+          }
+        }
+      });
+    });
+
     // Drop zones (left, right, and optional bottom).
     this.element.querySelectorAll('.split-zone').forEach(zone => {
+      // Click on a filled zone to clear it.
+      zone.addEventListener('click', () => {
+        if (!zone.classList.contains('filled')) return;
+        const side = zone.dataset.splitSide;
+        this._pendingSplit[side] = null;
+        zone.classList.remove('filled');
+        const hint = side === 'bottom' ? 'optional bottom panel…' : 'drop a tab here…';
+        zone.innerHTML = `<span class="split-zone-hint">${hint}</span>`;
+        this._updateSplitBuilder();
+      });
       zone.addEventListener('dragover', e => {
         e.preventDefault();
         zone.classList.add('drag-over');
@@ -492,7 +533,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       createBtn.addEventListener('click', () => {
         const { left, right, bottom } = this._pendingSplit;
         if (!left || !right) return;
-        this._createSplitTab(left, right, bottom || null);
+        const horiz = this._splitOrientation === 'horizontal';
+        this._createSplitTab(left, right, horiz ? null : (bottom || null), horiz);
       });
     }
   }
@@ -525,8 +567,11 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     if (btn) btn.disabled = true;
   }
 
-  _createSplitTab(left, right, bottom = null) {
-    const id = bottom ? `${left}+${right}+${bottom}` : `${left}+${right}`;
+  _createSplitTab(left, right, bottom = null, horizontal = false) {
+    let id;
+    if (bottom) id = `${left}+${right}+${bottom}`;
+    else if (horizontal) id = `${left}~${right}`;
+    else id = `${left}+${right}`;
     if (!this._openTabs.includes(id)) this._openTabs.push(id);
     this._activeTab = id;
     this._closePicker();
@@ -540,6 +585,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   _bindSplitDivider() {
     const view = this.element.querySelector('.split-view-3')
+      ?? this.element.querySelector('.split-view-h')
       ?? this.element.querySelector('.split-view');
     if (!view) return;
     const id = view.dataset.splitId;
@@ -719,8 +765,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   }
 
   async _clearQuickSlot(idx) {
-    const slots = Array.from({ length: 5 }, (_, i) =>
-      this.actor.flags?.[MODULE_ID]?.quickSlots?.[i] ?? null);
+    const saved = this.actor.flags?.[MODULE_ID]?.quickSlots ?? [];
+    const slots = [...saved];
     slots[idx] = null;
     await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
     this.render();
@@ -737,16 +783,16 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
     let entry = null;
 
-    if (data.type === 'Item') {
-      const item = await fromUuid(data.uuid);
-      if (item) entry = { type: 'item', id: item.id, label: item.name, img: item.img ?? '' };
-    } else if (data.type === 'skill' || data.type === 'trade') {
-      entry = { type: data.type, id: data.key, label: data.label, img: data.img ?? '' };
+    // Only skills and trades are accepted — items/spells/features are not.
+    if (data.type === 'skill' || data.type === 'trade') {
+      const abbr = (data.label ?? data.key ?? '').slice(0, 3).toUpperCase();
+      entry = { type: data.type, id: data.key, label: data.label, abbr, img: '' };
     }
 
     if (!entry) return;
-    const slots = Array.from({ length: 5 }, (_, i) =>
-      this.actor.flags?.[MODULE_ID]?.quickSlots?.[i] ?? null);
+    const saved = this.actor.flags?.[MODULE_ID]?.quickSlots ?? [];
+    const slots = [...saved];
+    while (slots.length <= idx) slots.push(null);
     slots[idx] = entry;
     await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
     this.render();
@@ -867,6 +913,15 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     });
     if (!ok) return;
     await resetLifetimeStats(this.actor);
+    this.render();
+  }
+
+  static async _onAddQuickSlot() {
+    const saved = this.actor.flags?.[MODULE_ID]?.quickSlots ?? [];
+    const count = Math.max(4, saved.length);
+    if (count >= 10) return;
+    const slots = Array.from({ length: count + 1 }, (_, i) => saved[i] ?? null);
+    await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
     this.render();
   }
 }

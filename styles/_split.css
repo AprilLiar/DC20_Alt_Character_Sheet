@@ -15,6 +15,23 @@
   flex-direction: row;
 }
 
+/* ── Horizontal 2-pane split (top / bottom) ── */
+.dc20-alt-sheet .split-view-h {
+  display: none;
+  height: 100%;
+  min-height: 0;
+}
+.dc20-alt-sheet .split-view-h.active {
+  display: flex;
+  flex-direction: column;
+}
+.dc20-alt-sheet .split-view-h .split-pane {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  flex-basis: 0;
+}
+
 /* Each pane scrolls independently; flex-grow set inline from the saved ratio */
 .dc20-alt-sheet .split-pane {
   flex-basis: 0;
@@ -128,6 +145,12 @@
   padding-top: var(--gap-sm);
   border-top: 1px solid var(--p-border-faint);
 }
+.dc20-alt-sheet .split-builder-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-sm);
+}
 .dc20-alt-sheet .split-builder-label {
   font-family: var(--font-heading);
   font-size: var(--fs-xs);
@@ -135,6 +158,30 @@
   color: var(--p-ink-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+.dc20-alt-sheet .split-orient-toggle {
+  display: flex;
+  gap: 3px;
+}
+.dc20-alt-sheet .split-orient-btn {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  padding: 2px 6px;
+  background: var(--p-bg-aged);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--r-sm);
+  color: var(--p-ink-muted);
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+.dc20-alt-sheet .split-orient-btn:hover {
+  border-color: var(--p-accent);
+  color: var(--p-accent);
+}
+.dc20-alt-sheet .split-orient-btn.active {
+  background: var(--p-accent);
+  border-color: var(--p-accent);
+  color: #fff;
 }
 .dc20-alt-sheet .split-zones-top-row {
   display: flex;
