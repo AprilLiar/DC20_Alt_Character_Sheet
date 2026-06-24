@@ -1,15 +1,37 @@
 <div class="split-page split-combat">
 
-  {{!-- Filter tabs (shared logic with the full combat page) --}}
+  {{!-- Filter tabs --}}
   <div class="combat-filter-bar">
     <button type="button" class="combat-filter-btn active" data-filter="all">All</button>
     <button type="button" class="combat-filter-btn" data-filter="weapon">Wpn</button>
+    <button type="button" class="combat-filter-btn" data-filter="equipment">Eqp</button>
     <button type="button" class="combat-filter-btn" data-filter="spell">Spell</button>
     <button type="button" class="combat-filter-btn" data-filter="maneuver">Mnvr</button>
     <button type="button" class="combat-filter-btn" data-filter="feature">Feat</button>
   </div>
 
-  {{!-- Actions only --}}
+  {{!-- Per-filter Create buttons (shown only when a specific filter is active) --}}
+  {{#if isEditable}}
+  <div class="combat-create-bar">
+    <button type="button" class="combat-create-btn hidden" data-create-filter="weapon"    data-action="createItem" data-type="weapon">
+      <i class="fas fa-plus"></i> Weapon
+    </button>
+    <button type="button" class="combat-create-btn hidden" data-create-filter="equipment" data-action="createItem" data-type="equipment">
+      <i class="fas fa-plus"></i> Equipment
+    </button>
+    <button type="button" class="combat-create-btn hidden" data-create-filter="spell"     data-action="createItem" data-type="spell">
+      <i class="fas fa-plus"></i> Spell
+    </button>
+    <button type="button" class="combat-create-btn hidden" data-create-filter="maneuver"  data-action="createItem" data-type="maneuver">
+      <i class="fas fa-plus"></i> Maneuver
+    </button>
+    <button type="button" class="combat-create-btn hidden" data-create-filter="feature"   data-action="createItem" data-type="feature">
+      <i class="fas fa-plus"></i> Feature
+    </button>
+  </div>
+  {{/if}}
+
+  {{!-- Actions --}}
   <div class="combat-actions compact-list" data-active-filter="all">
     {{#each combatActions}}
     <div class="combat-action-row" data-item-id="{{id}}" data-filter-type="{{filterType}}">
@@ -18,6 +40,7 @@
       <span class="ca-name">{{name}}</span>
       <span class="ca-type">{{filterType}}</span>
       <span class="ca-cost">{{itemCost costs}}</span>
+      {{#if rangeType}}<span class="ca-range muted">{{rangeType}}</span>{{/if}}
       {{#if attackBonus}}<span class="ca-atk">{{signedNum attackBonus}}</span>{{/if}}
       <div class="ca-controls">
         <button type="button" class="ca-btn equip-btn{{#if isEquipped}} active{{/if}}"
@@ -30,6 +53,12 @@
           title="{{#if isAttuned}}Unattune{{else}}Attune{{/if}}">
           <i class="fas fa-gem"></i>
         </button>
+        {{#if ../isEditable}}
+        <button type="button" class="ca-btn del-btn"
+          data-action="deleteItem" data-item-id="{{id}}" title="Delete">
+          <i class="fas fa-trash"></i>
+        </button>
+        {{/if}}
       </div>
     </div>
     {{else}}

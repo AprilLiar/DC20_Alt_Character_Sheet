@@ -66,13 +66,26 @@
     <span class="sc-stats-sess">{{sessTakenTotal}}</span>
   </div>
 
-  {{!-- Most used item --}}
-  {{#if mostUsedItem}}
-  <div class="sc-stats-group-label">Most Used</div>
+  {{!-- Top Used --}}
+  {{#if topUsed.length}}
+  <div class="sc-stats-group-label">Top Used</div>
+  {{#each topUsed}}
   <div class="sc-stats-row sc-stats-item-row">
-    <img class="sc-stats-item-img" src="{{mostUsedItem.img}}" alt="{{mostUsedItem.name}}">
-    <span class="sc-stats-item-name">{{mostUsedItem.name}}</span>
-    <span class="sc-stats-item-count">×{{mostUsedItem.count}}</span>
+    {{#if img}}<img class="sc-stats-item-img" src="{{img}}" alt="{{name}}">{{/if}}
+    <span class="sc-stats-item-name">{{name}}</span>
+    <span class="sc-stats-life">{{count}}</span>
+    <span class="sc-stats-sess">{{sessCount}}</span>
+  </div>
+  {{/each}}
+  {{/if}}
+
+  {{!-- Reset --}}
+  {{#if isEditable}}
+  <div class="stats-reset-wrap">
+    <button type="button" class="stats-reset-btn" data-action="resetStats"
+      title="Clear all lifetime statistics (session stats are unaffected)">
+      ↺ Reset Lifetime Stats
+    </button>
   </div>
   {{/if}}
 
