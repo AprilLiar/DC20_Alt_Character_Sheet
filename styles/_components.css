@@ -472,7 +472,7 @@
 .dc20-alt-sheet .combat-actions { margin-bottom: var(--gap-lg); }
 .dc20-alt-sheet .combat-action-row {
   display: grid;
-  grid-template-columns: 26px 1fr auto auto auto auto;
+  grid-template-columns: 26px 1fr auto auto auto auto auto;
   align-items: center;
   gap: var(--gap-sm);
   padding: 5px var(--gap-sm);
@@ -516,6 +516,22 @@
 .dc20-alt-sheet .ca-range { font-size: var(--fs-xs); white-space: nowrap; }
 .dc20-alt-sheet .ca-atk   { font-size: var(--fs-sm); font-weight: 700; white-space: nowrap; }
 
+/* Type badge — hidden by default, shown on "All" filter */
+.dc20-alt-sheet .ca-type {
+  display: none;
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--p-ink-muted);
+  white-space: nowrap;
+  padding: 1px 4px;
+  border: 1px solid var(--p-border-faint);
+  border-radius: 3px;
+}
+.dc20-alt-sheet .combat-actions[data-active-filter="all"] .ca-type { display: inline-block; }
+
 .dc20-alt-sheet .ca-controls { display: flex; gap: 2px; }
 .dc20-alt-sheet .ca-btn {
   background: transparent;
@@ -531,9 +547,11 @@
   border-radius: var(--r-sm);
   transition: color var(--t-fast), background var(--t-fast);
 }
-.dc20-alt-sheet .ca-btn:hover     { background: var(--p-bg-aged); color: var(--p-ink); }
-.dc20-alt-sheet .ca-btn.del-btn:hover { color: var(--c-hp-light); }
-.dc20-alt-sheet .ca-btn.use-btn:hover { color: var(--c-grit-light); }
+.dc20-alt-sheet .ca-btn:hover          { background: var(--p-bg-aged); color: var(--p-ink); }
+.dc20-alt-sheet .ca-btn.del-btn:hover  { color: var(--c-hp-light); }
+.dc20-alt-sheet .ca-btn.use-btn:hover  { color: var(--c-grit-light); }
+.dc20-alt-sheet .ca-btn.equip-btn.active  { color: var(--p-accent); }
+.dc20-alt-sheet .ca-btn.attune-btn.active { color: var(--p-gold); }
 
 /* ════════════════════════════════════════
    CONDITIONS — Glowing Square Icons

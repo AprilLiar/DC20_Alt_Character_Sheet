@@ -10,14 +10,27 @@
   </div>
 
   {{!-- Actions only --}}
-  <div class="combat-actions compact-list">
+  <div class="combat-actions compact-list" data-active-filter="all">
     {{#each combatActions}}
     <div class="combat-action-row" data-item-id="{{id}}" data-filter-type="{{filterType}}">
       <img class="ca-img" src="{{img}}" alt="{{name}}"
         data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
       <span class="ca-name">{{name}}</span>
+      <span class="ca-type">{{filterType}}</span>
       <span class="ca-cost">{{itemCost costs}}</span>
       {{#if attackBonus}}<span class="ca-atk">{{signedNum attackBonus}}</span>{{/if}}
+      <div class="ca-controls">
+        <button type="button" class="ca-btn equip-btn{{#if isEquipped}} active{{/if}}"
+          data-action="toggleEquip" data-item-id="{{id}}"
+          title="{{#if isEquipped}}Unequip{{else}}Equip{{/if}}">
+          <i class="fas fa-shield-alt"></i>
+        </button>
+        <button type="button" class="ca-btn attune-btn{{#if isAttuned}} active{{/if}}"
+          data-action="toggleAttune" data-item-id="{{id}}"
+          title="{{#if isAttuned}}Unattune{{else}}Attune{{/if}}">
+          <i class="fas fa-gem"></i>
+        </button>
+      </div>
     </div>
     {{else}}
     <p class="empty-note">No combat actions.</p>

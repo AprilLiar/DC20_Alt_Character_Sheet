@@ -24,6 +24,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       editItem:      DC20AltCharacterSheet._onEditItem,
       deleteItem:    DC20AltCharacterSheet._onDeleteItem,
       toggleEquip:   DC20AltCharacterSheet._onToggleEquip,
+      toggleAttune:  DC20AltCharacterSheet._onToggleAttune,
       useItem:       DC20AltCharacterSheet._onUseItem,
       resetStats:    DC20AltCharacterSheet._onResetStats,
     },
@@ -625,6 +626,10 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this.element.querySelectorAll('.combat-create-btn').forEach(btn => {
       btn.classList.toggle('hidden', filter === 'all' || btn.dataset.createFilter !== filter);
     });
+    // Track active filter on the container so CSS can show/hide the type badge
+    this.element.querySelectorAll('.combat-actions').forEach(el => {
+      el.dataset.activeFilter = filter;
+    });
   }
 
   /* -------------------------------------------- */
@@ -740,6 +745,12 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     const item = this.actor.items.get(target.closest('[data-item-id]').dataset.itemId);
     if (!item) return;
     item.update({ 'system.statuses.equipped': !item.system.statuses?.equipped });
+  }
+
+  static async _onToggleAttune(event, target) {
+    const item = this.actor.items.get(target.closest('[data-item-id]').dataset.itemId);
+    if (!item) return;
+    item.update({ 'system.statuses.attuned': !item.system.statuses?.attuned });
   }
 
   static async _onUseItem(event, target) {

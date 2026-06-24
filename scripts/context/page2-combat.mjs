@@ -89,6 +89,7 @@ export async function prepareCombat(actor) {
       attackBonus:  item.system.attackFormula?.rollBonus ?? 0,
       checkType:    item.system.attackFormula?.checkType ?? item.system.check?.checkKey ?? '',
       isEquipped:   item.system.statuses?.equipped ?? false,
+      isAttuned:    item.system.statuses?.attuned  ?? false,
     });
   }
 
