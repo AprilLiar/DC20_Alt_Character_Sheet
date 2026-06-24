@@ -65,6 +65,27 @@
     </div>
   </div>
 
+  {{#if header.rest.max}}
+  <div class="hstrip-divider"></div>
+
+  {{!-- Rest Points --}}
+  <div class="hstrip-resource rest-strip">
+    <span class="hstrip-label rest-label">REST</span>
+    <div class="hstrip-bar-wrap rest-bar">
+      <div class="hstrip-bar-fill" style="width: {{percent header.rest.value header.rest.max}}%"></div>
+      <div class="hstrip-bar-text">
+        <input type="number" name="system.resources.restPoints.value"
+          value="{{header.rest.value}}" class="hstrip-input"
+          {{#unless isEditable}}disabled{{/unless}}>
+        <span class="hstrip-sep">/</span>
+        <input type="number" name="system.resources.restPoints.max"
+          value="{{header.rest.max}}" class="hstrip-input"
+          {{#unless isEditable}}disabled{{/unless}}>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
   <div class="hstrip-divider"></div>
 
   {{!-- Quick Access Slots --}}
@@ -72,13 +93,15 @@
     {{#each header.quickSlots}}
     <div class="quick-slot{{#if this}} filled{{/if}}" data-slot-index="{{@index}}">
       {{#if this}}
-        {{#if img}}<img class="qs-img" src="{{img}}" alt="{{label}}" title="{{label}}">
+        {{#if abbr}}<span class="qs-abbr" title="{{label}}">{{abbr}}</span>
+        {{else if img}}<img class="qs-img" src="{{img}}" alt="{{label}}" title="{{label}}">
         {{else}}<span class="qs-label" title="{{label}}">{{label}}</span>{{/if}}
       {{else}}
         <span class="qs-empty-hint">+</span>
       {{/if}}
     </div>
     {{/each}}
+    <button type="button" class="qs-add-btn" data-action="addQuickSlot" title="Add quick-access slot">+</button>
   </div>
 
 </div>

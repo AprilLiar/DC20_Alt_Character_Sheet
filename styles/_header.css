@@ -137,7 +137,8 @@
   display: flex;
   gap: var(--gap-xs);
   align-items: center;
-  margin-left: auto;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .dc20-alt-sheet .quick-slot {
@@ -196,6 +197,36 @@
   user-select: none;
   pointer-events: none;
 }
+.dc20-alt-sheet .qs-abbr {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-align: center;
+  pointer-events: none;
+}
+.dc20-alt-sheet .qs-add-btn {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.30);
+  background: none;
+  border: 1.5px dashed rgba(255, 255, 255, 0.15);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.dc20-alt-sheet .qs-add-btn:hover {
+  color: var(--p-accent);
+  border-color: var(--p-accent);
+}
 
 /* ── Horizontal browser-style tab bar ── */
 .dc20-alt-sheet .browser-tabs-container {
@@ -229,8 +260,9 @@
   letter-spacing: 0.05em;
   color: var(--tab-inactive-text);
   transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
-  max-width: 150px;
+  flex: 0 0 130px;
   white-space: nowrap;
+  overflow: hidden;
   user-select: none;
 }
 .dc20-alt-sheet .browser-tab:hover {

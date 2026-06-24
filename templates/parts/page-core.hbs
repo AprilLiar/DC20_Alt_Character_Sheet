@@ -34,7 +34,7 @@
           {{#each movement}}
           <div class="mv-entry">
             <span class="mv-type">{{label}}</span>
-            <span class="mv-val">{{value}}<span class="mv-unit"> sp</span></span>
+            <span class="mv-val">{{value}}</span>
           </div>
           {{/each}}
         </div>
@@ -97,10 +97,10 @@
           <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
           <div class="skills-list">
             {{#each items}}
-            <div class="skill-row">
+            <div class="skill-row" data-trade="{{key}}">
               <span class="skill-profs">{{{profDots mastery 5}}}</span>
-              <span class="skill-name">{{label}}</span>
-              <span class="skill-bonus">{{signedNum bonus}}</span>
+              <span class="skill-name rollable" data-action="rollTrade" data-trade="{{key}}">{{label}}</span>
+              <span class="skill-bonus rollable" data-action="rollTrade" data-trade="{{key}}">{{signedNum bonus}}</span>
             </div>
             {{/each}}
           </div>

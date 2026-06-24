@@ -48,7 +48,7 @@
         {{#if items.length}}
         <div class="sc-attr-group-label">{{label}}</div>
         {{#each items}}
-        <div class="sc-skill-row">
+        <div class="sc-skill-row rollable" data-action="rollTrade" data-trade="{{key}}" title="{{label}}">
           <span class="sc-skill-name">{{label}}</span>
           <span class="sc-skill-bonus">{{signedNum bonus}}</span>
         </div>

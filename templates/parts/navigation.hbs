@@ -39,13 +39,19 @@
 
     {{!-- Split-tab builder --}}
     <div class="split-builder">
-      <div class="split-builder-label">Splitscreen</div>
+      <div class="split-builder-header">
+        <div class="split-builder-label">Splitscreen</div>
+        <div class="split-orient-toggle">
+          <button type="button" class="split-orient-btn active" data-orient="vertical" title="Side by side">⇔ Vertical</button>
+          <button type="button" class="split-orient-btn" data-orient="horizontal" title="Top and bottom">⇕ Horizontal</button>
+        </div>
+      </div>
       <div class="split-zones-top-row">
         <div class="split-zone" data-split-side="left">
-          <span class="split-zone-hint">put the tab here…</span>
+          <span class="split-zone-hint">drop a tab here…</span>
         </div>
         <div class="split-zone" data-split-side="right">
-          <span class="split-zone-hint">put the tab here…</span>
+          <span class="split-zone-hint">drop a tab here…</span>
         </div>
       </div>
       <div class="split-bottom-wrap hidden">

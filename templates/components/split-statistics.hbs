@@ -1,92 +1,107 @@
 <div class="split-page split-statistics">
+  <div class="stats-layout">
 
-  {{!-- Column labels --}}
-  <div class="sc-stats-header">
-    <span class="sc-stats-section-title">Statistics</span>
-    <span class="sc-stats-col-head">All Time</span>
-    <span class="sc-stats-col-head">Session</span>
-  </div>
+    {{!-- Roll Statistics --}}
+    <div class="stats-table">
+      <div class="stats-section-head">
+        <span class="stats-sec-title">Roll Statistics</span>
+        <span class="stats-sec-col">All Time</span>
+        <span class="stats-sec-col">Session</span>
+      </div>
+      <div class="stats-tr">
+        <span class="stats-tc-label">Average d20</span>
+        <span class="stats-tc-life">{{d20Avg}}</span>
+        <span class="stats-tc-sess">{{sessD20Avg}}</span>
+      </div>
+      <div class="stats-tr">
+        <span class="stats-tc-label">Total Rolls</span>
+        <span class="stats-tc-life">{{d20Count}}</span>
+        <span class="stats-tc-sess">{{sessD20Count}}</span>
+      </div>
+      <div class="stats-tr stats-row-good">
+        <span class="stats-tc-label">Natural 20s</span>
+        <span class="stats-tc-life">{{nat20}}</span>
+        <span class="stats-tc-sess">{{sessNat20}}</span>
+      </div>
+      <div class="stats-tr stats-row-bad">
+        <span class="stats-tc-label">Natural 1s</span>
+        <span class="stats-tc-life">{{nat1}}</span>
+        <span class="stats-tc-sess">{{sessNat1}}</span>
+      </div>
+    </div>
 
-  {{!-- Roll stats --}}
-  <div class="sc-stats-group-label">Rolls</div>
-  <div class="sc-stats-row">
-    <span class="sc-stats-label">Avg d20</span>
-    <span class="sc-stats-life">{{d20Avg}}</span>
-    <span class="sc-stats-sess">{{sessD20Avg}}</span>
-  </div>
-  <div class="sc-stats-row">
-    <span class="sc-stats-label">Total</span>
-    <span class="sc-stats-life">{{d20Count}}</span>
-    <span class="sc-stats-sess">{{sessD20Count}}</span>
-  </div>
-  <div class="sc-stats-row sc-stats-good">
-    <span class="sc-stats-label">Nat 20s</span>
-    <span class="sc-stats-life">{{nat20}}</span>
-    <span class="sc-stats-sess">{{sessNat20}}</span>
-  </div>
-  <div class="sc-stats-row sc-stats-bad">
-    <span class="sc-stats-label">Nat 1s</span>
-    <span class="sc-stats-life">{{nat1}}</span>
-    <span class="sc-stats-sess">{{sessNat1}}</span>
-  </div>
+    {{!-- Damage --}}
+    <div class="stats-table">
+      <div class="stats-section-head">
+        <span class="stats-sec-title">Damage</span>
+        <span class="stats-sec-col">All Time</span>
+        <span class="stats-sec-col">Session</span>
+      </div>
+      <div class="stats-subsec">Dealt</div>
+      <div class="stats-tr">
+        <span class="stats-tc-label stats-tc-indent">Highest</span>
+        <span class="stats-tc-life">{{dealtHighest}}</span>
+        <span class="stats-tc-sess">{{sessDealtHighest}}</span>
+      </div>
+      <div class="stats-tr">
+        <span class="stats-tc-label stats-tc-indent">Lowest</span>
+        <span class="stats-tc-life">{{dealtLowest}}</span>
+        <span class="stats-tc-sess">{{sessDealtLowest}}</span>
+      </div>
+      <div class="stats-tr stats-tr-total">
+        <span class="stats-tc-label stats-tc-indent">Total</span>
+        <span class="stats-tc-life">{{dealtTotal}}</span>
+        <span class="stats-tc-sess">{{sessDealtTotal}}</span>
+      </div>
+      <div class="stats-subsec">Taken</div>
+      <div class="stats-tr">
+        <span class="stats-tc-label stats-tc-indent">Highest</span>
+        <span class="stats-tc-life">{{takenHighest}}</span>
+        <span class="stats-tc-sess">{{sessTakenHighest}}</span>
+      </div>
+      <div class="stats-tr">
+        <span class="stats-tc-label stats-tc-indent">Lowest</span>
+        <span class="stats-tc-life">{{takenLowest}}</span>
+        <span class="stats-tc-sess">{{sessTakenLowest}}</span>
+      </div>
+      <div class="stats-tr stats-tr-total">
+        <span class="stats-tc-label stats-tc-indent">Total</span>
+        <span class="stats-tc-life">{{takenTotal}}</span>
+        <span class="stats-tc-sess">{{sessTakenTotal}}</span>
+      </div>
+    </div>
 
-  {{!-- Damage dealt --}}
-  <div class="sc-stats-group-label">Damage Dealt</div>
-  <div class="sc-stats-row">
-    <span class="sc-stats-label">Highest</span>
-    <span class="sc-stats-life">{{dealtHighest}}</span>
-    <span class="sc-stats-sess">{{sessDealtHighest}}</span>
-  </div>
-  <div class="sc-stats-row">
-    <span class="sc-stats-label">Lowest</span>
-    <span class="sc-stats-life">{{dealtLowest}}</span>
-    <span class="sc-stats-sess">{{sessDealtLowest}}</span>
-  </div>
-  <div class="sc-stats-row">
-    <span class="sc-stats-label">Total</span>
-    <span class="sc-stats-life">{{dealtTotal}}</span>
-    <span class="sc-stats-sess">{{sessDealtTotal}}</span>
-  </div>
+    {{!-- Top Used --}}
+    {{#if topUsed.length}}
+    <div class="stats-table">
+      <div class="stats-section-head">
+        <span class="stats-sec-title">Top Used</span>
+        <span class="stats-sec-col">All Time</span>
+        <span class="stats-sec-col">Session</span>
+      </div>
+      {{#each topUsed}}
+      <div class="stats-tr">
+        <span class="stats-tc-label stats-tc-rollable">
+          {{#if img}}<img class="stats-rollable-img" src="{{img}}" alt="">{{/if}}
+          <span class="stats-rollable-badge stats-type-{{type}}">{{type}}</span>
+          <span class="stats-rollable-name">{{name}}</span>
+        </span>
+        <span class="stats-tc-life">{{count}}</span>
+        <span class="stats-tc-sess">{{sessCount}}</span>
+      </div>
+      {{/each}}
+    </div>
+    {{/if}}
 
-  {{!-- Damage taken --}}
-  <div class="sc-stats-group-label">Damage Taken</div>
-  <div class="sc-stats-row">
-    <span class="sc-stats-label">Highest</span>
-    <span class="sc-stats-life">{{takenHighest}}</span>
-    <span class="sc-stats-sess">{{sessTakenHighest}}</span>
-  </div>
-  <div class="sc-stats-row">
-    <span class="sc-stats-label">Lowest</span>
-    <span class="sc-stats-life">{{takenLowest}}</span>
-    <span class="sc-stats-sess">{{sessTakenLowest}}</span>
-  </div>
-  <div class="sc-stats-row">
-    <span class="sc-stats-label">Total</span>
-    <span class="sc-stats-life">{{takenTotal}}</span>
-    <span class="sc-stats-sess">{{sessTakenTotal}}</span>
-  </div>
+    {{!-- Reset --}}
+    {{#if isEditable}}
+    <div class="stats-reset-wrap">
+      <button type="button" class="stats-reset-btn" data-action="resetStats"
+        title="Clear all lifetime statistics (session stats are unaffected)">
+        ↺ Reset Lifetime Stats
+      </button>
+    </div>
+    {{/if}}
 
-  {{!-- Top Used --}}
-  {{#if topUsed.length}}
-  <div class="sc-stats-group-label">Top Used</div>
-  {{#each topUsed}}
-  <div class="sc-stats-row sc-stats-item-row">
-    {{#if img}}<img class="sc-stats-item-img" src="{{img}}" alt="{{name}}">{{/if}}
-    <span class="sc-stats-item-name">{{name}}</span>
-    <span class="sc-stats-life">{{count}}</span>
-    <span class="sc-stats-sess">{{sessCount}}</span>
   </div>
-  {{/each}}
-  {{/if}}
-
-  {{!-- Reset --}}
-  {{#if isEditable}}
-  <div class="stats-reset-wrap">
-    <button type="button" class="stats-reset-btn" data-action="resetStats"
-      title="Clear all lifetime statistics (session stats are unaffected)">
-      ↺ Reset Lifetime Stats
-    </button>
-  </div>
-  {{/if}}
-
 </div>
