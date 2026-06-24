@@ -1,4 +1,14 @@
 <div class="split-page split-features compact-list">
+
+  {{#if isEditable}}
+  <div class="page-section-header">
+    <button type="button" class="add-btn"
+      data-action="createItem" data-type="feature">
+      <i class="fas fa-plus"></i> Add Feature
+    </button>
+  </div>
+  {{/if}}
+
   {{#each featureGroups}}
   <div class="feature-group">
     <h4 class="feature-source-heading">{{label}}</h4>
@@ -7,6 +17,13 @@
       <li class="item-row" data-item-id="{{id}}">
         <img class="item-img" src="{{img}}" alt="{{name}}">
         <span class="item-name">{{name}}</span>
+        {{#if ../../isEditable}}
+        <div class="item-controls">
+          <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Delete">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+        {{/if}}
       </li>
       {{/each}}
     </ul>
@@ -14,4 +31,5 @@
   {{else}}
   <p class="empty-note">No passive features.</p>
   {{/each}}
+
 </div>
