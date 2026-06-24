@@ -61,7 +61,7 @@
       <div class="sc-panel">
         <div class="sc-panel-heading">Languages</div>
         {{#each languages}}
-        <div class="sc-skill-row">
+        <div class="sc-skill-row rollable" data-action="rollLanguage" data-language="{{key}}" title="{{label}}">
           <span class="sc-skill-name">{{label}}</span>
         </div>
         {{/each}}
@@ -72,33 +72,37 @@
 
   </div>
 
-  {{!-- Items half: Favourites + Last Used in rounded panels --}}
+  {{!-- Items half: Favourites + Last Used — fills remaining vertical space --}}
   <div class="sc-items-grid">
-    <div class="sc-panel">
+    <div class="sc-panel sc-panel-stretch">
       <div class="sc-panel-heading">Favourites</div>
-      {{#if favourites.length}}
-        {{#each favourites}}
-        <div class="sc-item-row" data-item-id="{{id}}">
-          <img class="sc-item-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
-          <span class="sc-item-name">{{name}}</span>
-        </div>
-        {{/each}}
-      {{else}}
-        <p class="empty-note">—</p>
-      {{/if}}
+      <div class="sc-panel-scroll">
+        {{#if favourites.length}}
+          {{#each favourites}}
+          <div class="sc-item-row" data-item-id="{{id}}">
+            <img class="sc-item-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+            <span class="sc-item-name">{{name}}</span>
+          </div>
+          {{/each}}
+        {{else}}
+          <p class="empty-note">—</p>
+        {{/if}}
+      </div>
     </div>
-    <div class="sc-panel">
+    <div class="sc-panel sc-panel-stretch">
       <div class="sc-panel-heading">Last Used</div>
-      {{#if lastUsed.length}}
-        {{#each lastUsed}}
-        <div class="sc-item-row" data-item-id="{{id}}">
-          <img class="sc-item-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
-          <span class="sc-item-name">{{name}}</span>
-        </div>
-        {{/each}}
-      {{else}}
-        <p class="empty-note">—</p>
-      {{/if}}
+      <div class="sc-panel-scroll">
+        {{#if lastUsed.length}}
+          {{#each lastUsed}}
+          <div class="sc-item-row" data-item-id="{{id}}">
+            <img class="sc-item-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+            <span class="sc-item-name">{{name}}</span>
+          </div>
+          {{/each}}
+        {{else}}
+          <p class="empty-note">—</p>
+        {{/if}}
+      </div>
     </div>
   </div>
 
