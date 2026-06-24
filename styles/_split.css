@@ -340,6 +340,17 @@
   font-family: var(--font-heading);
 }
 .dc20-alt-sheet .sc-skill-bonus { font-weight: 600; color: var(--p-accent); min-width: 20px; text-align: right; }
+.dc20-alt-sheet .sc-attr-group-label {
+  grid-column: 1 / -1;
+  font-size: 9px;
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--p-ink-muted);
+  border-bottom: 1px solid var(--p-rule);
+  padding-bottom: 1px;
+  margin-top: 3px;
+}
 
 /* Items half (Favourites + Last Used) — 2-column grid of panels */
 .dc20-alt-sheet .sc-items-grid {

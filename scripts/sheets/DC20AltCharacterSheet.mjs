@@ -298,6 +298,11 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         if (e.target.closest('.btab-close')) return;
         this._switchToTab(tab.dataset.page);
       });
+      tab.addEventListener('mousedown', e => {
+        if (e.button !== 1) return;
+        e.preventDefault();
+        this._closeTab(tab.dataset.page);
+      });
     });
 
     // × close button
