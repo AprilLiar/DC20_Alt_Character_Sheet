@@ -65,4 +65,20 @@
     </div>
   </div>
 
+  <div class="hstrip-divider"></div>
+
+  {{!-- Quick Access Slots --}}
+  <div class="hstrip-quick-slots">
+    {{#each header.quickSlots}}
+    <div class="quick-slot{{#if this}} filled{{/if}}" data-slot-index="{{@index}}">
+      {{#if this}}
+        {{#if img}}<img class="qs-img" src="{{img}}" alt="{{label}}" title="{{label}}">
+        {{else}}<span class="qs-label" title="{{label}}">{{label}}</span>{{/if}}
+      {{else}}
+        <span class="qs-empty-hint">+</span>
+      {{/if}}
+    </div>
+    {{/each}}
+  </div>
+
 </div>
