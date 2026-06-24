@@ -8,6 +8,7 @@ function _defaultShape() {
     d20:         { count: 0, sum: 0, nat20: 0, nat1: 0 },
     damageDealt: { count: 0, total: 0, highest: null, lowest: null },
     damageTaken: { count: 0, total: 0, highest: null, lowest: null },
+    rollCounts:  {},  // key → count; e.g. "item:id", "skill:athletics", "save:mig"
   };
 }
 
@@ -24,7 +25,8 @@ export function getStats(actor) {
     d20:          { count: 0, sum: 0, nat20: 0, nat1: 0, ...(s.d20 ?? {}) },
     damageDealt:  { count: 0, total: 0, highest: null, lowest: null, ...(s.damageDealt ?? {}) },
     damageTaken:  { count: 0, total: 0, highest: null, lowest: null, ...(s.damageTaken ?? {}) },
-    itemUseCounts: s.itemUseCounts ?? {},
+    rollCounts:   s.rollCounts ?? {},
+    itemUseCounts: s.itemUseCounts ?? {},  // legacy field — migrated on read in context
   };
 }
 
@@ -85,8 +87,17 @@ export async function recordDamageTaken(actor, amount) {
   if (sess.damageTaken.lowest  === null || amount < sess.damageTaken.lowest)  sess.damageTaken.lowest  = amount;
 }
 
-export async function recordItemUseForStats(actor, itemId) {
+/** Record usage of any rollable by a composite key (e.g. "item:abc", "skill:athletics"). */
+export async function recordRollableUse(actor, rollKey) {
   const s = getStats(actor);
-  s.itemUseCounts[itemId] = (s.itemUseCounts[itemId] ?? 0) + 1;
+  s.rollCounts[rollKey] = (s.rollCounts[rollKey] ?? 0) + 1;
   await actor.setFlag(MODULE_ID, 'stats', s);
+
+  const sess = _sessionFor(actor.id);
+  sess.rollCounts[rollKey] = (sess.rollCounts[rollKey] ?? 0) + 1;
+}
+
+/** @deprecated Use recordRollableUse(actor, `item:${itemId}`) instead. */
+export async function recordItemUseForStats(actor, itemId) {
+  return recordRollableUse(actor, `item:${itemId}`);
 }
