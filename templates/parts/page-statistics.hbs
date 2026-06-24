@@ -1,0 +1,115 @@
+<section class="page-scroll" data-page="statistics">
+  <div class="stats-layout">
+
+    {{!-- Roll Statistics --}}
+    <h3 class="section-heading">Roll Statistics</h3>
+    <div class="stats-session-labels">
+      <span class="stats-col-label">All Time</span>
+      <span class="stats-col-label">This Session</span>
+    </div>
+    <div class="stats-card-grid">
+
+      <div class="stats-card">
+        <div class="stats-card-label">Avg d20</div>
+        <div class="stats-card-values">
+          <span class="stats-val stats-val-life">{{d20Avg}}</span>
+          <span class="stats-val-sep">/</span>
+          <span class="stats-val stats-val-sess">{{sessD20Avg}}</span>
+        </div>
+      </div>
+
+      <div class="stats-card">
+        <div class="stats-card-label">Total Rolls</div>
+        <div class="stats-card-values">
+          <span class="stats-val stats-val-life">{{d20Count}}</span>
+          <span class="stats-val-sep">/</span>
+          <span class="stats-val stats-val-sess">{{sessD20Count}}</span>
+        </div>
+      </div>
+
+      <div class="stats-card stats-card-good">
+        <div class="stats-card-label">Natural 20s</div>
+        <div class="stats-card-values">
+          <span class="stats-val stats-val-life">{{nat20}}</span>
+          <span class="stats-val-sep">/</span>
+          <span class="stats-val stats-val-sess">{{sessNat20}}</span>
+        </div>
+      </div>
+
+      <div class="stats-card stats-card-bad">
+        <div class="stats-card-label">Natural 1s</div>
+        <div class="stats-card-values">
+          <span class="stats-val stats-val-life">{{nat1}}</span>
+          <span class="stats-val-sep">/</span>
+          <span class="stats-val stats-val-sess">{{sessNat1}}</span>
+        </div>
+      </div>
+
+    </div>
+
+    {{!-- Damage --}}
+    <h3 class="section-heading mt">Damage</h3>
+    <div class="stats-damage-grid">
+
+      <div class="stats-damage-panel">
+        <div class="stats-panel-heading">Dealt</div>
+        <div class="stats-row">
+          <span class="stats-row-label">Highest</span>
+          <span class="stats-row-life">{{dealtHighest}}</span>
+          <span class="stats-row-sess">({{sessDealtHighest}})</span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-row-label">Lowest</span>
+          <span class="stats-row-life">{{dealtLowest}}</span>
+          <span class="stats-row-sess">({{sessDealtLowest}})</span>
+        </div>
+        <div class="stats-row stats-row-total">
+          <span class="stats-row-label">Total</span>
+          <span class="stats-row-life">{{dealtTotal}}</span>
+          <span class="stats-row-sess">({{sessDealtTotal}})</span>
+        </div>
+      </div>
+
+      <div class="stats-damage-panel">
+        <div class="stats-panel-heading">Taken</div>
+        <div class="stats-row">
+          <span class="stats-row-label">Highest</span>
+          <span class="stats-row-life">{{takenHighest}}</span>
+          <span class="stats-row-sess">({{sessTakenHighest}})</span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-row-label">Lowest</span>
+          <span class="stats-row-life">{{takenLowest}}</span>
+          <span class="stats-row-sess">({{sessTakenLowest}})</span>
+        </div>
+        <div class="stats-row stats-row-total">
+          <span class="stats-row-label">Total</span>
+          <span class="stats-row-life">{{takenTotal}}</span>
+          <span class="stats-row-sess">({{sessTakenTotal}})</span>
+        </div>
+      </div>
+
+    </div>
+
+    {{!-- Most Used Item --}}
+    {{#if mostUsedItem}}
+    <h3 class="section-heading mt">Most Used</h3>
+    <div class="stats-most-used">
+      <img class="stats-item-img" src="{{mostUsedItem.img}}" alt="{{mostUsedItem.name}}">
+      <span class="stats-item-name">{{mostUsedItem.name}}</span>
+      <span class="stats-item-count">×{{mostUsedItem.count}}</span>
+    </div>
+    {{/if}}
+
+    {{!-- Reset --}}
+    {{#if isEditable}}
+    <div class="stats-reset-wrap mt">
+      <button type="button" class="stats-reset-btn" data-action="resetStats"
+        title="Clear all lifetime statistics (session stats are unaffected)">
+        ↺ Reset Lifetime Stats
+      </button>
+    </div>
+    {{/if}}
+
+  </div>
+</section>
