@@ -4,7 +4,9 @@ import { prepareCore }      from '../context/page1-core.mjs';
 import { prepareCombat }    from '../context/page2-combat.mjs';
 import { prepareFeatures }  from '../context/page3-features.mjs';
 import { prepareInventory } from '../context/page4-inventory.mjs';
-import { prepareBiography } from '../context/page5-biography.mjs';
+import { prepareBiography }  from '../context/page5-biography.mjs';
+import { prepareStatistics } from '../context/page6-statistics.mjs';
+import { resetLifetimeStats } from '../helpers/stats.mjs';
 import { addFavourite, removeFavourite, isFavourite, recordItemUse } from '../helpers/tracking.mjs';
 
 export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsApplicationMixin(
@@ -23,6 +25,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       deleteItem:    DC20AltCharacterSheet._onDeleteItem,
       toggleEquip:   DC20AltCharacterSheet._onToggleEquip,
       useItem:       DC20AltCharacterSheet._onUseItem,
+      resetStats:    DC20AltCharacterSheet._onResetStats,
     },
     form: { submitOnChange: true, closeOnSubmit: false },
   };
@@ -34,8 +37,9 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     'page-combat':    { template: `modules/${MODULE_ID}/templates/parts/page-combat.hbs`,    scrollable: ['.page-scroll'] },
     'page-features':  { template: `modules/${MODULE_ID}/templates/parts/page-features.hbs`,  scrollable: ['.page-scroll'] },
     'page-inventory': { template: `modules/${MODULE_ID}/templates/parts/page-inventory.hbs`, scrollable: ['.page-scroll'] },
-    'page-biography': { template: `modules/${MODULE_ID}/templates/parts/page-biography.hbs`, scrollable: ['.page-scroll'] },
-    'page-split':     { template: `modules/${MODULE_ID}/templates/parts/page-split.hbs`,     scrollable: ['.split-pane'] },
+    'page-biography':   { template: `modules/${MODULE_ID}/templates/parts/page-biography.hbs`,   scrollable: ['.page-scroll'] },
+    'page-statistics':  { template: `modules/${MODULE_ID}/templates/parts/page-statistics.hbs`,  scrollable: ['.page-scroll'] },
+    'page-split':       { template: `modules/${MODULE_ID}/templates/parts/page-split.hbs`,        scrollable: ['.split-pane'] },
   };
 
   /** All pages the user can open, in display order */
@@ -44,7 +48,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     { id: 'combat',    label: 'Combat'      },
     { id: 'features',  label: 'Features'    },
     { id: 'inventory', label: 'Inventory'   },
-    { id: 'biography', label: 'Info'        },
+    { id: 'biography',   label: 'Info'        },
+    { id: 'statistics',  label: 'Statistics'  },
   ];
 
   /** Ordered list of currently-open tab page ids */
@@ -167,8 +172,9 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       case 'page-combat':    return Object.assign(context, await prepareCombat(this.actor), { combatFilter: this._combatFilter });
       case 'page-features':  return Object.assign(context, await prepareFeatures(this.actor));
       case 'page-inventory': return Object.assign(context, await prepareInventory(this.actor));
-      case 'page-biography': return Object.assign(context, await prepareBiography(this.actor));
-      case 'page-split':     return Object.assign(context, await this._prepareSplitContext());
+      case 'page-biography':  return Object.assign(context, await prepareBiography(this.actor));
+      case 'page-statistics': return Object.assign(context, await prepareStatistics(this.actor));
+      case 'page-split':      return Object.assign(context, await this._prepareSplitContext());
     }
     return context;
   }
@@ -180,7 +186,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       case 'combat':    return prepareCombat(this.actor);
       case 'features':  return prepareFeatures(this.actor);
       case 'inventory': return prepareInventory(this.actor);
-      case 'biography': return prepareBiography(this.actor);
+      case 'biography':  return prepareBiography(this.actor);
+      case 'statistics': return prepareStatistics(this.actor);
     }
     return {};
   }
@@ -741,5 +748,15 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     if (!item) return;
     await recordItemUse(this.actor, itemId);
     return item.roll();
+  }
+
+  static async _onResetStats() {
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window:  { title: 'Reset Lifetime Statistics' },
+      content: 'Clear all lifetime statistics for this character? Session stats are unaffected.',
+    });
+    if (!ok) return;
+    await resetLifetimeStats(this.actor);
+    this.render();
   }
 }

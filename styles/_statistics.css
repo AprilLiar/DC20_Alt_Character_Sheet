@@ -1,0 +1,258 @@
+/* ============================================================
+   DC20 Alt Sheet — Statistics Page & Split Variant
+   ============================================================ */
+
+/* ── Full page layout ── */
+.dc20-alt-sheet .stats-layout {
+  padding: var(--gap-md);
+}
+
+.dc20-alt-sheet .stats-session-labels {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--gap-lg);
+  padding-right: var(--gap-sm);
+  margin-bottom: var(--gap-xs);
+}
+.dc20-alt-sheet .stats-col-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--p-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 64px;
+  text-align: center;
+}
+
+/* ── d20 card grid (2×2) ── */
+.dc20-alt-sheet .stats-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-sm);
+}
+.dc20-alt-sheet .stats-card {
+  background: var(--p-bg-card);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--r-md);
+  padding: var(--gap-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dc20-alt-sheet .stats-card.stats-card-good { border-color: var(--p-accent); }
+.dc20-alt-sheet .stats-card.stats-card-bad  { border-color: var(--p-red); }
+
+.dc20-alt-sheet .stats-card-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  color: var(--p-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.dc20-alt-sheet .stats-card-values {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.dc20-alt-sheet .stats-val {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  line-height: 1;
+}
+.dc20-alt-sheet .stats-val-life { color: var(--p-ink); min-width: 40px; }
+.dc20-alt-sheet .stats-val-sep  { color: var(--p-ink-muted); font-size: var(--fs-xs); }
+.dc20-alt-sheet .stats-val-sess { color: var(--p-ink-muted); font-size: var(--fs-sm); }
+.dc20-alt-sheet .stats-card-good .stats-val-life { color: var(--p-accent); }
+.dc20-alt-sheet .stats-card-bad  .stats-val-life { color: var(--p-red); }
+
+/* ── Damage grid (two panels side by side) ── */
+.dc20-alt-sheet .stats-damage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-sm);
+}
+.dc20-alt-sheet .stats-damage-panel {
+  background: var(--p-bg-card);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--r-md);
+  padding: var(--gap-sm);
+}
+.dc20-alt-sheet .stats-panel-heading {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--p-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.dc20-alt-sheet .stats-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--gap-xs);
+  padding: 2px 0;
+  font-size: var(--fs-sm);
+}
+.dc20-alt-sheet .stats-row-label {
+  flex: 1;
+  color: var(--p-ink-muted);
+  font-size: var(--fs-xs);
+}
+.dc20-alt-sheet .stats-row-life  { font-weight: 600; color: var(--p-ink); min-width: 30px; text-align: right; }
+.dc20-alt-sheet .stats-row-sess  { color: var(--p-ink-muted); font-size: var(--fs-xs); min-width: 30px; }
+.dc20-alt-sheet .stats-row-total .stats-row-life { color: var(--p-accent); }
+
+/* ── Most used item ── */
+.dc20-alt-sheet .stats-most-used {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  background: var(--p-bg-card);
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--r-md);
+  padding: var(--gap-sm);
+}
+.dc20-alt-sheet .stats-item-img {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-sm);
+  flex-shrink: 0;
+}
+.dc20-alt-sheet .stats-item-name {
+  flex: 1;
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--p-ink);
+}
+.dc20-alt-sheet .stats-item-count {
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--p-accent);
+}
+
+/* ── Reset button ── */
+.dc20-alt-sheet .stats-reset-wrap { display: flex; justify-content: flex-end; }
+.dc20-alt-sheet .stats-reset-btn {
+  padding: 4px var(--gap-sm);
+  background: transparent;
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--r-sm);
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  color: var(--p-ink-muted);
+  cursor: pointer;
+  transition: border-color var(--t-fast), color var(--t-fast);
+}
+.dc20-alt-sheet .stats-reset-btn:hover {
+  border-color: var(--p-red);
+  color: var(--p-red);
+}
+
+/* ============================================================
+   Split variant — compact, all stats shown, tight spacing
+   ============================================================ */
+
+.dc20-alt-sheet .split-statistics {
+  padding: var(--gap-xs) var(--gap-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* 3-column header: label | All Time | Session */
+.dc20-alt-sheet .sc-stats-header {
+  display: grid;
+  grid-template-columns: 1fr 52px 52px;
+  align-items: baseline;
+  gap: var(--gap-xs);
+  padding-bottom: 3px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid var(--p-border-faint);
+}
+.dc20-alt-sheet .sc-stats-section-title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--p-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.dc20-alt-sheet .sc-stats-col-head {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  color: var(--p-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+/* Group label (Rolls / Damage Dealt / etc.) */
+.dc20-alt-sheet .sc-stats-group-label {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--p-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-top: 4px;
+}
+
+/* Each stat row: label | life value | session value */
+.dc20-alt-sheet .sc-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 52px 52px;
+  align-items: center;
+  gap: var(--gap-xs);
+  padding: 1px 0;
+}
+.dc20-alt-sheet .sc-stats-label {
+  font-size: var(--fs-xs);
+  color: var(--p-ink);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dc20-alt-sheet .sc-stats-life {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--p-ink);
+  text-align: center;
+}
+.dc20-alt-sheet .sc-stats-sess {
+  font-size: var(--fs-xs);
+  color: var(--p-ink-muted);
+  text-align: center;
+}
+.dc20-alt-sheet .sc-stats-good .sc-stats-life { color: var(--p-accent); }
+.dc20-alt-sheet .sc-stats-bad  .sc-stats-life { color: var(--p-red); }
+
+/* Most used item row */
+.dc20-alt-sheet .sc-stats-item-row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xs);
+  padding: 2px 0;
+}
+.dc20-alt-sheet .sc-stats-item-img {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.dc20-alt-sheet .sc-stats-item-name {
+  flex: 1;
+  font-size: var(--fs-xs);
+  color: var(--p-ink);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dc20-alt-sheet .sc-stats-item-count {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--p-accent);
+}

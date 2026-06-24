@@ -1,6 +1,7 @@
 import { DC20AltCharacterSheet } from './sheets/DC20AltCharacterSheet.mjs';
 import { registerHandlebarsHelpers } from './helpers/handlebars.mjs';
 import { registerItemUseHook } from './hooks/trackItemUse.mjs';
+import { registerRollStatsHook } from './hooks/trackRollStats.mjs';
 
 import { MODULE_ID } from './constants.mjs';
 export { MODULE_ID };
@@ -23,10 +24,12 @@ Hooks.once('init', () => {
     'dc20-split-combat':    `${components}/split-combat.hbs`,
     'dc20-split-features':  `${components}/split-features.hbs`,
     'dc20-split-inventory': `${components}/split-inventory.hbs`,
-    'dc20-split-biography': `${components}/split-biography.hbs`,
+    'dc20-split-biography':   `${components}/split-biography.hbs`,
+    'dc20-split-statistics':  `${components}/split-statistics.hbs`,
   });
 });
 
 Hooks.once('ready', () => {
   registerItemUseHook();
+  registerRollStatsHook();
 });

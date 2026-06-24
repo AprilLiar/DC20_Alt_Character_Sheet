@@ -1,0 +1,79 @@
+<div class="split-page split-statistics">
+
+  {{!-- Column labels --}}
+  <div class="sc-stats-header">
+    <span class="sc-stats-section-title">Statistics</span>
+    <span class="sc-stats-col-head">All Time</span>
+    <span class="sc-stats-col-head">Session</span>
+  </div>
+
+  {{!-- Roll stats --}}
+  <div class="sc-stats-group-label">Rolls</div>
+  <div class="sc-stats-row">
+    <span class="sc-stats-label">Avg d20</span>
+    <span class="sc-stats-life">{{d20Avg}}</span>
+    <span class="sc-stats-sess">{{sessD20Avg}}</span>
+  </div>
+  <div class="sc-stats-row">
+    <span class="sc-stats-label">Total</span>
+    <span class="sc-stats-life">{{d20Count}}</span>
+    <span class="sc-stats-sess">{{sessD20Count}}</span>
+  </div>
+  <div class="sc-stats-row sc-stats-good">
+    <span class="sc-stats-label">Nat 20s</span>
+    <span class="sc-stats-life">{{nat20}}</span>
+    <span class="sc-stats-sess">{{sessNat20}}</span>
+  </div>
+  <div class="sc-stats-row sc-stats-bad">
+    <span class="sc-stats-label">Nat 1s</span>
+    <span class="sc-stats-life">{{nat1}}</span>
+    <span class="sc-stats-sess">{{sessNat1}}</span>
+  </div>
+
+  {{!-- Damage dealt --}}
+  <div class="sc-stats-group-label">Damage Dealt</div>
+  <div class="sc-stats-row">
+    <span class="sc-stats-label">Highest</span>
+    <span class="sc-stats-life">{{dealtHighest}}</span>
+    <span class="sc-stats-sess">{{sessDealtHighest}}</span>
+  </div>
+  <div class="sc-stats-row">
+    <span class="sc-stats-label">Lowest</span>
+    <span class="sc-stats-life">{{dealtLowest}}</span>
+    <span class="sc-stats-sess">{{sessDealtLowest}}</span>
+  </div>
+  <div class="sc-stats-row">
+    <span class="sc-stats-label">Total</span>
+    <span class="sc-stats-life">{{dealtTotal}}</span>
+    <span class="sc-stats-sess">{{sessDealtTotal}}</span>
+  </div>
+
+  {{!-- Damage taken --}}
+  <div class="sc-stats-group-label">Damage Taken</div>
+  <div class="sc-stats-row">
+    <span class="sc-stats-label">Highest</span>
+    <span class="sc-stats-life">{{takenHighest}}</span>
+    <span class="sc-stats-sess">{{sessTakenHighest}}</span>
+  </div>
+  <div class="sc-stats-row">
+    <span class="sc-stats-label">Lowest</span>
+    <span class="sc-stats-life">{{takenLowest}}</span>
+    <span class="sc-stats-sess">{{sessTakenLowest}}</span>
+  </div>
+  <div class="sc-stats-row">
+    <span class="sc-stats-label">Total</span>
+    <span class="sc-stats-life">{{takenTotal}}</span>
+    <span class="sc-stats-sess">{{sessTakenTotal}}</span>
+  </div>
+
+  {{!-- Most used item --}}
+  {{#if mostUsedItem}}
+  <div class="sc-stats-group-label">Most Used</div>
+  <div class="sc-stats-row sc-stats-item-row">
+    <img class="sc-stats-item-img" src="{{mostUsedItem.img}}" alt="{{mostUsedItem.name}}">
+    <span class="sc-stats-item-name">{{mostUsedItem.name}}</span>
+    <span class="sc-stats-item-count">×{{mostUsedItem.count}}</span>
+  </div>
+  {{/if}}
+
+</div>
