@@ -70,6 +70,16 @@
             <option value="other"      {{#if (eq appearance.hair "other")}}selected{{/if}}>Other</option>
           </select>
         </div>
+        {{#if (eq appearance.hair "other")}}
+        <div class="appr-row">
+          <label class="appr-label">Hair (custom)</label>
+          <input class="appr-input" type="text"
+            name="flags.{{moduleId}}.appearance.hairOther"
+            value="{{appearance.hairOther}}"
+            placeholder="Describe hair colour / style…"
+            {{#unless isEditable}}disabled{{/unless}}>
+        </div>
+        {{/if}}
 
         <div class="appr-row">
           <label class="appr-label">Eyes</label>
@@ -92,6 +102,16 @@
             <option value="other"      {{#if (eq appearance.eyes "other")}}selected{{/if}}>Other</option>
           </select>
         </div>
+        {{#if (eq appearance.eyes "other")}}
+        <div class="appr-row">
+          <label class="appr-label">Eyes (custom)</label>
+          <input class="appr-input" type="text"
+            name="flags.{{moduleId}}.appearance.eyesOther"
+            value="{{appearance.eyesOther}}"
+            placeholder="Describe eye colour / appearance…"
+            {{#unless isEditable}}disabled{{/unless}}>
+        </div>
+        {{/if}}
 
         <div class="appr-row">
           <label class="appr-label">Skin</label>
@@ -111,6 +131,16 @@
             <option value="other"      {{#if (eq appearance.skin "other")}}selected{{/if}}>Other</option>
           </select>
         </div>
+        {{#if (eq appearance.skin "other")}}
+        <div class="appr-row">
+          <label class="appr-label">Skin (custom)</label>
+          <input class="appr-input" type="text"
+            name="flags.{{moduleId}}.appearance.skinOther"
+            value="{{appearance.skinOther}}"
+            placeholder="Describe skin tone / texture…"
+            {{#unless isEditable}}disabled{{/unless}}>
+        </div>
+        {{/if}}
 
         <div class="appr-row">
           <label class="appr-label">Height</label>

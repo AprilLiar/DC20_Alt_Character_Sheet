@@ -55,8 +55,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   _tabsInitialized = false;
   /** Active combat filter */
   _combatFilter = 'all';
-  /** Pending split-tab builder selection (left/right page ids) */
-  _pendingSplit = { left: null, right: null };
+  /** Pending split-tab builder selection (left/right/bottom page ids) */
+  _pendingSplit = { left: null, right: null, bottom: null };
   /** Page id currently being dragged (from a tab or the picker) */
   _dragPageId = null;
 
@@ -69,11 +69,11 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     return typeof id === 'string' && id.includes('+');
   }
 
-  /** Validate a tab id — a single known page, or a split of two known pages. */
+  /** Validate a tab id — a single known page, or a split of two or three known pages. */
   _isValidTabId(id, valid) {
     if (this._isSplitId(id)) {
       const parts = id.split('+');
-      return parts.length === 2 && parts.every(p => valid.has(p));
+      return (parts.length === 2 || parts.length === 3) && parts.every(p => valid.has(p));
     }
     return valid.has(id);
   }
@@ -93,16 +93,24 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       : (this._openTabs[0] ?? null);
   }
 
-  /** Left-pane width fraction (0.25–0.75) for a split tab, persisted per id. */
+  /** Returns { lr, tb } ratio object (0.25–0.75) for a split tab, persisted per id. */
   _getSplitRatio(id) {
     const r = this.actor.flags?.[MODULE_ID]?.splitRatios?.[id];
-    return (typeof r === 'number') ? Math.min(0.75, Math.max(0.25, r)) : 0.5;
+    if (r && typeof r === 'object') {
+      return {
+        lr: Math.min(0.75, Math.max(0.25, r.lr ?? 0.5)),
+        tb: Math.min(0.75, Math.max(0.25, r.tb ?? 0.5)),
+      };
+    }
+    // Backwards compat: old scalar value stored for 2-pane tabs
+    const lr = (typeof r === 'number') ? Math.min(0.75, Math.max(0.25, r)) : 0.5;
+    return { lr, tb: 0.5 };
   }
 
-  _saveSplitRatio(id, ratio) {
-    const ratios = { ...(this.actor.flags?.[MODULE_ID]?.splitRatios ?? {}) };
-    ratios[id] = Math.min(0.75, Math.max(0.25, ratio));
-    this.actor.setFlag(MODULE_ID, 'splitRatios', ratios);
+  _saveSplitRatio(id, ratios) {
+    const all = { ...(this.actor.flags?.[MODULE_ID]?.splitRatios ?? {}) };
+    all[id] = { lr: ratios.lr ?? 0.5, tb: ratios.tb ?? 0.5 };
+    this.actor.setFlag(MODULE_ID, 'splitRatios', all);
   }
 
   _saveTabState() {
@@ -136,13 +144,18 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         return Object.assign(context, {
           openTabs: this._openTabs.map(id => {
             if (this._isSplitId(id)) {
-              const [leftId, rightId] = id.split('+');
+              const parts = id.split('+');
+              const [leftId, rightId, bottomId] = parts;
+              if (bottomId) {
+                return {
+                  id, isSplit: true, is3Pane: true, leftId, rightId, bottomId,
+                  label: `${this._labelOf(leftId)} | ${this._labelOf(rightId)} + ${this._labelOf(bottomId)}`,
+                  active: id === this._activeTab,
+                };
+              }
               return {
-                id,
-                isSplit: true,
-                leftId,
-                rightId,
-                label:  `${this._labelOf(leftId)} | ${this._labelOf(rightId)}`,
+                id, isSplit: true, is3Pane: false, leftId, rightId,
+                label: `${this._labelOf(leftId)} | ${this._labelOf(rightId)}`,
                 active: id === this._activeTab,
               };
             }
@@ -177,7 +190,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     if (!this._isSplitId(this._activeTab)) return { split: null };
 
     const id = this._activeTab;
-    const [left, right] = id.split('+');
+    const parts = id.split('+');
+    const [left, right, bottom] = parts;
     const ratio = this._getSplitRatio(id);
     const common = {
       isEditable: this.isEditable,
@@ -186,18 +200,35 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       system:     this.actor.system,
     };
 
+    if (bottom) {
+      const [leftData, rightData, bottomData] = await Promise.all([
+        this._preparePageData(left),
+        this._preparePageData(right),
+        this._preparePageData(bottom),
+      ]);
+      return {
+        split: {
+          id, left, right, bottom,
+          leftGrow:   Math.round(ratio.lr * 100),
+          rightGrow:  Math.round((1 - ratio.lr) * 100),
+          topGrow:    Math.round(ratio.tb * 100),
+          bottomGrow: Math.round((1 - ratio.tb) * 100),
+        },
+        leftCtx:   { ...common, ...leftData },
+        rightCtx:  { ...common, ...rightData },
+        bottomCtx: { ...common, ...bottomData },
+      };
+    }
+
     const [leftData, rightData] = await Promise.all([
       this._preparePageData(left),
       this._preparePageData(right),
     ]);
-
     return {
       split: {
-        id,
-        left,
-        right,
-        leftGrow:  Math.round(ratio * 100),
-        rightGrow: Math.round((1 - ratio) * 100),
+        id, left, right,
+        leftGrow:  Math.round(ratio.lr * 100),
+        rightGrow: Math.round((1 - ratio.lr) * 100),
       },
       leftCtx:  { ...common, ...leftData },
       rightCtx: { ...common, ...rightData },
@@ -332,10 +363,12 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       if (this.isEditable) this._setControlsDisabled(el, !show);
     });
 
-    const splitView = this.element.querySelector('.split-view');
-    if (splitView) {
-      splitView.classList.toggle('active', isSplit);
-      if (this.isEditable) this._setControlsDisabled(splitView, !isSplit);
+    // Support both 2-pane (.split-view) and 3-pane (.split-view-3) containers
+    const splitContainer = this.element.querySelector('.split-view')
+      ?? this.element.querySelector('.split-view-3');
+    if (splitContainer) {
+      splitContainer.classList.toggle('active', isSplit);
+      if (this.isEditable) this._setControlsDisabled(splitContainer, !isSplit);
     }
   }
 
@@ -414,7 +447,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       });
     });
 
-    // The two drop zones in the picker that compose a split tab.
+    // Drop zones (left, right, and optional bottom).
     this.element.querySelectorAll('.split-zone').forEach(zone => {
       zone.addEventListener('dragover', e => {
         e.preventDefault();
@@ -430,11 +463,28 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         const side = zone.dataset.splitSide;
         this._pendingSplit[side] = pageId;
         this._fillZone(zone, pageId);
-        if (this._pendingSplit.left && this._pendingSplit.right) {
-          this._createSplitTab(this._pendingSplit.left, this._pendingSplit.right);
-        }
+        this._updateSplitBuilder();
       });
     });
+
+    // Create Split button — active once left+right are filled.
+    const createBtn = this.element.querySelector('.split-create-btn');
+    if (createBtn) {
+      createBtn.addEventListener('click', () => {
+        const { left, right, bottom } = this._pendingSplit;
+        if (!left || !right) return;
+        this._createSplitTab(left, right, bottom || null);
+      });
+    }
+  }
+
+  /** Show/enable the bottom zone and create button once left+right are both filled. */
+  _updateSplitBuilder() {
+    const { left, right } = this._pendingSplit;
+    const bothFilled = !!(left && right);
+    this.element?.querySelector('.split-bottom-wrap')?.classList.toggle('hidden', !bothFilled);
+    const createBtn = this.element?.querySelector('.split-create-btn');
+    if (createBtn) createBtn.disabled = !bothFilled;
   }
 
   _fillZone(zone, pageId) {
@@ -445,18 +495,21 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   }
 
   _resetPendingSplit() {
-    this._pendingSplit = { left: null, right: null };
+    this._pendingSplit = { left: null, right: null, bottom: null };
     this.element?.querySelectorAll('.split-zone').forEach(z => {
       z.classList.remove('filled');
-      z.innerHTML = '<span class="split-zone-hint">put the tab here…</span>';
+      const hint = z.dataset.splitSide === 'bottom' ? 'optional bottom panel…' : 'put the tab here…';
+      z.innerHTML = `<span class="split-zone-hint">${hint}</span>`;
     });
+    this.element?.querySelector('.split-bottom-wrap')?.classList.add('hidden');
+    const btn = this.element?.querySelector('.split-create-btn');
+    if (btn) btn.disabled = true;
   }
 
-  _createSplitTab(left, right) {
-    const id = `${left}+${right}`;
+  _createSplitTab(left, right, bottom = null) {
+    const id = bottom ? `${left}+${right}+${bottom}` : `${left}+${right}`;
     if (!this._openTabs.includes(id)) this._openTabs.push(id);
     this._activeTab = id;
-    this._resetPendingSplit();
     this._closePicker();
     this._saveTabState();
     this.render();
@@ -467,44 +520,79 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /* -------------------------------------------- */
 
   _bindSplitDivider() {
-    const divider = this.element.querySelector('.split-divider');
-    const view    = this.element.querySelector('.split-view');
-    if (!divider || !view) return;
+    const view = this.element.querySelector('.split-view-3')
+      ?? this.element.querySelector('.split-view');
+    if (!view) return;
+    const id = view.dataset.splitId;
+    if (!id) return;
 
-    const left  = view.querySelector('.split-pane-left');
-    const right = view.querySelector('.split-pane-right');
-    const id    = view.dataset.splitId;
-    if (!left || !right || !id) return;
+    const ratio = this._getSplitRatio(id);
+    let currentLr = ratio.lr;
+    let currentTb = ratio.tb;
 
-    let dragging = false;
-    let lastRatio = null;
+    // Vertical divider (left ↔ right)
+    const vDiv = view.querySelector('.split-divider-v') ?? view.querySelector('.split-divider');
+    if (vDiv) {
+      const paneL = view.querySelector('.split-pane-left');
+      const paneR = view.querySelector('.split-pane-right');
+      let dragging = false;
+      const onMove = (e) => {
+        if (!dragging) return;
+        const rect = view.getBoundingClientRect();
+        let r = (e.clientX - rect.left) / rect.width;
+        r = Math.min(0.75, Math.max(0.25, r));
+        currentLr = r;
+        if (paneL) paneL.style.flexGrow = String(Math.round(r * 100));
+        if (paneR) paneR.style.flexGrow = String(Math.round((1 - r) * 100));
+      };
+      const onUp = () => {
+        if (!dragging) return;
+        dragging = false;
+        vDiv.classList.remove('dragging');
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        this._saveSplitRatio(id, { lr: currentLr, tb: currentTb });
+      };
+      vDiv.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        dragging = true;
+        vDiv.classList.add('dragging');
+        document.addEventListener('pointermove', onMove);
+        document.addEventListener('pointerup', onUp);
+      });
+    }
 
-    const onMove = (e) => {
-      if (!dragging) return;
-      const rect = view.getBoundingClientRect();
-      let ratio = (e.clientX - rect.left) / rect.width;
-      ratio = Math.min(0.75, Math.max(0.25, ratio));
-      lastRatio = ratio;
-      left.style.flexGrow  = String(Math.round(ratio * 100));
-      right.style.flexGrow = String(Math.round((1 - ratio) * 100));
-    };
-
-    const onUp = () => {
-      if (!dragging) return;
-      dragging = false;
-      divider.classList.remove('dragging');
-      document.removeEventListener('pointermove', onMove);
-      document.removeEventListener('pointerup', onUp);
-      if (lastRatio != null) this._saveSplitRatio(id, lastRatio);
-    };
-
-    divider.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      dragging = true;
-      divider.classList.add('dragging');
-      document.addEventListener('pointermove', onMove);
-      document.addEventListener('pointerup', onUp);
-    });
+    // Horizontal divider (top row ↔ bottom pane) — 3-pane only
+    const hDiv = view.querySelector('.split-divider-h');
+    if (hDiv) {
+      const rowTop = view.querySelector('.split-row-top');
+      const rowBot = view.querySelector('.split-row-bottom');
+      let dragging = false;
+      const onMove = (e) => {
+        if (!dragging) return;
+        const rect = view.getBoundingClientRect();
+        let r = (e.clientY - rect.top) / rect.height;
+        r = Math.min(0.75, Math.max(0.25, r));
+        currentTb = r;
+        if (rowTop) rowTop.style.flexGrow = String(Math.round(r * 100));
+        if (rowBot) rowBot.style.flexGrow = String(Math.round((1 - r) * 100));
+      };
+      const onUp = () => {
+        if (!dragging) return;
+        dragging = false;
+        hDiv.classList.remove('dragging');
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        this._saveSplitRatio(id, { lr: currentLr, tb: currentTb });
+      };
+      hDiv.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        dragging = true;
+        hDiv.classList.add('dragging');
+        document.addEventListener('pointermove', onMove);
+        document.addEventListener('pointerup', onUp);
+      });
+    }
   }
 
   /* -------------------------------------------- */
