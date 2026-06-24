@@ -15,7 +15,8 @@
     <ul class="items-list">
       {{#each items}}
       <li class="item-row" data-item-id="{{id}}">
-        <img class="item-img" src="{{img}}" alt="{{name}}">
+        <img class="item-img item-img-rollable" src="{{img}}" alt="{{name}}"
+          data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
         <span class="item-name">{{name}}</span>
         {{#if ../../isEditable}}
         <div class="item-controls">

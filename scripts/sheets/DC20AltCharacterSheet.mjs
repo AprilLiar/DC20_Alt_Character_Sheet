@@ -21,6 +21,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       rollSave:      DC20AltCharacterSheet._onRollSave,
       rollSkill:     DC20AltCharacterSheet._onRollSkill,
       rollTrade:     DC20AltCharacterSheet._onRollTrade,
+      rollLanguage:  DC20AltCharacterSheet._onRollLanguage,
       createItem:    DC20AltCharacterSheet._onCreateItem,
       editItem:      DC20AltCharacterSheet._onEditItem,
       deleteItem:    DC20AltCharacterSheet._onDeleteItem,
@@ -867,6 +868,11 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   static async _onRollTrade(event, target) {
     const tradeKey = target.closest('[data-trade]').dataset.trade;
     return this.actor.roll(tradeKey, 'check');
+  }
+
+  static async _onRollLanguage(event, target) {
+    const langKey = target.closest('[data-language]').dataset.language;
+    return this.actor.roll(langKey, 'check');
   }
 
   static async _onCreateItem(event, target) {
