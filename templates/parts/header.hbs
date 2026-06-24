@@ -65,6 +65,27 @@
     </div>
   </div>
 
+  {{#if header.rest.max}}
+  <div class="hstrip-divider"></div>
+
+  {{!-- Rest Points --}}
+  <div class="hstrip-resource rest-strip">
+    <span class="hstrip-label rest-label">REST</span>
+    <div class="hstrip-bar-wrap rest-bar">
+      <div class="hstrip-bar-fill" style="width: {{percent header.rest.value header.rest.max}}%"></div>
+      <div class="hstrip-bar-text">
+        <input type="number" name="system.resources.restPoints.value"
+          value="{{header.rest.value}}" class="hstrip-input"
+          {{#unless isEditable}}disabled{{/unless}}>
+        <span class="hstrip-sep">/</span>
+        <input type="number" name="system.resources.restPoints.max"
+          value="{{header.rest.max}}" class="hstrip-input"
+          {{#unless isEditable}}disabled{{/unless}}>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
   <div class="hstrip-divider"></div>
 
   {{!-- Quick Access Slots --}}
