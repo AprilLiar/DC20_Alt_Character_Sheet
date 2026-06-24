@@ -24,6 +24,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       editItem:      DC20AltCharacterSheet._onEditItem,
       deleteItem:    DC20AltCharacterSheet._onDeleteItem,
       toggleEquip:   DC20AltCharacterSheet._onToggleEquip,
+      toggleAttune:  DC20AltCharacterSheet._onToggleAttune,
       useItem:       DC20AltCharacterSheet._onUseItem,
       resetStats:    DC20AltCharacterSheet._onResetStats,
     },
@@ -276,6 +277,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindSplitBuilder();
     this._bindSplitDivider();
     this._registerContextMenu();
+    this._bindQuickSlots();
   }
 
   /* -------------------------------------------- */
@@ -625,6 +627,10 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this.element.querySelectorAll('.combat-create-btn').forEach(btn => {
       btn.classList.toggle('hidden', filter === 'all' || btn.dataset.createFilter !== filter);
     });
+    // Track active filter on the container so CSS can show/hide the type badge
+    this.element.querySelectorAll('.combat-actions').forEach(el => {
+      el.dataset.activeFilter = filter;
+    });
   }
 
   /* -------------------------------------------- */
@@ -646,6 +652,94 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         this.actor.update({ 'system.resources.ap.value': idx });
       });
     });
+  }
+
+  /* -------------------------------------------- */
+  /*  Quick Access Slots                           */
+  /* -------------------------------------------- */
+
+  _bindQuickSlots() {
+    const el = this.element;
+
+    // Make skill rows draggable so they can be dropped into quick slots
+    el.querySelectorAll('.skill-row[data-skill]').forEach(row => {
+      row.setAttribute('draggable', 'true');
+      row.addEventListener('dragstart', e => {
+        const key   = row.dataset.skill;
+        const label = row.querySelector('.skill-name')?.textContent?.trim() ?? key;
+        e.dataTransfer.effectAllowed = 'copy';
+        e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'skill', key, label, img: '' }));
+      });
+    });
+
+    // Quick slot drag-drop + click events
+    el.querySelectorAll('.quick-slot[data-slot-index]').forEach(slot => {
+      const idx = parseInt(slot.dataset.slotIndex, 10);
+
+      slot.addEventListener('click', () => this._activateQuickSlot(idx));
+
+      slot.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        this._clearQuickSlot(idx);
+      });
+
+      slot.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        slot.classList.add('drag-over');
+      });
+      slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+      slot.addEventListener('drop', e => {
+        e.preventDefault();
+        slot.classList.remove('drag-over');
+        this._dropOnQuickSlot(idx, e.dataTransfer);
+      });
+    });
+  }
+
+  async _activateQuickSlot(idx) {
+    const slot = (this.actor.flags?.[MODULE_ID]?.quickSlots ?? [])[idx];
+    if (!slot) return;
+    if (slot.type === 'item') {
+      const item = this.actor.items.get(slot.id);
+      if (item) return item.roll?.();
+    } else if (slot.type === 'skill' || slot.type === 'trade') {
+      return this.actor.roll?.(slot.id, 'check');
+    }
+  }
+
+  async _clearQuickSlot(idx) {
+    const slots = Array.from({ length: 5 }, (_, i) =>
+      this.actor.flags?.[MODULE_ID]?.quickSlots?.[i] ?? null);
+    slots[idx] = null;
+    await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
+    this.render();
+  }
+
+  async _dropOnQuickSlot(idx, dataTransfer) {
+    let data;
+    try {
+      const raw = dataTransfer.getData('application/json') || dataTransfer.getData('text/plain');
+      data = JSON.parse(raw);
+    } catch {
+      return;
+    }
+
+    let entry = null;
+
+    if (data.type === 'Item') {
+      const item = await fromUuid(data.uuid);
+      if (item) entry = { type: 'item', id: item.id, label: item.name, img: item.img ?? '' };
+    } else if (data.type === 'skill' || data.type === 'trade') {
+      entry = { type: data.type, id: data.key, label: data.label, img: data.img ?? '' };
+    }
+
+    if (!entry) return;
+    const slots = Array.from({ length: 5 }, (_, i) =>
+      this.actor.flags?.[MODULE_ID]?.quickSlots?.[i] ?? null);
+    slots[idx] = entry;
+    await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
+    this.render();
   }
 
   /* -------------------------------------------- */
@@ -740,6 +834,12 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     const item = this.actor.items.get(target.closest('[data-item-id]').dataset.itemId);
     if (!item) return;
     item.update({ 'system.statuses.equipped': !item.system.statuses?.equipped });
+  }
+
+  static async _onToggleAttune(event, target) {
+    const item = this.actor.items.get(target.closest('[data-item-id]').dataset.itemId);
+    if (!item) return;
+    item.update({ 'system.statuses.attuned': !item.system.statuses?.attuned });
   }
 
   static async _onUseItem(event, target) {

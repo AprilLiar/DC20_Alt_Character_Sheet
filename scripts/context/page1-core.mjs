@@ -10,11 +10,14 @@ const ATTR_CONFIG = {
 function groupByAttr(items) {
   const groups = {};
   for (const item of items) {
-    const a = item.attribute;
-    if (!groups[a]) groups[a] = { attr: a, label: ATTR_CONFIG[a]?.label ?? a, items: [] };
+    const a = item.attribute ?? '_other';
+    if (!groups[a]) groups[a] = { attr: a, label: ATTR_CONFIG[a]?.label ?? String(a).toUpperCase(), items: [] };
     groups[a].items.push(item);
   }
-  return Object.keys(ATTR_CONFIG).filter(k => groups[k]).map(k => groups[k]);
+  // Known attributes in ATTR_CONFIG order first, then any extras (handles version differences)
+  const known = Object.keys(ATTR_CONFIG).filter(k => groups[k]).map(k => groups[k]);
+  const extra = Object.keys(groups).filter(k => !(k in ATTR_CONFIG)).map(k => groups[k]);
+  return [...known, ...extra];
 }
 
 export async function prepareCore(actor) {

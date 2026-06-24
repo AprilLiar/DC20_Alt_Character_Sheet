@@ -132,6 +132,71 @@
 .dc20-alt-sheet .hstrip-input:focus { color: var(--p-gold-light); }
 .dc20-alt-sheet .hstrip-input:disabled { opacity: 0.75; cursor: default; }
 
+/* ── Quick Access Slots ── */
+.dc20-alt-sheet .hstrip-quick-slots {
+  display: flex;
+  gap: var(--gap-xs);
+  align-items: center;
+  margin-left: auto;
+}
+
+.dc20-alt-sheet .quick-slot {
+  width: 34px;
+  height: 34px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.22);
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+}
+.dc20-alt-sheet .quick-slot:hover {
+  border-color: var(--p-accent);
+  background: var(--p-hover);
+}
+.dc20-alt-sheet .quick-slot.filled {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.30);
+}
+.dc20-alt-sheet .quick-slot.filled:hover {
+  border-color: var(--p-accent);
+  box-shadow: 0 0 6px rgba(100, 150, 255, 0.35);
+}
+.dc20-alt-sheet .quick-slot.drag-over {
+  border-color: var(--p-accent);
+  background: rgba(100, 150, 255, 0.15);
+  box-shadow: 0 0 8px rgba(100, 150, 255, 0.5);
+}
+.dc20-alt-sheet .qs-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: calc(var(--r-sm) - 1px);
+  pointer-events: none;
+}
+.dc20-alt-sheet .qs-label {
+  font-size: 8px;
+  line-height: 1.1;
+  text-align: center;
+  color: var(--p-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 30px;
+  padding: 0 2px;
+  pointer-events: none;
+}
+.dc20-alt-sheet .qs-empty-hint {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.18);
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
 /* ── Horizontal browser-style tab bar ── */
 .dc20-alt-sheet .browser-tabs-container {
   position: relative;

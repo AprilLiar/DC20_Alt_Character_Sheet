@@ -6,46 +6,18 @@
       <h3 class="section-heading">Biography</h3>
       {{#if isEditable}}
         <textarea class="bio-editor"
-          name="system.details.biography.value">{{biography}}</textarea>
+          name="system.details.biography.value"
+          placeholder="Empty">{{biography}}</textarea>
       {{else}}
         <div class="bio-view">{{biography}}</div>
       {{/if}}
     </div>
 
-    {{!-- Right: Origins + Appearance --}}
+    {{!-- Right: Appearance --}}
     <div class="traits-col">
 
-      {{!-- Origins --}}
-      <h3 class="section-heading">Origins</h3>
-      <div class="origin-list">
-        {{#if details.ancestry.name}}
-        <div class="origin-row">
-          <span class="origin-label">Ancestry</span>
-          <span class="origin-val">{{details.ancestry.name}}</span>
-        </div>
-        {{/if}}
-        {{#if details.background.name}}
-        <div class="origin-row">
-          <span class="origin-label">Background</span>
-          <span class="origin-val">{{details.background.name}}</span>
-        </div>
-        {{/if}}
-        {{#if details.class.name}}
-        <div class="origin-row">
-          <span class="origin-label">Class</span>
-          <span class="origin-val">{{details.class.name}}</span>
-        </div>
-        {{/if}}
-        {{#if details.subclass.name}}
-        <div class="origin-row">
-          <span class="origin-label">Subclass</span>
-          <span class="origin-val">{{details.subclass.name}}</span>
-        </div>
-        {{/if}}
-      </div>
-
       {{!-- Appearance --}}
-      <h3 class="section-heading mt">Appearance</h3>
+      <h3 class="section-heading">Appearance</h3>
       <div class="appearance-form">
 
         <div class="appr-row">
@@ -76,7 +48,7 @@
           <input class="appr-input" type="text"
             name="flags.{{moduleId}}.appearance.hairOther"
             value="{{appearance.hairOther}}"
-            placeholder="Describe hair colour / style…"
+            placeholder="Empty"
             {{#unless isEditable}}disabled{{/unless}}>
         </div>
         {{/if}}
@@ -108,7 +80,7 @@
           <input class="appr-input" type="text"
             name="flags.{{moduleId}}.appearance.eyesOther"
             value="{{appearance.eyesOther}}"
-            placeholder="Describe eye colour / appearance…"
+            placeholder="Empty"
             {{#unless isEditable}}disabled{{/unless}}>
         </div>
         {{/if}}
@@ -137,7 +109,7 @@
           <input class="appr-input" type="text"
             name="flags.{{moduleId}}.appearance.skinOther"
             value="{{appearance.skinOther}}"
-            placeholder="Describe skin tone / texture…"
+            placeholder="Empty"
             {{#unless isEditable}}disabled{{/unless}}>
         </div>
         {{/if}}
@@ -147,7 +119,7 @@
           <input class="appr-input" type="text"
             name="flags.{{moduleId}}.appearance.height"
             value="{{appearance.height}}"
-            placeholder="e.g. 5'10&quot;"
+            placeholder="Empty"
             {{#unless isEditable}}disabled{{/unless}}>
         </div>
 
@@ -156,7 +128,7 @@
           <input class="appr-input" type="text"
             name="flags.{{moduleId}}.appearance.weight"
             value="{{appearance.weight}}"
-            placeholder="e.g. 160 lbs"
+            placeholder="Empty"
             {{#unless isEditable}}disabled{{/unless}}>
         </div>
 
@@ -164,7 +136,7 @@
           <label class="appr-label">Clothing</label>
           <textarea class="appr-textarea" rows="3"
             name="flags.{{moduleId}}.appearance.clothing"
-            placeholder="What do they typically wear?"
+            placeholder="Empty"
             {{#unless isEditable}}disabled{{/unless}}>{{appearance.clothing}}</textarea>
         </div>
 
@@ -172,7 +144,7 @@
           <label class="appr-label">Distinguishing Features</label>
           <textarea class="appr-textarea" rows="3"
             name="flags.{{moduleId}}.appearance.features"
-            placeholder="Scars, tattoos, markings…"
+            placeholder="Empty"
             {{#unless isEditable}}disabled{{/unless}}>{{appearance.features}}</textarea>
         </div>
 
@@ -187,7 +159,7 @@
     {{#if isEditable}}
       <textarea class="campaign-notes-editor"
         name="flags.{{moduleId}}.campaignNotes"
-        placeholder="Session notes, quest leads, NPC names, loot to spend…">{{campaignNotes}}</textarea>
+        placeholder="Empty">{{campaignNotes}}</textarea>
     {{else}}
       <div class="campaign-notes-view">{{#if campaignNotes}}{{campaignNotes}}{{else}}<span class="empty-note">No campaign notes yet.</span>{{/if}}</div>
     {{/if}}

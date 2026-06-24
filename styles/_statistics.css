@@ -5,133 +5,119 @@
 /* ── Full page layout ── */
 .dc20-alt-sheet .stats-layout {
   padding: var(--gap-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
 }
 
-.dc20-alt-sheet .stats-session-labels {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--gap-lg);
-  padding-right: var(--gap-sm);
-  margin-bottom: var(--gap-xs);
+/* ── Shared stats table ── */
+.dc20-alt-sheet .stats-table {
+  border: 1px solid var(--p-border-light);
+  border-radius: var(--r-md);
+  overflow: hidden;
 }
-.dc20-alt-sheet .stats-col-label {
+
+.dc20-alt-sheet .stats-section-head {
+  display: grid;
+  grid-template-columns: 1fr 80px 80px;
+  align-items: center;
+  padding: 6px var(--gap-sm);
+  background: var(--p-border-light);
+}
+.dc20-alt-sheet .stats-sec-title {
   font-family: var(--font-heading);
   font-size: var(--fs-xs);
   font-weight: 700;
-  color: var(--p-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--p-light);
+}
+.dc20-alt-sheet .stats-sec-col {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  min-width: 64px;
+  color: var(--p-gold-light);
   text-align: center;
 }
 
-/* ── d20 card grid (2×2) ── */
-.dc20-alt-sheet .stats-card-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap-sm);
-}
-.dc20-alt-sheet .stats-card {
-  background: var(--p-bg-card);
-  border: 1px solid var(--p-border-light);
-  border-radius: var(--r-md);
-  padding: var(--gap-sm);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.dc20-alt-sheet .stats-card.stats-card-good { border-color: var(--p-accent); }
-.dc20-alt-sheet .stats-card.stats-card-bad  { border-color: var(--p-red); }
-
-.dc20-alt-sheet .stats-card-label {
-  font-family: var(--font-heading);
-  font-size: var(--fs-xs);
-  color: var(--p-ink-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-.dc20-alt-sheet .stats-card-values {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-.dc20-alt-sheet .stats-val {
-  font-family: var(--font-heading);
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  line-height: 1;
-}
-.dc20-alt-sheet .stats-val-life { color: var(--p-ink); min-width: 40px; }
-.dc20-alt-sheet .stats-val-sep  { color: var(--p-ink-muted); font-size: var(--fs-xs); }
-.dc20-alt-sheet .stats-val-sess { color: var(--p-ink-muted); font-size: var(--fs-sm); }
-.dc20-alt-sheet .stats-card-good .stats-val-life { color: var(--p-accent); }
-.dc20-alt-sheet .stats-card-bad  .stats-val-life { color: var(--p-red); }
-
-/* ── Damage grid (two panels side by side) ── */
-.dc20-alt-sheet .stats-damage-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap-sm);
-}
-.dc20-alt-sheet .stats-damage-panel {
-  background: var(--p-bg-card);
-  border: 1px solid var(--p-border-light);
-  border-radius: var(--r-md);
-  padding: var(--gap-sm);
-}
-.dc20-alt-sheet .stats-panel-heading {
+.dc20-alt-sheet .stats-subsec {
   font-family: var(--font-heading);
   font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--p-ink-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  margin-bottom: 4px;
+  padding: 4px var(--gap-sm) 3px;
+  background: var(--p-bg-card);
+  border-top: 1px solid var(--p-border-faint);
 }
-.dc20-alt-sheet .stats-row {
-  display: flex;
-  align-items: baseline;
-  gap: var(--gap-xs);
-  padding: 2px 0;
+
+.dc20-alt-sheet .stats-tr {
+  display: grid;
+  grid-template-columns: 1fr 80px 80px;
+  align-items: center;
+  padding: 5px var(--gap-sm);
+  border-top: 1px solid var(--p-border-faint);
   font-size: var(--fs-sm);
+  background: var(--p-light);
+  transition: background var(--t-fast);
 }
-.dc20-alt-sheet .stats-row-label {
-  flex: 1;
+.dc20-alt-sheet .stats-tr:hover { background: var(--p-hover); }
+.dc20-alt-sheet .stats-tc-label {
+  color: var(--p-ink);
+}
+.dc20-alt-sheet .stats-tc-indent {
+  padding-left: var(--gap-md);
+}
+.dc20-alt-sheet .stats-tc-life {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--p-ink);
+  text-align: center;
+}
+.dc20-alt-sheet .stats-tc-sess {
   color: var(--p-ink-muted);
+  text-align: center;
   font-size: var(--fs-xs);
 }
-.dc20-alt-sheet .stats-row-life  { font-weight: 600; color: var(--p-ink); min-width: 30px; text-align: right; }
-.dc20-alt-sheet .stats-row-sess  { color: var(--p-ink-muted); font-size: var(--fs-xs); min-width: 30px; }
-.dc20-alt-sheet .stats-row-total .stats-row-life { color: var(--p-accent); }
+.dc20-alt-sheet .stats-row-good .stats-tc-life { color: var(--p-accent); }
+.dc20-alt-sheet .stats-row-bad  .stats-tc-life { color: var(--p-red);    }
+.dc20-alt-sheet .stats-tr-total .stats-tc-life { color: var(--p-accent); }
 
-/* ── Most used item ── */
-.dc20-alt-sheet .stats-most-used {
+/* ── Top Used rollable entry ── */
+.dc20-alt-sheet .stats-tc-rollable {
   display: flex;
   align-items: center;
-  gap: var(--gap-sm);
-  background: var(--p-bg-card);
-  border: 1px solid var(--p-border-light);
-  border-radius: var(--r-md);
-  padding: var(--gap-sm);
+  gap: 6px;
+  overflow: hidden;
 }
-.dc20-alt-sheet .stats-item-img {
-  width: 28px;
-  height: 28px;
+.dc20-alt-sheet .stats-rollable-img {
+  width: 20px;
+  height: 20px;
   border-radius: var(--r-sm);
   flex-shrink: 0;
 }
-.dc20-alt-sheet .stats-item-name {
-  flex: 1;
+.dc20-alt-sheet .stats-rollable-badge {
   font-family: var(--font-heading);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--p-ink);
-}
-.dc20-alt-sheet .stats-item-count {
-  font-family: var(--font-heading);
-  font-size: var(--fs-sm);
+  font-size: 8px;
   font-weight: 700;
-  color: var(--p-accent);
+  text-transform: uppercase;
+  padding: 1px 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  color: #fff;
+  letter-spacing: 0.03em;
+}
+.dc20-alt-sheet .stats-type-item  { background: var(--p-accent); }
+.dc20-alt-sheet .stats-type-skill { background: var(--p-border-light); }
+.dc20-alt-sheet .stats-type-save  { background: var(--p-red); }
+.dc20-alt-sheet .stats-type-check { background: var(--p-ink-muted); }
+.dc20-alt-sheet .stats-rollable-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* ── Reset button ── */
@@ -139,7 +125,7 @@
 .dc20-alt-sheet .stats-reset-btn {
   padding: 4px var(--gap-sm);
   background: transparent;
-  border: 1px solid var(--p-border-light);
+  border: 1px solid var(--p-border-faint);
   border-radius: var(--r-sm);
   font-family: var(--font-body);
   font-size: var(--fs-xs);

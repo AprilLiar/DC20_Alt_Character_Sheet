@@ -1,5 +1,12 @@
 import { getStats, getSessionStats } from '../helpers/stats.mjs';
 
+const SAVE_LABELS = {
+  mig: 'Might Save',
+  agi: 'Agility Save',
+  cha: 'Charisma Save',
+  int: 'Intelligence Save',
+};
+
 function fmtAvg(sum, count) {
   if (!count) return '—';
   return (sum / count).toFixed(1);
@@ -9,21 +16,61 @@ function fmtVal(v) {
   return v === null || v === undefined ? '—' : v;
 }
 
+/** Resolve a roll key like "item:abc", "skill:athletics", "save:mig" to display data. */
+function resolveRollable(actor, key, count) {
+  const colon = key.indexOf(':');
+  const type = colon >= 0 ? key.slice(0, colon) : 'item';
+  const id   = colon >= 0 ? key.slice(colon + 1) : key;
+
+  if (type === 'item') {
+    const item = actor.items.get(id);
+    if (!item) return null;
+    return { key, type: 'item', name: item.name, img: item.img, count };
+  }
+
+  if (type === 'skill') {
+    const skill = actor.system?.skills?.[id] ?? actor.system?.trades?.[id];
+    const name  = skill?.label ?? skill?.name ?? id;
+    return { key, type: 'skill', name, img: null, count };
+  }
+
+  if (type === 'save') {
+    const name = SAVE_LABELS[id] ?? `${id} Save`;
+    return { key, type: 'save', name, img: null, count };
+  }
+
+  // Generic check — use the raw id as label
+  return { key, type: 'check', name: id, img: null, count };
+}
+
+/** Build top-5 rollables sorted by lifetime count, including session counts. */
+function buildTopUsed(actor, lifeStats, sessStats) {
+  // Merge rollCounts with legacy itemUseCounts so old data still appears
+  const merged = { ...lifeStats.rollCounts };
+  for (const [itemId, n] of Object.entries(lifeStats.itemUseCounts ?? {})) {
+    const key = `item:${itemId}`;
+    merged[key] = (merged[key] ?? 0) + n;
+  }
+
+  const sessCounts = sessStats.rollCounts ?? {};
+
+  const sorted = Object.entries(merged)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  const results = [];
+  for (const [key, lifeCount] of sorted) {
+    const resolved = resolveRollable(actor, key, lifeCount);
+    if (resolved) results.push({ ...resolved, sessCount: sessCounts[key] ?? 0 });
+  }
+  return results;
+}
+
 export async function prepareStatistics(actor) {
   const life = getStats(actor);
   const sess = getSessionStats(actor.id);
 
-  // Most-used item: find itemId with highest count
-  let mostUsedItem = null;
-  const counts = life.itemUseCounts ?? {};
-  let topId = null, topCount = 0;
-  for (const [id, n] of Object.entries(counts)) {
-    if (n > topCount) { topCount = n; topId = id; }
-  }
-  if (topId) {
-    const item = actor.items.get(topId);
-    if (item) mostUsedItem = { id: item.id, name: item.name, img: item.img, count: topCount };
-  }
+  const topUsed = buildTopUsed(actor, life, sess);
 
   return {
     // Lifetime roll stats
@@ -55,6 +102,6 @@ export async function prepareStatistics(actor) {
     sessTakenLowest:  fmtVal(sess.damageTaken.lowest),
     sessTakenTotal:   sess.damageTaken.total,
 
-    mostUsedItem,
+    topUsed,
   };
 }
