@@ -80,7 +80,7 @@
   width: 110px;
   height: 26px;
   background: rgba(0, 0, 0, 0.30);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: none;
   border-radius: var(--r-sm);
   overflow: hidden;
   flex-shrink: 0;
@@ -116,7 +116,7 @@
 .dc20-alt-sheet .hstrip-input {
   background: transparent;
   border: none;
-  color: #fff;
+  color: #fff !important;
   font-family: var(--font-body);
   font-size: var(--fs-md);
   font-weight: 700;
@@ -129,8 +129,8 @@
 }
 .dc20-alt-sheet .hstrip-input::-webkit-inner-spin-button,
 .dc20-alt-sheet .hstrip-input::-webkit-outer-spin-button { -webkit-appearance: none; }
-.dc20-alt-sheet .hstrip-input:focus { color: var(--p-gold-light); }
-.dc20-alt-sheet .hstrip-input:disabled { opacity: 0.75; cursor: default; }
+.dc20-alt-sheet .hstrip-input:focus { color: var(--p-gold-light) !important; }
+.dc20-alt-sheet .hstrip-input:disabled { opacity: 1; cursor: default; }
 
 /* ── Quick Access Slots ── */
 .dc20-alt-sheet .hstrip-quick-slots {

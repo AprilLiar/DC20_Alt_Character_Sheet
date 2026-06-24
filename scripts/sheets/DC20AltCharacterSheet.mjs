@@ -248,18 +248,23 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /* -------------------------------------------- */
 
   _prepareSubmitData(event, form, formData) {
+    // Duplicate field names (header + page, or split pane + hidden full page) can produce
+    // arrays when FormDataExtended includes disabled elements. Resolve every array to a
+    // scalar: prefer the value from whichever element triggered the change, else take last.
+    for (const key of Object.keys(formData.object)) {
+      const val = foundry.utils.getProperty(formData.object, key);
+      if (!Array.isArray(val)) continue;
+      const picked = (event?.target?.name === key && event.target.value !== undefined)
+        ? event.target.value
+        : val[val.length - 1] ?? '';
+      foundry.utils.setProperty(formData.object, key, picked);
+    }
+    // Coerce number inputs to integers (array case already resolved above)
     for (const el of form.elements) {
       if (el.type !== 'number' || !el.name) continue;
       const raw = foundry.utils.getProperty(formData.object, el.name);
       if (raw === undefined || raw === null || raw === '') continue;
-      // Duplicate field names (header bar + page both enabled) produce an array.
-      // Prefer the value from the input that triggered the change; fall back to last.
-      const scalar = Array.isArray(raw)
-        ? (event?.target?.name === el.name && event.target.value !== ''
-            ? event.target.value
-            : raw[raw.length - 1])
-        : raw;
-      const n = Number(scalar);
+      const n = Number(raw);
       if (!isNaN(n)) foundry.utils.setProperty(formData.object, el.name, Math.trunc(n));
     }
     return super._prepareSubmitData(event, form, formData);
