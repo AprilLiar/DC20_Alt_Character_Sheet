@@ -212,11 +212,13 @@
           title="{{#if isEquipped}}Unequip{{else}}Equip{{/if}}">
           <i class="fas fa-shield-alt"></i>
         </button>
+        {{#if canAttune}}
         <button type="button" class="ca-btn attune-btn{{#if isAttuned}} active{{/if}}"
           data-action="toggleAttune" data-item-id="{{id}}"
           title="{{#if isAttuned}}Unattune{{else}}Attune{{/if}}">
           <i class="fas fa-gem"></i>
         </button>
+        {{/if}}
         {{#if ../isEditable}}
         <button type="button" class="ca-btn del-btn"
           data-action="deleteItem" data-item-id="{{id}}" title="Delete">

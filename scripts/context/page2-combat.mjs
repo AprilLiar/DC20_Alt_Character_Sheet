@@ -90,6 +90,7 @@ export async function prepareCombat(actor) {
       checkType:    item.system.attackFormula?.checkType ?? item.system.check?.checkKey ?? '',
       isEquipped:   item.system.statuses?.equipped ?? false,
       isAttuned:    item.system.statuses?.attuned  ?? false,
+      canAttune:    !!(item.system.statuses?.requiresAttunement || item.system.requiresAttunement || item.system.attunement?.required || item.system.statuses?.attuned),
     });
   }
 

@@ -1,10 +1,10 @@
 import { getFavourites, getLastUsed } from '../helpers/tracking.mjs';
 
 const ATTR_CONFIG = {
-  mig: { label: 'MIGHT',        abbr: 'MIG' },
-  agi: { label: 'AGILITY',      abbr: 'AGI' },
-  cha: { label: 'CHARISMA',     abbr: 'CHA' },
-  int: { label: 'INTELLIGENCE', abbr: 'INT' },
+  mig: { label: 'Might',        abbr: 'MIG' },
+  agi: { label: 'Agility',      abbr: 'AGI' },
+  cha: { label: 'Charisma',     abbr: 'CHA' },
+  int: { label: 'Intelligence', abbr: 'INT' },
 };
 
 function groupByAttr(items) {
@@ -70,12 +70,17 @@ export async function prepareCore(actor) {
     .filter(Boolean)
     .map(item => ({ id: item.id, name: item.name, img: item.img, type: item.type }));
 
+  const skillGroupsMastered = groupByAttr(skills.filter(s => s.mastery));
+  const tradeGroupsMastered = groupByAttr(trades.filter(t => t.mastery));
+
   return {
     attributes,
     skills,
     trades,
     skillGroups: groupByAttr(skills),
     tradeGroups: groupByAttr(trades),
+    skillGroupsMastered,
+    tradeGroupsMastered,
     languages,
     movement,
     senses,
