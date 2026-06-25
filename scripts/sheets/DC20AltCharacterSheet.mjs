@@ -302,18 +302,18 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     const bioEl = this.element.querySelector('.bio-editor');
     if (bioEl) {
       const save = foundry.utils.debounce(
-        () => this.actor.update({ 'system.details.biography.value': bioEl.value }),
-        600,
+        (v) => this.actor.update({ 'system.details.biography.value': v }),
+        500,
       );
-      bioEl.addEventListener('input', save);
+      bioEl.addEventListener('input', () => save(bioEl.value));
     }
     const notesEl = this.element.querySelector('.campaign-notes-editor');
     if (notesEl) {
       const save = foundry.utils.debounce(
-        () => this.actor.setFlag(MODULE_ID, 'campaignNotes', notesEl.value),
-        600,
+        (v) => this.actor.setFlag(MODULE_ID, 'campaignNotes', v),
+        500,
       );
-      notesEl.addEventListener('input', save);
+      notesEl.addEventListener('input', () => save(notesEl.value));
     }
   }
 
