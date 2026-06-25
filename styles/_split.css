@@ -287,9 +287,13 @@
   flex-direction: column;
   height: 100%;
 }
-.dc20-alt-sheet .split-page.split-core .sc-attrs,
-.dc20-alt-sheet .split-page.split-core .sc-knowledge {
+.dc20-alt-sheet .split-page.split-core .sc-attrs {
   flex-shrink: 0;
+}
+.dc20-alt-sheet .split-page.split-core .sc-knowledge {
+  flex-shrink: 1;
+  max-height: 40%;
+  overflow-y: auto;
 }
 
 .dc20-alt-sheet .sc-attrs {

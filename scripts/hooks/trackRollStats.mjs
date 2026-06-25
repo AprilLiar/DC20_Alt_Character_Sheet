@@ -7,11 +7,20 @@ import {
 
 export function registerRollStatsHook() {
 
-  // Parse d20 face values, damage dealt, and rollable usage from chat messages.
+  // Item use via the dedicated DC20 hook — most reliable signal.
+  // We track items here so the createChatMessage handler doesn't double-count them.
+  Hooks.on('dc20rpg.itemUsed', (item) => {
+    if (item?.actor) recordRollableUse(item.actor, `item:${item.id}`);
+  });
+
+  // Parse d20 face values, damage dealt, and non-item rollable usage from chat messages.
   Hooks.on('createChatMessage', (message) => {
     const actorId = message.speaker?.actor;
     const actor   = actorId ? game.actors.get(actorId) : null;
     if (!actor) return;
+
+    const dc20flags = message.flags?.['dc20rpg'] ?? {};
+    const hasItemFlag = !!(dc20flags.itemId ?? dc20flags.item?.id);
 
     for (const roll of (message.rolls ?? [])) {
       let hasD20 = false;
@@ -28,17 +37,15 @@ export function registerRollStatsHook() {
       }
 
       // Non-d20 roll from an item activation = treat as damage dealt.
-      const dc20flags = message.flags?.['dc20rpg'] ?? {};
-      const hasItemFlag = !!(dc20flags.itemId ?? dc20flags.item?.id);
       if (!hasD20 && hasItemFlag && roll.total > 0) {
         recordDamageDealt(actor, roll.total);
       }
     }
 
-    // Track what was rolled for "Top Used"
-    const dc20flags = message.flags?.['dc20rpg'] ?? {};
+    // Track skill / save / check usage for "Top Used".
+    // Items are already tracked via dc20rpg.itemUsed above; skip them here.
+    if (hasItemFlag) return;
 
-    const itemId   = dc20flags.itemId ?? dc20flags.item?.id;
     // DC20 puts the skill key in several possible fields depending on version
     const skillKey = dc20flags.skillKey ?? dc20flags.skillId ?? dc20flags.skill;
     // Save attribute key (mig / agi / cha / int)
@@ -46,9 +53,7 @@ export function registerRollStatsHook() {
     // Generic check type label
     const checkType = dc20flags.checkType ?? dc20flags.type ?? dc20flags.rollType ?? '';
 
-    if (itemId) {
-      recordRollableUse(actor, `item:${itemId}`);
-    } else if (skillKey) {
+    if (skillKey) {
       recordRollableUse(actor, `skill:${skillKey}`);
     } else if (saveAttr) {
       recordRollableUse(actor, `save:${saveAttr}`);
