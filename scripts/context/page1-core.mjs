@@ -46,10 +46,15 @@ export async function prepareCore(actor) {
     ...lang,
   }));
 
-  // Only non-zero movement values
+  // Only non-zero movement values — try all known DC20 field variants
   const movement = Object.entries(system.movement ?? {})
-    .filter(([, mv]) => (mv.current ?? mv.value ?? 0) > 0)
-    .map(([key, mv]) => ({ key, label: mv.label ?? key, value: mv.current ?? mv.value }));
+    .filter(([, mv]) => typeof mv === 'object' && mv !== null &&
+      (mv.total ?? mv.current ?? mv.value ?? mv.base ?? mv.max ?? 0) > 0)
+    .map(([key, mv]) => ({
+      key,
+      label: mv.label ?? key,
+      value: mv.total ?? mv.current ?? mv.value ?? mv.base ?? mv.max,
+    }));
 
   // Only non-zero senses
   const senses = Object.entries(system.senses ?? {})
