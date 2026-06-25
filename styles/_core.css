@@ -1,0 +1,282 @@
+/* ============================================================
+   DC20 Alt Sheet — Core Tab
+   5-zone portrait-centred layout:
+     north / west / portrait / east / south
+   ============================================================ */
+
+/* Make the core page fill its container as a flex column */
+.dc20-alt-sheet .page-scroll[data-page="core"] {
+  overflow: hidden;
+  padding: var(--gap-sm);
+}
+.dc20-alt-sheet .page-scroll[data-page="core"].active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── 5-zone grid ── */
+.dc20-alt-sheet .core-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-areas:
+    "north   north    north"
+    "west    portrait east"
+    "south   south    south";
+  grid-template-columns: 1fr minmax(130px, 180px) 1fr;
+  grid-template-rows: auto 1fr minmax(calc(100px * var(--dc20-scale)), 28%);
+  gap: var(--gap-sm);
+}
+
+.dc20-alt-sheet .core-north         { grid-area: north; }
+.dc20-alt-sheet .core-west          { grid-area: west; }
+.dc20-alt-sheet .core-portrait-zone { grid-area: portrait; }
+.dc20-alt-sheet .core-east          { grid-area: east; }
+.dc20-alt-sheet .core-south         { grid-area: south; }
+
+/* ════════════════════════════════════════
+   PANEL BASE
+═══════════════════════════════════════ */
+.dc20-alt-sheet .core-panel {
+  border: 1.5px solid var(--p-border-faint);
+  border-radius: var(--r-md);
+  background: var(--p-light);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.dc20-alt-sheet .core-panel-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--gap-sm);
+  min-height: 0;
+}
+.dc20-alt-sheet .core-panel-scroll::-webkit-scrollbar       { width: 4px; }
+.dc20-alt-sheet .core-panel-scroll::-webkit-scrollbar-track { background: transparent; }
+.dc20-alt-sheet .core-panel-scroll::-webkit-scrollbar-thumb {
+  background: var(--p-border-faint);
+  border-radius: 2px;
+}
+
+/* ════════════════════════════════════════
+   NORTH: meta chips + attribute row
+═══════════════════════════════════════ */
+.dc20-alt-sheet .core-north-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xs);
+  padding: var(--gap-sm) var(--gap-sm) var(--gap-xs);
+}
+
+.dc20-alt-sheet .core-meta-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-xs);
+  align-items: center;
+}
+
+.dc20-alt-sheet .core-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--p-bg-card);
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-md);
+  padding: 2px var(--gap-sm);
+  white-space: nowrap;
+}
+.dc20-alt-sheet .chip-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--p-ink-muted);
+}
+.dc20-alt-sheet .chip-val {
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--p-accent);
+}
+.dc20-alt-sheet .chip-unit {
+  font-size: var(--fs-xs);
+  color: var(--p-ink-muted);
+}
+.dc20-alt-sheet .chip-size-select {
+  background: transparent;
+  border: none;
+  color: var(--p-accent);
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  text-transform: capitalize;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.dc20-alt-sheet .chip-size-select:focus { outline: none; }
+
+/* Attribute cards in a horizontal row inside the north panel */
+.dc20-alt-sheet .core-attrs-row {
+  display: flex;
+  gap: var(--gap-sm);
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.dc20-alt-sheet .core-attrs-row::-webkit-scrollbar { display: none; }
+.dc20-alt-sheet .core-attrs-row .attribute-card {
+  flex: 1;
+  min-width: 70px;
+}
+/* Compact the score font so it fits the row without being enormous */
+.dc20-alt-sheet .core-attrs-row .attr-score {
+  font-size: var(--fs-2xl);
+}
+
+/* ════════════════════════════════════════
+   PORTRAIT ZONE (centre column)
+═══════════════════════════════════════ */
+.dc20-alt-sheet .core-portrait-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-xs);
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Decorative portrait frame ──
+   Layered crosshatch texture on a deep-purple directional gradient,
+   wrapped in a triple box-shadow ring. Corner L-brackets with
+   lavender diamond tips sit over the frame face.
+*/
+.dc20-alt-sheet .portrait-frame {
+  position: relative;
+  width: 100%;
+  padding: 10px;
+  border-radius: 3px;
+  background:
+    /* diagonal crosshatch */
+    repeating-linear-gradient(
+      45deg,
+      transparent 0, transparent 5px,
+      rgba(255, 255, 255, 0.025) 5px, rgba(255, 255, 255, 0.025) 6px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0, transparent 5px,
+      rgba(0, 0, 0, 0.035) 5px, rgba(0, 0, 0, 0.035) 6px
+    ),
+    /* depth gradient */
+    linear-gradient(135deg, #4e1258 0%, #2a0035 45%, #3c0056 70%, #4e1258 100%);
+  /* triple ring */
+  border: 1px solid rgba(145, 121, 150, 0.45);
+  box-shadow:
+    0 0 0 1px rgba(196, 144, 209, 0.18),
+    0 0 0 3px var(--p-border),
+    0 0 0 4px rgba(90, 38, 95, 0.35),
+    0 10px 30px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Horizontal inner-mat highlight lines top + bottom */
+.dc20-alt-sheet .portrait-frame::before,
+.dc20-alt-sheet .portrait-frame::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(196, 144, 209, 0.35), transparent);
+  pointer-events: none;
+}
+.dc20-alt-sheet .portrait-frame::before { top: 5px; }
+.dc20-alt-sheet .portrait-frame::after  { bottom: 5px; }
+
+/* Image container — inner mat with inset shadow */
+.dc20-alt-sheet .portrait-frame-inner {
+  display: block;
+  overflow: hidden;
+  border: 1.5px solid rgba(196, 144, 209, 0.4);
+  box-shadow:
+    inset 0 0 14px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(63, 3, 68, 0.55);
+  border-radius: 2px;
+  aspect-ratio: 1;
+  background: var(--p-bg-aged);
+}
+.dc20-alt-sheet .portrait-frame-inner .portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  display: block;
+  margin: 0;
+}
+
+/* Corner ornaments: L-bracket + outer diamond */
+.dc20-alt-sheet .portrait-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  z-index: 1;
+}
+.dc20-alt-sheet .portrait-corner.tl {
+  top: 3px; left: 3px;
+  border-top: 2px solid var(--p-gold-light);
+  border-left: 2px solid var(--p-gold-light);
+}
+.dc20-alt-sheet .portrait-corner.tr {
+  top: 3px; right: 3px;
+  border-top: 2px solid var(--p-gold-light);
+  border-right: 2px solid var(--p-gold-light);
+}
+.dc20-alt-sheet .portrait-corner.bl {
+  bottom: 3px; left: 3px;
+  border-bottom: 2px solid var(--p-gold-light);
+  border-left: 2px solid var(--p-gold-light);
+}
+.dc20-alt-sheet .portrait-corner.br {
+  bottom: 3px; right: 3px;
+  border-bottom: 2px solid var(--p-gold-light);
+  border-right: 2px solid var(--p-gold-light);
+}
+/* Diamond at corner tip */
+.dc20-alt-sheet .portrait-corner::before {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background: var(--p-gold-light);
+  transform: rotate(45deg);
+  box-shadow: 0 0 5px rgba(196, 144, 209, 0.7);
+}
+.dc20-alt-sheet .portrait-corner.tl::before { top: -3px;    left: -3px;   }
+.dc20-alt-sheet .portrait-corner.tr::before { top: -3px;    right: -3px;  }
+.dc20-alt-sheet .portrait-corner.bl::before { bottom: -3px; left: -3px;   }
+.dc20-alt-sheet .portrait-corner.br::before { bottom: -3px; right: -3px;  }
+
+/* Character name + meta below portrait */
+.dc20-alt-sheet .core-portrait-zone .identity-block {
+  width: 100%;
+  text-align: center;
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+/* ════════════════════════════════════════
+   SOUTH ROW: Favourites | Last Used (50/50)
+═══════════════════════════════════════ */
+.dc20-alt-sheet .core-south {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-sm);
+  min-height: 0;
+}

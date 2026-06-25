@@ -62,15 +62,6 @@
   border-radius: 3px;
 }
 
-/* ── Core page 3-column layout ── */
-.dc20-alt-sheet .core-layout {
-  display: grid;
-  grid-template-columns: 220px 1fr 160px;
-  gap: var(--gap-lg);
-  min-height: 100%;
-}
-.dc20-alt-sheet .core-col { min-width: 0; }
-
 /* ── Combat page: upper split ── */
 .dc20-alt-sheet .combat-upper {
   display: grid;
