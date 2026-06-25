@@ -801,7 +801,11 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
       slot.addEventListener('contextmenu', e => {
         e.preventDefault();
-        this._clearQuickSlot(idx);
+        if (slot.classList.contains('filled')) {
+          this._clearQuickSlot(idx);
+        } else {
+          this._removeQuickSlot(idx);
+        }
       });
 
       slot.addEventListener('dragover', e => {
@@ -816,6 +820,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         this._dropOnQuickSlot(idx, e.dataTransfer);
       });
     });
+
+    el.querySelector('.qs-add-btn')?.addEventListener('click', () => this._addQuickSlot());
   }
 
   async _activateQuickSlot(idx) {
@@ -830,9 +836,27 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   }
 
   async _clearQuickSlot(idx) {
-    const saved = this.actor.flags?.[MODULE_ID]?.quickSlots ?? [];
-    const slots = Array.from({ length: 6 }, (_, i) => saved[i] ?? null);
-    slots[idx] = null;
+    const slots = [...(this.actor.flags?.[MODULE_ID]?.quickSlots ?? [])];
+    if (idx < slots.length) slots[idx] = null;
+    await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
+    this.render();
+  }
+
+  async _removeQuickSlot(idx) {
+    const slots = [...(this.actor.flags?.[MODULE_ID]?.quickSlots ?? [])];
+    slots.splice(idx, 1);
+    await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
+    this.render();
+  }
+
+  async _addQuickSlot() {
+    const slots = [...(this.actor.flags?.[MODULE_ID]?.quickSlots ?? [])];
+    if (slots.length === 0) {
+      // Re-init to 4 empty if slots were somehow cleared entirely
+      slots.push(null, null, null, null);
+    } else {
+      slots.push(null);
+    }
     await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
     this.render();
   }
@@ -864,8 +888,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     }
 
     if (!entry) return;
-    const saved = this.actor.flags?.[MODULE_ID]?.quickSlots ?? [];
-    const slots = Array.from({ length: 6 }, (_, i) => saved[i] ?? null);
+    const slots = [...(this.actor.flags?.[MODULE_ID]?.quickSlots ?? [])];
+    while (slots.length <= idx) slots.push(null);
     slots[idx] = entry;
     await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
     this.render();

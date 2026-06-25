@@ -11,6 +11,7 @@ export async function prepareInventory(actor) {
       quantity: item.system.quantity ?? 1,
       weight:   item.system.weight ?? 0,
       equipped: item.system.statuses?.equipped ?? false,
+      attuned:  item.system.statuses?.attuned  ?? false,
       rarity:   item.system.rarity ?? '',
     };
     switch (item.type) {
