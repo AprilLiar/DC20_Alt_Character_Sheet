@@ -25,6 +25,6 @@ export function getLastUsed(actor) {
 
 export async function recordItemUse(actor, itemId) {
   const current = getLastUsed(actor);
-  const updated = [itemId, ...current.filter(id => id !== itemId)].slice(0, 3);
+  const updated = [itemId, ...current.filter(id => id !== itemId)].slice(0, 10);
   await actor.setFlag(MODULE_ID, 'lastUsed', updated);
 }

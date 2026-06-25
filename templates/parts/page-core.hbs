@@ -1,181 +1,195 @@
 <section class="page-scroll" data-page="core">
-  <div class="core-layout">
+  <div class="core-grid">
 
-    {{!-- LEFT: 2×2 Attribute Cards + Movement/Senses --}}
-    <div class="core-col col-attributes">
-      <h3 class="section-heading">Attributes</h3>
-      <div class="attributes-grid">
-        {{#each attributes}}
-        <div class="attribute-card" data-attr="{{key}}">
-          <div class="attr-name">{{label}}</div>
-          <div class="attr-score">{{signedNum check}}</div>
-          <div class="attr-actions">
-            <button type="button" class="attr-btn check-btn rollable"
-              data-action="rollAttribute" data-attr="{{key}}"
-              title="Roll Attribute Check">
-              <i class="fas fa-dice-d20"></i>
-              <span>{{signedNum check}}</span>
-            </button>
-            <button type="button" class="attr-btn save-btn rollable"
-              data-action="rollSave" data-attr="{{key}}"
-              title="Roll Saving Throw">
-              <i class="fas fa-shield-alt"></i>
-              <span>{{signedNum save}}</span>
-            </button>
+    {{!-- NORTH: Meta stats + Attribute cards --}}
+    <div class="core-panel core-north">
+      <div class="core-north-content">
+        <div class="core-meta-chips">
+          {{#if details.level}}
+          <div class="core-chip">
+            <span class="chip-label">LVL</span>
+            <span class="chip-val">{{details.level}}</span>
           </div>
-        </div>
-        {{/each}}
-      </div>
-
-      {{!-- Movement --}}
-      {{#if movement.length}}
-        <h4 class="subsection-heading mt">Movement</h4>
-        <div class="mv-list">
+          {{/if}}
+          {{#if details.combatMastery}}
+          <div class="core-chip">
+            <span class="chip-label">CM</span>
+            <span class="chip-val">+{{details.combatMastery}}</span>
+          </div>
+          {{/if}}
+          <div class="core-chip">
+            <span class="chip-label">SIZE</span>
+            {{#if isEditable}}
+              <select class="chip-size-select" name="system.size.size">
+                <option value="tiny"       {{#if (eq size "tiny")}}selected{{/if}}>Tiny</option>
+                <option value="small"      {{#if (eq size "small")}}selected{{/if}}>Small</option>
+                <option value="medium"     {{#if (eq size "medium")}}selected{{/if}}>Medium</option>
+                <option value="large"      {{#if (eq size "large")}}selected{{/if}}>Large</option>
+                <option value="huge"       {{#if (eq size "huge")}}selected{{/if}}>Huge</option>
+                <option value="gargantuan" {{#if (eq size "gargantuan")}}selected{{/if}}>Gargantuan</option>
+                <option value="colossal"   {{#if (eq size "colossal")}}selected{{/if}}>Colossal</option>
+                <option value="titanic"    {{#if (eq size "titanic")}}selected{{/if}}>Titanic</option>
+              </select>
+            {{else}}
+              <span class="chip-val">{{#if size}}{{size}}{{else}}—{{/if}}</span>
+            {{/if}}
+          </div>
           {{#each movement}}
-          <div class="mv-entry">
-            <span class="mv-type">{{label}}</span>
-            <span class="mv-val">{{value}}</span>
+          <div class="core-chip">
+            <span class="chip-label">{{label}}</span>
+            <span class="chip-val">{{value}}<span class="chip-unit"> ft</span></span>
           </div>
           {{/each}}
-        </div>
-      {{/if}}
-
-      {{!-- Senses --}}
-      {{#if senses.length}}
-        <h4 class="subsection-heading mt">Senses</h4>
-        <div class="mv-list">
           {{#each senses}}
-          <div class="mv-entry">
-            <span class="mv-type">{{label}}</span>
-            <span class="mv-val">{{range}}<span class="mv-unit"> ft</span></span>
+          <div class="core-chip">
+            <span class="chip-label">{{label}}</span>
+            <span class="chip-val">{{range}}<span class="chip-unit"> ft</span></span>
           </div>
           {{/each}}
         </div>
-      {{/if}}
 
-      {{!-- Size --}}
-      <div class="mv-entry size-entry mt">
-        <span class="mv-type">Size</span>
-        {{#if isEditable}}
-          <select class="size-select" name="system.size.size">
-            <option value="tiny"       {{#if (eq size "tiny")}}selected{{/if}}>Tiny</option>
-            <option value="small"      {{#if (eq size "small")}}selected{{/if}}>Small</option>
-            <option value="medium"     {{#if (eq size "medium")}}selected{{/if}}>Medium</option>
-            <option value="large"      {{#if (eq size "large")}}selected{{/if}}>Large</option>
-            <option value="huge"       {{#if (eq size "huge")}}selected{{/if}}>Huge</option>
-            <option value="gargantuan" {{#if (eq size "gargantuan")}}selected{{/if}}>Gargantuan</option>
-            <option value="colossal"   {{#if (eq size "colossal")}}selected{{/if}}>Colossal</option>
-            <option value="titanic"    {{#if (eq size "titanic")}}selected{{/if}}>Titanic</option>
-          </select>
-        {{else}}
-          <span class="mv-val size-val">{{#if size}}{{size}}{{else}}—{{/if}}</span>
-        {{/if}}
+        <div class="core-attrs-row">
+          {{#each attributes}}
+          <div class="attribute-card" data-attr="{{key}}">
+            <div class="attr-name">{{label}}</div>
+            <div class="attr-score">{{signedNum check}}</div>
+            <div class="attr-actions">
+              <button type="button" class="attr-btn check-btn rollable"
+                data-action="rollAttribute" data-attr="{{key}}" title="Roll Attribute Check">
+                <i class="fas fa-dice-d20"></i><span>{{signedNum check}}</span>
+              </button>
+              <button type="button" class="attr-btn save-btn rollable"
+                data-action="rollSave" data-attr="{{key}}" title="Roll Saving Throw">
+                <i class="fas fa-shield-alt"></i><span>{{signedNum save}}</span>
+              </button>
+            </div>
+          </div>
+          {{/each}}
+        </div>
       </div>
     </div>
 
-    {{!-- MIDDLE: Skills (grouped by attribute) + Trades + Languages --}}
-    <div class="core-col col-skills">
-      <h3 class="section-heading">Skills</h3>
-      {{#each skillGroups}}
-        <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
-        <div class="skills-list">
-          {{#each items}}
-          <div class="skill-row" data-skill="{{key}}">
-            <span class="skill-profs">{{{profDots mastery 5}}}</span>
-            <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">{{label}}</span>
-            <span class="skill-bonus rollable" data-action="rollSkill" data-skill="{{key}}">{{signedNum bonus}}</span>
-          </div>
-          {{/each}}
-        </div>
-      {{else}}
-        <p class="empty-note">No skills defined.</p>
-      {{/each}}
-
-      {{#if tradeGroups.length}}
-        <h3 class="section-heading mt">Trades</h3>
-        {{#each tradeGroups}}
+    {{!-- WEST: Skills + Languages --}}
+    <div class="core-panel core-west">
+      <div class="core-panel-scroll">
+        <h3 class="section-heading">Skills</h3>
+        {{#each skillGroups}}
           <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
           <div class="skills-list">
             {{#each items}}
-            <div class="skill-row" data-trade="{{key}}">
+            <div class="skill-row" data-skill="{{key}}">
               <span class="skill-profs">{{{profDots mastery 5}}}</span>
-              <span class="skill-name rollable" data-action="rollTrade" data-trade="{{key}}">{{label}}</span>
-              <span class="skill-bonus rollable" data-action="rollTrade" data-trade="{{key}}">{{signedNum bonus}}</span>
+              <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">{{label}}</span>
+              <span class="skill-bonus rollable" data-action="rollSkill" data-skill="{{key}}">{{signedNum bonus}}</span>
             </div>
             {{/each}}
           </div>
+        {{else}}
+          <p class="empty-note">No skills defined.</p>
         {{/each}}
-      {{/if}}
 
-      {{#if languages.length}}
-        <h3 class="section-heading mt">Languages</h3>
-        <div class="skills-list">
-          {{#each languages}}
-          <div class="skill-row lang-row">
-            <span class="skill-profs">{{{profDots mastery 2}}}</span>
-            <span class="skill-name">{{label}}</span>
+        {{#if languages.length}}
+          <h3 class="section-heading mt">Languages</h3>
+          <div class="skills-list">
+            {{#each languages}}
+            <div class="skill-row lang-row">
+              <span class="skill-profs">{{{profDots mastery 2}}}</span>
+              <span class="skill-name">{{label}}</span>
+            </div>
+            {{/each}}
           </div>
-          {{/each}}
-        </div>
-      {{/if}}
+        {{/if}}
+      </div>
     </div>
 
-    {{!-- RIGHT: Portrait + Identity + Favourites + Last Used --}}
-    <div class="core-col col-identity">
-
-      <div class="portrait-wrap">
-        <img class="portrait-img" src="{{portrait}}" alt="{{actorName}}"
-          {{#if isEditable}}data-edit="img"{{/if}}>
+    {{!-- CENTER: Portrait (the centrepiece) --}}
+    <div class="core-portrait-zone">
+      <div class="portrait-frame">
+        <div class="portrait-frame-inner">
+          <img class="portrait-img" src="{{portrait}}" alt="{{actorName}}"
+            {{#if isEditable}}data-edit="img"{{/if}}>
+        </div>
+        <span class="portrait-corner tl" aria-hidden="true"></span>
+        <span class="portrait-corner tr" aria-hidden="true"></span>
+        <span class="portrait-corner bl" aria-hidden="true"></span>
+        <span class="portrait-corner br" aria-hidden="true"></span>
       </div>
-
       <div class="identity-block">
         <div class="char-name">{{actorName}}</div>
         <div class="char-meta">
-          {{#if details.level}}<span class="char-meta-item">Level {{details.level}}</span>{{/if}}
-          {{#if details.combatMastery}}<span class="char-meta-item char-cm">CM +{{details.combatMastery}}</span>{{/if}}
           {{#if details.class.name}}<span class="char-meta-item">{{details.class.name}}</span>{{/if}}
-          {{#if details.subclass.name}}<span class="char-meta-item muted">{{details.subclass.name}}</span>{{/if}}
+          {{#if details.subclass.name}}<span class="char-meta-item muted"> · {{details.subclass.name}}</span>{{/if}}
           {{#if details.ancestry.name}}<span class="char-meta-item">{{details.ancestry.name}}</span>{{/if}}
-          {{#if details.background.name}}<span class="char-meta-item muted">{{details.background.name}}</span>{{/if}}
+          {{#if details.background.name}}<span class="char-meta-item muted"> · {{details.background.name}}</span>{{/if}}
+        </div>
+      </div>
+    </div>
+
+    {{!-- EAST: Trades --}}
+    <div class="core-panel core-east">
+      <div class="core-panel-scroll">
+        {{#if tradeGroups.length}}
+          <h3 class="section-heading">Trades</h3>
+          {{#each tradeGroups}}
+            <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
+            <div class="skills-list">
+              {{#each items}}
+              <div class="skill-row" data-trade="{{key}}">
+                <span class="skill-profs">{{{profDots mastery 5}}}</span>
+                <span class="skill-name rollable" data-action="rollTrade" data-trade="{{key}}">{{label}}</span>
+                <span class="skill-bonus rollable" data-action="rollTrade" data-trade="{{key}}">{{signedNum bonus}}</span>
+              </div>
+              {{/each}}
+            </div>
+          {{/each}}
+        {{else}}
+          <p class="empty-note">No trades defined.</p>
+        {{/if}}
+      </div>
+    </div>
+
+    {{!-- SOUTH: Favourites (left) | Last Used (right) --}}
+    <div class="core-south">
+
+      <div class="core-panel">
+        <div class="core-panel-scroll">
+          <h3 class="section-heading">Favourites</h3>
+          {{#if favourites.length}}
+            <ul class="qol-list">
+              {{#each favourites}}
+              <li class="qol-row" data-item-id="{{id}}">
+                <img class="qol-img" src="{{img}}" alt="{{name}}"
+                  data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+                <span class="qol-name">{{name}}</span>
+              </li>
+              {{/each}}
+            </ul>
+          {{else}}
+            <p class="empty-note">Right-click items to pin them here.</p>
+          {{/if}}
         </div>
       </div>
 
-      {{!-- Favourites --}}
-      <div class="qol-section">
-        <h4 class="subsection-heading">Favourites</h4>
-        {{#if favourites.length}}
-          <ul class="qol-list">
-            {{#each favourites}}
-            <li class="qol-row" data-item-id="{{id}}">
-              <img class="qol-img" src="{{img}}" alt="{{name}}"
-                data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
-              <span class="qol-name">{{name}}</span>
-            </li>
-            {{/each}}
-          </ul>
-        {{else}}
-          <p class="empty-note">Right-click items to pin them here.</p>
-        {{/if}}
-      </div>
-
-      {{!-- Last 3 Used --}}
-      <div class="qol-section">
-        <h4 class="subsection-heading">Last Used</h4>
-        {{#if lastUsed.length}}
-          <ul class="qol-list">
-            {{#each lastUsed}}
-            <li class="qol-row" data-item-id="{{id}}">
-              <img class="qol-img" src="{{img}}" alt="{{name}}"
-                data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
-              <span class="qol-name">{{name}}</span>
-            </li>
-            {{/each}}
-          </ul>
-        {{else}}
-          <p class="empty-note">Recently used items appear here.</p>
-        {{/if}}
+      <div class="core-panel">
+        <div class="core-panel-scroll">
+          <h3 class="section-heading">Last Used</h3>
+          {{#if lastUsed.length}}
+            <ul class="qol-list">
+              {{#each lastUsed}}
+              <li class="qol-row" data-item-id="{{id}}">
+                <img class="qol-img" src="{{img}}" alt="{{name}}"
+                  data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+                <span class="qol-name">{{name}}</span>
+              </li>
+              {{/each}}
+            </ul>
+          {{else}}
+            <p class="empty-note">Recently used items appear here.</p>
+          {{/if}}
+        </div>
       </div>
 
     </div>
+
   </div>
 </section>
