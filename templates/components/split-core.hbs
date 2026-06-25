@@ -17,7 +17,7 @@
     {{/each}}
   </div>
 
-  {{!-- Knowledge half: Skills + Trades + Languages in rounded panels --}}
+  {{!-- Knowledge half: Skills + Trades in rounded panels --}}
   <div class="sc-knowledge">
 
     {{!-- Skills panel: only proficient (mastery > 0), grouped by attribute --}}
@@ -38,12 +38,11 @@
       </div>
     </div>
 
-    {{!-- Trades + Languages side by side --}}
-    {{#if (or tradeGroupsMastered.length languages.length)}}
-    <div class="sc-panel-row">
-      {{#if tradeGroupsMastered.length}}
-      <div class="sc-panel">
-        <div class="sc-panel-heading">Trades</div>
+    {{!-- Trades panel --}}
+    {{#if tradeGroupsMastered.length}}
+    <div class="sc-panel">
+      <div class="sc-panel-heading">Trades</div>
+      <div class="sc-skill-grid">
         {{#each tradeGroupsMastered}}
         {{#if items.length}}
         <div class="sc-attr-group-label">{{label}}</div>
@@ -56,17 +55,6 @@
         {{/if}}
         {{/each}}
       </div>
-      {{/if}}
-      {{#if languages.length}}
-      <div class="sc-panel">
-        <div class="sc-panel-heading">Languages</div>
-        {{#each languages}}
-        <div class="sc-skill-row rollable" data-action="rollLanguage" data-language="{{key}}" title="{{label}}">
-          <span class="sc-skill-name">{{label}}</span>
-        </div>
-        {{/each}}
-      </div>
-      {{/if}}
     </div>
     {{/if}}
 

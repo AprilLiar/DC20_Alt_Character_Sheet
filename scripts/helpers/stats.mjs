@@ -17,16 +17,48 @@ function _sessionFor(actorId) {
   return _session.get(actorId);
 }
 
+/* ── Batched flag writes ──
+   Multiple recorders fire in the same synchronous turn (e.g. d20 roll +
+   item-use in one chat message). Without batching, every async setFlag call
+   reads the same snapshot and the last writer clobbers the others' changes.
+   Instead, we accumulate mutation functions and flush them in one setFlag
+   call per actor at the end of the current microtask queue.
+*/
+const _pending = new Map(); // actorId → mutate-fn[]
+let _flushQueued = false;
+
+function _flushAll() {
+  _flushQueued = false;
+  for (const [actorId, mutations] of _pending) {
+    const actor = game.actors?.get(actorId);
+    if (actor) {
+      const s = getStats(actor);
+      for (const fn of mutations) fn(s);
+      actor.setFlag(MODULE_ID, 'stats', s);
+    }
+  }
+  _pending.clear();
+}
+
+function _queue(actor, mutateFn) {
+  if (!_pending.has(actor.id)) _pending.set(actor.id, []);
+  _pending.get(actor.id).push(mutateFn);
+  if (!_flushQueued) {
+    _flushQueued = true;
+    Promise.resolve().then(_flushAll);
+  }
+}
+
 /* ── Flag helpers ── */
 
 export function getStats(actor) {
   const s = actor.flags?.[MODULE_ID]?.stats ?? {};
   return {
-    d20:          { count: 0, sum: 0, nat20: 0, nat1: 0, ...(s.d20 ?? {}) },
-    damageDealt:  { count: 0, total: 0, highest: null, lowest: null, ...(s.damageDealt ?? {}) },
-    damageTaken:  { count: 0, total: 0, highest: null, lowest: null, ...(s.damageTaken ?? {}) },
-    rollCounts:   s.rollCounts ?? {},
-    itemUseCounts: s.itemUseCounts ?? {},  // legacy field — migrated on read in context
+    d20:           { count: 0, sum: 0, nat20: 0, nat1: 0,                          ...(s.d20          ?? {}) },
+    damageDealt:   { count: 0, total: 0, highest: null, lowest: null,               ...(s.damageDealt  ?? {}) },
+    damageTaken:   { count: 0, total: 0, highest: null, lowest: null,               ...(s.damageTaken  ?? {}) },
+    rollCounts:    s.rollCounts    ?? {},
+    itemUseCounts: s.itemUseCounts ?? {},  // legacy — merged in context
   };
 }
 
@@ -35,19 +67,19 @@ export function getSessionStats(actorId) {
 }
 
 export async function resetLifetimeStats(actor) {
+  _pending.delete(actor.id); // discard any queued, unsaved mutations
   await actor.setFlag(MODULE_ID, 'stats', null);
 }
 
 /* ── Recorders ── */
 
-export async function recordD20Roll(actor, faceValue) {
-  const s = getStats(actor);
-  s.d20.count += 1;
-  s.d20.sum   += faceValue;
-  if (faceValue === 20) s.d20.nat20 += 1;
-  if (faceValue === 1)  s.d20.nat1  += 1;
-  await actor.setFlag(MODULE_ID, 'stats', s);
-
+export function recordD20Roll(actor, faceValue) {
+  _queue(actor, (s) => {
+    s.d20.count += 1;
+    s.d20.sum   += faceValue;
+    if (faceValue === 20) s.d20.nat20 += 1;
+    if (faceValue === 1)  s.d20.nat1  += 1;
+  });
   const sess = _sessionFor(actor.id);
   sess.d20.count += 1;
   sess.d20.sum   += faceValue;
@@ -55,49 +87,45 @@ export async function recordD20Roll(actor, faceValue) {
   if (faceValue === 1)  sess.d20.nat1  += 1;
 }
 
-export async function recordDamageDealt(actor, amount) {
+export function recordDamageDealt(actor, amount) {
   if (typeof amount !== 'number' || amount <= 0) return;
-  const s = getStats(actor);
-  s.damageDealt.count  += 1;
-  s.damageDealt.total  += amount;
-  if (s.damageDealt.highest === null || amount > s.damageDealt.highest) s.damageDealt.highest = amount;
-  if (s.damageDealt.lowest  === null || amount < s.damageDealt.lowest)  s.damageDealt.lowest  = amount;
-  await actor.setFlag(MODULE_ID, 'stats', s);
-
+  _queue(actor, (s) => {
+    s.damageDealt.count += 1;
+    s.damageDealt.total += amount;
+    if (s.damageDealt.highest === null || amount > s.damageDealt.highest) s.damageDealt.highest = amount;
+    if (s.damageDealt.lowest  === null || amount < s.damageDealt.lowest)  s.damageDealt.lowest  = amount;
+  });
   const sess = _sessionFor(actor.id);
-  sess.damageDealt.count  += 1;
-  sess.damageDealt.total  += amount;
+  sess.damageDealt.count += 1;
+  sess.damageDealt.total += amount;
   if (sess.damageDealt.highest === null || amount > sess.damageDealt.highest) sess.damageDealt.highest = amount;
   if (sess.damageDealt.lowest  === null || amount < sess.damageDealt.lowest)  sess.damageDealt.lowest  = amount;
 }
 
-export async function recordDamageTaken(actor, amount) {
+export function recordDamageTaken(actor, amount) {
   if (typeof amount !== 'number' || amount <= 0) return;
-  const s = getStats(actor);
-  s.damageTaken.count  += 1;
-  s.damageTaken.total  += amount;
-  if (s.damageTaken.highest === null || amount > s.damageTaken.highest) s.damageTaken.highest = amount;
-  if (s.damageTaken.lowest  === null || amount < s.damageTaken.lowest)  s.damageTaken.lowest  = amount;
-  await actor.setFlag(MODULE_ID, 'stats', s);
-
+  _queue(actor, (s) => {
+    s.damageTaken.count += 1;
+    s.damageTaken.total += amount;
+    if (s.damageTaken.highest === null || amount > s.damageTaken.highest) s.damageTaken.highest = amount;
+    if (s.damageTaken.lowest  === null || amount < s.damageTaken.lowest)  s.damageTaken.lowest  = amount;
+  });
   const sess = _sessionFor(actor.id);
-  sess.damageTaken.count  += 1;
-  sess.damageTaken.total  += amount;
+  sess.damageTaken.count += 1;
+  sess.damageTaken.total += amount;
   if (sess.damageTaken.highest === null || amount > sess.damageTaken.highest) sess.damageTaken.highest = amount;
   if (sess.damageTaken.lowest  === null || amount < sess.damageTaken.lowest)  sess.damageTaken.lowest  = amount;
 }
 
-/** Record usage of any rollable by a composite key (e.g. "item:abc", "skill:athletics"). */
-export async function recordRollableUse(actor, rollKey) {
-  const s = getStats(actor);
-  s.rollCounts[rollKey] = (s.rollCounts[rollKey] ?? 0) + 1;
-  await actor.setFlag(MODULE_ID, 'stats', s);
-
+export function recordRollableUse(actor, rollKey) {
+  _queue(actor, (s) => {
+    s.rollCounts[rollKey] = (s.rollCounts[rollKey] ?? 0) + 1;
+  });
   const sess = _sessionFor(actor.id);
   sess.rollCounts[rollKey] = (sess.rollCounts[rollKey] ?? 0) + 1;
 }
 
 /** @deprecated Use recordRollableUse(actor, `item:${itemId}`) instead. */
-export async function recordItemUseForStats(actor, itemId) {
+export function recordItemUseForStats(actor, itemId) {
   return recordRollableUse(actor, `item:${itemId}`);
 }
