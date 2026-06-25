@@ -90,10 +90,10 @@
   gap: 2px;
 }
 
-/* dots scale with font; column = calc(32px * scale) */
+/* pip column = 5 pips × 80% fs-md + 4 × 1px gaps; bonus column = ~2× fs-md */
 .dc20-alt-sheet .skill-row {
   display: grid;
-  grid-template-columns: calc(32px * var(--dc20-scale)) 1fr calc(32px * var(--dc20-scale));
+  grid-template-columns: calc(var(--fs-md) * 4 + 4px) 1fr calc(var(--fs-md) * 2);
   align-items: center;
   gap: var(--gap-xs);
   padding: 2px 4px;
@@ -103,7 +103,7 @@
 }
 .dc20-alt-sheet .skill-row:last-child  { border-bottom: none; }
 .dc20-alt-sheet .skill-row:hover       { background: var(--p-hover); }
-.dc20-alt-sheet .lang-row { grid-template-columns: calc(32px * var(--dc20-scale)) 1fr; }
+.dc20-alt-sheet .lang-row { grid-template-columns: calc(var(--fs-md) * 1.6 + 1px) 1fr; }
 
 .dc20-alt-sheet .skill-profs {
   display: flex;
@@ -111,8 +111,8 @@
   align-items: center;
 }
 .dc20-alt-sheet .prof-dot {
-  width: calc(5px * var(--dc20-scale));
-  height: calc(5px * var(--dc20-scale));
+  width:  calc(var(--fs-md) * 0.8);
+  height: calc(var(--fs-md) * 0.8);
   border-radius: 50%;
   border: 1px solid var(--p-border-light);
   background: transparent;
@@ -487,6 +487,8 @@
 .dc20-alt-sheet .combat-action-row:last-child  { border-bottom: none; }
 .dc20-alt-sheet .combat-action-row:hover        { background: var(--p-hover); }
 .dc20-alt-sheet .combat-action-row.hidden       { display: none; }
+.dc20-alt-sheet .combat-action-row.equipped     { background: rgba(45, 130, 45, 0.08); border-left: 2px solid var(--c-grit-light); }
+.dc20-alt-sheet .combat-action-row.equipped.attuned { background: rgba(120, 60, 170, 0.10); border-left: 2px solid #9966cc; }
 
 .dc20-alt-sheet .ca-img {
   width: 24px;
@@ -671,7 +673,8 @@
 }
 .dc20-alt-sheet .item-row:last-child { border-bottom: none; }
 .dc20-alt-sheet .item-row:hover       { background: var(--p-hover); border-color: var(--p-border-faint); }
-.dc20-alt-sheet .item-row.equipped    { border-left: 3px solid var(--c-grit-light); }
+.dc20-alt-sheet .item-row.equipped    { background: rgba(45, 130, 45, 0.10); border-left: 3px solid var(--c-grit-light); }
+.dc20-alt-sheet .item-row.equipped.attuned { background: rgba(120, 60, 170, 0.12); border-left: 3px solid #9966cc; }
 
 .dc20-alt-sheet .item-img {
   width: 24px;

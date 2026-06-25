@@ -96,11 +96,10 @@
         {{#if abbr}}<span class="qs-abbr" title="{{label}}">{{abbr}}</span>
         {{else if img}}<img class="qs-img" src="{{img}}" alt="{{label}}" title="{{label}}">
         {{else}}<span class="qs-label" title="{{label}}">{{label}}</span>{{/if}}
-      {{else}}
-        <span class="qs-empty-hint">+</span>
       {{/if}}
     </div>
     {{/each}}
+    <button type="button" class="qs-add-btn" title="Add quick slot">+</button>
   </div>
 
 </div>

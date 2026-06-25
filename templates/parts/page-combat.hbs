@@ -46,7 +46,7 @@
   {{!-- Combat Actions --}}
   <div class="combat-actions">
     {{#each combatActions}}
-    <div class="combat-action-row" data-item-id="{{id}}" data-filter-type="{{filterType}}">
+    <div class="combat-action-row{{#if isEquipped}} equipped{{/if}}{{#if isAttuned}} attuned{{/if}}" data-item-id="{{id}}" data-filter-type="{{filterType}}">
       <img class="ca-img" src="{{img}}" alt="{{name}}"
         data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
       <span class="ca-name">{{name}}</span>

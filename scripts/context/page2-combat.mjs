@@ -1,3 +1,20 @@
+/** Broad check for whether an item requires attunement, covering DC20 property naming conventions. */
+function _requiresAttunement(item) {
+  const s = item.system;
+  const p = s.properties ?? {};
+  return !!(
+    s.statuses?.requiresAttunement ||
+    s.statuses?.attuned ||          // already attuned → always show button
+    s.requiresAttunement ||
+    s.attunement?.required ||
+    s.attunement?.requiresAttunement ||
+    s.attunement === true ||
+    p.att || p.attunement || p.requiresAttunement ||
+    s.requirements?.attunement ||
+    s.traits?.attunement
+  );
+}
+
 // Maps item types to the filter tab they belong to
 const TYPE_TO_FILTER = {
   weapon:      'weapon',
@@ -90,7 +107,7 @@ export async function prepareCombat(actor) {
       checkType:    item.system.attackFormula?.checkType ?? item.system.check?.checkKey ?? '',
       isEquipped:   item.system.statuses?.equipped ?? false,
       isAttuned:    item.system.statuses?.attuned  ?? false,
-      canAttune:    !!(item.system.statuses?.requiresAttunement || item.system.requiresAttunement || item.system.attunement?.required || item.system.statuses?.attuned),
+      canAttune:    _requiresAttunement(item),
     });
   }
 
