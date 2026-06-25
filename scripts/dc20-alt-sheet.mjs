@@ -2,12 +2,14 @@ import { DC20AltCharacterSheet } from './sheets/DC20AltCharacterSheet.mjs';
 import { registerHandlebarsHelpers } from './helpers/handlebars.mjs';
 import { registerItemUseHook } from './hooks/trackItemUse.mjs';
 import { registerRollStatsHook } from './hooks/trackRollStats.mjs';
+import { registerSettings, applySheetSettings } from './settings.mjs';
 
 import { MODULE_ID } from './constants.mjs';
 export { MODULE_ID };
 
 Hooks.once('init', () => {
   registerHandlebarsHelpers();
+  registerSettings();
 
   foundry.documents.collections.Actors.registerSheet(MODULE_ID, DC20AltCharacterSheet, {
     types: ['character'],
@@ -32,4 +34,5 @@ Hooks.once('init', () => {
 Hooks.once('ready', () => {
   registerItemUseHook();
   registerRollStatsHook();
+  applySheetSettings();
 });
