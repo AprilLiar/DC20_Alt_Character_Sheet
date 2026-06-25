@@ -12,6 +12,8 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--gap-sm);
   margin-bottom: var(--gap-sm);
+  overflow: hidden;
+  min-width: 0;
 }
 
 .dc20-alt-sheet .attribute-card {
@@ -22,6 +24,9 @@
   padding: var(--gap-sm) var(--gap-xs);
   text-align: center;
   transition: border-color var(--t-fast), background var(--t-fast);
+  aspect-ratio: 1;
+  overflow: hidden;
+  min-width: 0;
 }
 .dc20-alt-sheet .attribute-card:hover { border-color: var(--p-border); }
 
@@ -37,7 +42,7 @@
 
 .dc20-alt-sheet .attr-score {
   font-family: var(--font-heading);
-  font-size: var(--fs-3xl);
+  font-size: min(var(--fs-3xl), 36px);
   font-weight: 700;
   color: var(--p-accent);
   line-height: 1;
