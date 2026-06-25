@@ -294,6 +294,26 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindSplitDivider();
     this._registerContextMenu();
     this._bindQuickSlots();
+    this._bindBiographyAutoSave();
+  }
+
+  _bindBiographyAutoSave() {
+    const bioEl = this.element.querySelector('.bio-editor');
+    if (bioEl) {
+      const save = foundry.utils.debounce(
+        () => this.actor.update({ 'system.details.biography.value': bioEl.value }),
+        600,
+      );
+      bioEl.addEventListener('input', save);
+    }
+    const notesEl = this.element.querySelector('.campaign-notes-editor');
+    if (notesEl) {
+      const save = foundry.utils.debounce(
+        () => this.actor.setFlag(MODULE_ID, 'campaignNotes', notesEl.value),
+        600,
+      );
+      notesEl.addEventListener('input', save);
+    }
   }
 
   /* -------------------------------------------- */
@@ -596,8 +616,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     let currentLr = ratio.lr;
     let currentTb = ratio.tb;
 
-    // Vertical divider (left ↔ right)
-    const vDiv = view.querySelector('.split-divider-v') ?? view.querySelector('.split-divider');
+    // Vertical divider (left ↔ right) — exclude the horizontal divider from fallback match
+    const vDiv = view.querySelector('.split-divider-v') ?? view.querySelector('.split-divider:not(.split-divider-h)');
     if (vDiv) {
       const paneL = view.querySelector('.split-pane-left');
       const paneR = view.querySelector('.split-pane-right');
@@ -628,11 +648,12 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       });
     }
 
-    // Horizontal divider (top row ↔ bottom pane) — 3-pane only
+    // Horizontal divider (top ↔ bottom) — 3-pane uses .split-row-top/.split-row-bottom;
+    // 2-pane horizontal uses .split-pane-left (top) / .split-pane-right (bottom)
     const hDiv = view.querySelector('.split-divider-h');
     if (hDiv) {
-      const rowTop = view.querySelector('.split-row-top');
-      const rowBot = view.querySelector('.split-row-bottom');
+      const topEl = view.querySelector('.split-row-top') ?? view.querySelector('.split-pane-left');
+      const botEl = view.querySelector('.split-row-bottom') ?? view.querySelector('.split-pane-right');
       let dragging = false;
       const onMove = (e) => {
         if (!dragging) return;
@@ -640,8 +661,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         let r = (e.clientY - rect.top) / rect.height;
         r = Math.min(0.75, Math.max(0.25, r));
         currentTb = r;
-        if (rowTop) rowTop.style.flexGrow = String(Math.round(r * 100));
-        if (rowBot) rowBot.style.flexGrow = String(Math.round((1 - r) * 100));
+        if (topEl) topEl.style.flexGrow = String(Math.round(r * 100));
+        if (botEl) botEl.style.flexGrow = String(Math.round((1 - r) * 100));
       };
       const onUp = () => {
         if (!dragging) return;
