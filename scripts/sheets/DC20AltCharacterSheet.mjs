@@ -29,7 +29,6 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       toggleAttune:  DC20AltCharacterSheet._onToggleAttune,
       useItem:       DC20AltCharacterSheet._onUseItem,
       resetStats:    DC20AltCharacterSheet._onResetStats,
-      addQuickSlot:  DC20AltCharacterSheet._onAddQuickSlot,
     },
     form: { submitOnChange: true, closeOnSubmit: false },
   };
@@ -719,7 +718,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   _bindQuickSlots() {
     const el = this.element;
 
-    // Make skill rows draggable so they can be dropped into quick slots
+    // Skills — draggable to quick slots
     el.querySelectorAll('.skill-row[data-skill]').forEach(row => {
       row.setAttribute('draggable', 'true');
       row.addEventListener('dragstart', e => {
@@ -727,6 +726,29 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         const label = row.querySelector('.skill-name')?.textContent?.trim() ?? key;
         e.dataTransfer.effectAllowed = 'copy';
         e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'skill', key, label, img: '' }));
+      });
+    });
+
+    // Trades — draggable to quick slots
+    el.querySelectorAll('.skill-row[data-trade], .sc-skill-row[data-trade]').forEach(row => {
+      row.setAttribute('draggable', 'true');
+      row.addEventListener('dragstart', e => {
+        const key   = row.dataset.trade;
+        const label = row.querySelector('.skill-name, .sc-skill-name')?.textContent?.trim() ?? key;
+        e.dataTransfer.effectAllowed = 'copy';
+        e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'trade', key, label, img: '' }));
+      });
+    });
+
+    // Items (all types: weapons, spells, maneuvers, features, etc.) — draggable to quick slots
+    el.querySelectorAll('.combat-action-row[data-item-id], .item-row[data-item-id], .qol-row[data-item-id], .sc-item-row[data-item-id]').forEach(row => {
+      const itemId = row.dataset.itemId;
+      const item   = this.actor.items.get(itemId);
+      if (!item) return;
+      row.setAttribute('draggable', 'true');
+      row.addEventListener('dragstart', e => {
+        e.dataTransfer.effectAllowed = 'copy';
+        e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'item', id: itemId, label: item.name, img: item.img }));
       });
     });
 
@@ -761,14 +783,14 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     if (slot.type === 'item') {
       const item = this.actor.items.get(slot.id);
       if (item) return item.roll?.();
-    } else if (slot.type === 'skill' || slot.type === 'trade') {
+    } else if (slot.type === 'skill' || slot.type === 'trade' || slot.type === 'language') {
       return this.actor.roll?.(slot.id, 'check');
     }
   }
 
   async _clearQuickSlot(idx) {
     const saved = this.actor.flags?.[MODULE_ID]?.quickSlots ?? [];
-    const slots = [...saved];
+    const slots = Array.from({ length: 6 }, (_, i) => saved[i] ?? null);
     slots[idx] = null;
     await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
     this.render();
@@ -785,16 +807,24 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
     let entry = null;
 
-    // Only skills and trades are accepted — items/spells/features are not.
-    if (data.type === 'skill' || data.type === 'trade') {
+    if (data.type === 'skill' || data.type === 'trade' || data.type === 'language') {
       const abbr = (data.label ?? data.key ?? '').slice(0, 3).toUpperCase();
       entry = { type: data.type, id: data.key, label: data.label, abbr, img: '' };
+    } else if (data.type === 'item') {
+      entry = { type: 'item', id: data.id, label: data.label, img: data.img ?? '', abbr: '' };
+    } else if (data.type === 'Item') {
+      // FoundryVTT native sidebar drag
+      try {
+        const item = await fromUuid(data.uuid ?? '');
+        if (item && item.parent?.id === this.actor.id) {
+          entry = { type: 'item', id: item.id, label: item.name, img: item.img ?? '', abbr: '' };
+        }
+      } catch { /* uuid not resolvable */ }
     }
 
     if (!entry) return;
     const saved = this.actor.flags?.[MODULE_ID]?.quickSlots ?? [];
-    const slots = [...saved];
-    while (slots.length <= idx) slots.push(null);
+    const slots = Array.from({ length: 6 }, (_, i) => saved[i] ?? null);
     slots[idx] = entry;
     await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
     this.render();
@@ -928,12 +958,4 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this.render();
   }
 
-  static async _onAddQuickSlot() {
-    const saved = this.actor.flags?.[MODULE_ID]?.quickSlots ?? [];
-    const count = Math.max(4, saved.length);
-    if (count >= 10) return;
-    const slots = Array.from({ length: count + 1 }, (_, i) => saved[i] ?? null);
-    await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
-    this.render();
-  }
 }

@@ -6,20 +6,22 @@
     <div class="browser-tab{{#if active}} active{{/if}}{{#if isSplit}} split-tab{{/if}}"
          data-page="{{id}}"
          draggable="true">
-      {{#if isSplit}}
-        <span class="btab-split-icons">
-          <span class="btab-icon btab-icon-{{leftId}}"></span>
-          <span class="btab-split-sep">|</span>
-          <span class="btab-icon btab-icon-{{rightId}}"></span>
-          {{#if is3Pane}}
-            <span class="btab-split-sep">+</span>
-            <span class="btab-icon btab-icon-{{bottomId}}"></span>
-          {{/if}}
-        </span>
-      {{else}}
-        <span class="btab-icon btab-icon-{{id}}"></span>
-      {{/if}}
-      <span class="btab-label">{{label}}</span>
+      <span class="btab-content">
+        {{#if isSplit}}
+          <span class="btab-split-icons">
+            <span class="btab-icon btab-icon-{{leftId}}"></span>
+            <span class="btab-split-sep">|</span>
+            <span class="btab-icon btab-icon-{{rightId}}"></span>
+            {{#if is3Pane}}
+              <span class="btab-split-sep">+</span>
+              <span class="btab-icon btab-icon-{{bottomId}}"></span>
+            {{/if}}
+          </span>
+        {{else}}
+          <span class="btab-icon btab-icon-{{id}}"></span>
+        {{/if}}
+        <span class="btab-label">{{label}}</span>
+      </span>
       <button type="button" class="btab-close" data-close-page="{{id}}" title="Close tab">×</button>
     </div>
     {{/each}}
