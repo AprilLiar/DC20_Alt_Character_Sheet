@@ -5,23 +5,23 @@
    ============================================================ */
 
 .dc20-alt-sheet {
-  /* ── Spacing ── */
-  --gap-xs:  4px;
-  --gap-sm:  8px;
-  --gap-md:  12px;
-  --gap-lg:  16px;
-  --gap-xl:  24px;
+  /* ── Spacing (scale with font size) ── */
+  --gap-xs:  calc(4px  * var(--dc20-scale));
+  --gap-sm:  calc(8px  * var(--dc20-scale));
+  --gap-md:  calc(12px * var(--dc20-scale));
+  --gap-lg:  calc(16px * var(--dc20-scale));
+  --gap-xl:  calc(24px * var(--dc20-scale));
 
-  /* ── Border radii ── */
-  --r-sm:    4px;
-  --r-md:    6px;
-  --r-lg:    10px;
-  --r-xl:    14px;
+  /* ── Border radii (scale with font size) ── */
+  --r-sm:    calc(4px  * var(--dc20-scale));
+  --r-md:    calc(6px  * var(--dc20-scale));
+  --r-lg:    calc(10px * var(--dc20-scale));
+  --r-xl:    calc(14px * var(--dc20-scale));
 
   /* ── Font stack (overridable via module settings) ── */
-  --font-heading: 'Cinzel', 'Palatino Linotype', 'Book Antiqua', serif;
-  --font-body:    'Crimson Text', 'Palatino Linotype', Georgia, serif;
-  --font-ui:      'Crimson Text', 'Palatino Linotype', Georgia, serif;
+  --font-heading: Georgia, 'Times New Roman', serif;
+  --font-body:    Signika, Arial, sans-serif;
+  --font-ui:      Signika, Arial, sans-serif;
 
   /* ── Font scale (1.0 = original sizes; overridden by module settings) ── */
   --dc20-scale: 1.5;
