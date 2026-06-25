@@ -15,6 +15,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   static DEFAULT_OPTIONS = {
     classes: ['dc20-alt-sheet'],
+    window: { resizable: true },
     position: { width: 1020, height: 980 },
     actions: {
       rollAttribute: DC20AltCharacterSheet._onRollAttribute,
