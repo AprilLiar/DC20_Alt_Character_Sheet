@@ -1,19 +1,19 @@
 import { MODULE_ID } from './constants.mjs';
 
 const BODY_FONTS = {
-  "'Crimson Text', 'Palatino Linotype', Georgia, serif": 'Crimson Text (default)',
+  "Signika, Arial, sans-serif":                          'Signika (default)',
+  "'Crimson Text', 'Palatino Linotype', Georgia, serif": 'Crimson Text',
   "'Palatino Linotype', 'Book Antiqua', Palatino, serif": 'Palatino',
   "Georgia, 'Times New Roman', serif":                   'Georgia',
   "'EB Garamond', Garamond, serif":                      'EB Garamond',
-  "Signika, Arial, sans-serif":                          'Signika',
   "Arial, Helvetica, sans-serif":                        'Arial',
   "'Trebuchet MS', Verdana, sans-serif":                 'Trebuchet MS',
 };
 
 const HEADING_FONTS = {
-  "Cinzel, 'Palatino Linotype', 'Book Antiqua', serif":  'Cinzel (default)',
+  "Georgia, 'Times New Roman', serif":                    'Georgia (default)',
+  "Cinzel, 'Palatino Linotype', 'Book Antiqua', serif":  'Cinzel',
   "'Palatino Linotype', 'Book Antiqua', Palatino, serif": 'Palatino',
-  "Georgia, 'Times New Roman', serif":                    'Georgia',
   "'EB Garamond', Garamond, serif":                       'EB Garamond',
   "Signika, Arial, sans-serif":                           'Signika',
   "Arial, Helvetica, sans-serif":                         'Arial',
@@ -38,7 +38,7 @@ export function registerSettings() {
     config: true,
     type: String,
     choices: BODY_FONTS,
-    default: "'Crimson Text', 'Palatino Linotype', Georgia, serif",
+    default: "Signika, Arial, sans-serif",
     onChange: applySheetSettings,
   });
 
@@ -49,7 +49,7 @@ export function registerSettings() {
     config: true,
     type: String,
     choices: HEADING_FONTS,
-    default: "Cinzel, 'Palatino Linotype', 'Book Antiqua', serif",
+    default: "Georgia, 'Times New Roman', serif",
     onChange: applySheetSettings,
   });
 }

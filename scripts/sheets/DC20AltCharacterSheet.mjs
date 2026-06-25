@@ -353,9 +353,28 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
     // Picker item → open (or switch to) a tab
     el.querySelectorAll('.picker-item').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        // ⊕ icon handles its own click via stopPropagation — ignore here
+        if (e.target.closest('.picker-split-add')) return;
         this._openTab(btn.dataset.openPage);
         this._closePicker();
+      });
+    });
+
+    // ⊕ icon on picker item → fill next empty split zone (left first, then right)
+    el.querySelectorAll('.picker-split-add').forEach(icon => {
+      icon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const pageId = icon.dataset.addToSplit;
+        const { left, right } = this._pendingSplit;
+        let side = null;
+        if (!left) side = 'left';
+        else if (!right) side = 'right';
+        if (!side) return;
+        this._pendingSplit[side] = pageId;
+        const zone = this.element?.querySelector(`.split-zone[data-split-side="${side}"]`);
+        if (zone) this._fillZone(zone, pageId);
+        this._updateSplitBuilder();
       });
     });
 

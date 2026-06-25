@@ -42,7 +42,7 @@
 
 .dc20-alt-sheet .attr-score {
   font-family: var(--font-heading);
-  font-size: min(var(--fs-3xl), 36px);
+  font-size: min(var(--fs-3xl), calc(36px * var(--dc20-scale)));
   font-weight: 700;
   color: var(--p-accent);
   line-height: 1;
@@ -90,10 +90,10 @@
   gap: 2px;
 }
 
-/* 5 dots at 5px × 5px, 1px gap = 5×5+4×1 = 29px → column 32px */
+/* dots scale with font; column = calc(32px * scale) */
 .dc20-alt-sheet .skill-row {
   display: grid;
-  grid-template-columns: 32px 1fr 32px;
+  grid-template-columns: calc(32px * var(--dc20-scale)) 1fr calc(32px * var(--dc20-scale));
   align-items: center;
   gap: var(--gap-xs);
   padding: 2px 4px;
@@ -103,7 +103,7 @@
 }
 .dc20-alt-sheet .skill-row:last-child  { border-bottom: none; }
 .dc20-alt-sheet .skill-row:hover       { background: var(--p-hover); }
-.dc20-alt-sheet .lang-row { grid-template-columns: 32px 1fr; }
+.dc20-alt-sheet .lang-row { grid-template-columns: calc(32px * var(--dc20-scale)) 1fr; }
 
 .dc20-alt-sheet .skill-profs {
   display: flex;
@@ -111,8 +111,8 @@
   align-items: center;
 }
 .dc20-alt-sheet .prof-dot {
-  width: 5px;
-  height: 5px;
+  width: calc(5px * var(--dc20-scale));
+  height: calc(5px * var(--dc20-scale));
   border-radius: 50%;
   border: 1px solid var(--p-border-light);
   background: transparent;

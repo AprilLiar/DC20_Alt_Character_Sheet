@@ -15,7 +15,7 @@
 /* Dividers between resources */
 .dc20-alt-sheet .hstrip-divider {
   width: 1px;
-  height: 28px;
+  height: calc(28px * var(--dc20-scale));
   background: var(--p-border-light);
   opacity: 0.5;
   flex-shrink: 0;
@@ -53,8 +53,8 @@
 
 /* Generic pip dot (reused on combat page too) */
 .dc20-alt-sheet .ap-pip {
-  width: 11px;
-  height: 11px;
+  width: calc(11px * var(--dc20-scale));
+  height: calc(11px * var(--dc20-scale));
   border-radius: 50%;
   border: 1.5px solid rgba(180, 200, 255, 0.5);
   background: transparent;
@@ -426,3 +426,17 @@
   text-align: center;
   white-space: nowrap;
 }
+
+.dc20-alt-sheet .picker-split-add {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: var(--fs-xs);
+  color: var(--p-border-light);
+  line-height: 1;
+  opacity: 0;
+  transition: opacity var(--t-fast), color var(--t-fast);
+  pointer-events: auto;
+  user-select: none;
+}
+.dc20-alt-sheet .picker-item:hover .picker-split-add { opacity: 1; }
+.dc20-alt-sheet .picker-split-add:hover { color: var(--p-accent); }
