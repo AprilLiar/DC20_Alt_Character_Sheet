@@ -104,6 +104,12 @@
 .dc20-alt-sheet .skill-row:last-child  { border-bottom: none; }
 .dc20-alt-sheet .skill-row:hover       { background: var(--p-hover); }
 .dc20-alt-sheet .lang-row { grid-template-columns: calc(var(--fs-md) * 1.6 + 1px) 1fr; }
+.dc20-alt-sheet .skills-divider {
+  border: none;
+  border-top: 1px dashed var(--p-border-faint);
+  margin: 2px 0;
+  opacity: 0.6;
+}
 
 .dc20-alt-sheet .skill-profs {
   display: flex;

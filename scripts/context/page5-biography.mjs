@@ -5,7 +5,7 @@ export async function prepareBiography(actor) {
   const flags = actor.flags?.[MODULE_ID] ?? {};
 
   return {
-    biography:       system.details?.biography?.value ?? '',
+    biography:       flags.biography ?? system.details?.biography?.value ?? '',
     details:         system.details ?? {},
     appearance:      flags.appearance ?? {},
     campaignNotes:   flags.campaignNotes ?? '',
