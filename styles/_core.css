@@ -23,8 +23,8 @@
     "north   north    north"
     "west    portrait east"
     "south   south    south";
-  grid-template-columns: 1fr minmax(130px, 180px) 1fr;
-  grid-template-rows: auto 1fr minmax(calc(100px * var(--dc20-scale)), 28%);
+  grid-template-columns: 1fr minmax(180px, 260px) 1fr;
+  grid-template-rows: auto 1fr minmax(calc(80px * var(--dc20-scale)), 22%);
   gap: var(--gap-sm);
 }
 
@@ -67,25 +67,25 @@
 .dc20-alt-sheet .core-north-content {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-xs);
-  padding: var(--gap-sm) var(--gap-sm) var(--gap-xs);
+  gap: 2px;
+  padding: 2px var(--gap-xs) var(--gap-xs);
 }
 
 .dc20-alt-sheet .core-meta-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--gap-xs);
+  gap: 3px;
   align-items: center;
 }
 
 .dc20-alt-sheet .core-chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   background: var(--p-bg-card);
   border: 1px solid var(--p-border-faint);
   border-radius: var(--r-md);
-  padding: 2px var(--gap-sm);
+  padding: 1px 5px;
   white-space: nowrap;
 }
 .dc20-alt-sheet .chip-label {
@@ -124,18 +124,25 @@
 /* Attribute cards in a horizontal row inside the north panel */
 .dc20-alt-sheet .core-attrs-row {
   display: flex;
-  gap: var(--gap-sm);
+  gap: var(--gap-xs);
   overflow-x: auto;
-  padding-bottom: 2px;
+  padding-bottom: 1px;
 }
 .dc20-alt-sheet .core-attrs-row::-webkit-scrollbar { display: none; }
 .dc20-alt-sheet .core-attrs-row .attribute-card {
   flex: 1;
-  min-width: 70px;
+  min-width: 58px;
+  padding: 2px;
 }
-/* Compact the score font so it fits the row without being enormous */
 .dc20-alt-sheet .core-attrs-row .attr-score {
-  font-size: var(--fs-2xl);
+  font-size: var(--fs-xl);
+}
+.dc20-alt-sheet .core-attrs-row .attr-actions {
+  gap: 2px;
+}
+.dc20-alt-sheet .core-attrs-row .attr-btn {
+  padding: 2px 1px;
+  font-size: var(--fs-xs);
 }
 
 /* ════════════════════════════════════════
@@ -148,6 +155,16 @@
   gap: var(--gap-xs);
   min-height: 0;
   overflow: hidden;
+}
+
+/* Portrait frame fills available vertical space in its zone */
+.dc20-alt-sheet .portrait-frame {
+  flex: 1;
+  min-height: 0;
+}
+.dc20-alt-sheet .portrait-frame-inner {
+  aspect-ratio: unset;
+  height: 100%;
 }
 
 /* ── Decorative portrait frame ──

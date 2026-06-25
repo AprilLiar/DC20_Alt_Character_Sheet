@@ -78,12 +78,21 @@ export async function prepareCore(actor) {
   const skillGroupsMastered = groupByAttr(skills.filter(s => s.mastery));
   const tradeGroupsMastered = groupByAttr(trades.filter(t => t.mastery));
 
+  function splitGroups(allGroups) {
+    return allGroups.map(g => ({
+      ...g,
+      masteredItems:   g.items.filter(i => i.mastery),
+      unmasteredItems: g.items.filter(i => !i.mastery),
+      hasBoth: g.items.some(i => i.mastery) && g.items.some(i => !i.mastery),
+    }));
+  }
+
   return {
     attributes,
     skills,
     trades,
-    skillGroups: groupByAttr(skills),
-    tradeGroups: groupByAttr(trades),
+    skillGroups: splitGroups(groupByAttr(skills)),
+    tradeGroups: splitGroups(groupByAttr(trades)),
     skillGroupsMastered,
     tradeGroupsMastered,
     languages,

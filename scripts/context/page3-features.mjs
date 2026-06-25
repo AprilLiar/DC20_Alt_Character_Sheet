@@ -5,8 +5,8 @@ export async function prepareFeatures(actor) {
 
   for (const item of actor.items) {
     if (item.type !== 'feature') continue;
-    const costs = item.system.costs ?? {};
-    if (RESOURCE_KEYS.some(k => costs[k])) continue; // active features live on combat page
+    const resources = item.system.costs?.resources ?? {};
+    if (RESOURCE_KEYS.some(k => resources[k])) continue; // active features live on combat page
 
     const rawType  = item.system.featureType ?? '';
     const label    = rawType ? rawType.charAt(0).toUpperCase() + rawType.slice(1) : 'Other';

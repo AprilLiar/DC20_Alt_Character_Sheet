@@ -76,7 +76,15 @@
         {{#each skillGroups}}
           <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
           <div class="skills-list">
-            {{#each items}}
+            {{#each masteredItems}}
+            <div class="skill-row" data-skill="{{key}}">
+              <span class="skill-profs">{{{profDots mastery 5}}}</span>
+              <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">{{label}}</span>
+              <span class="skill-bonus rollable" data-action="rollSkill" data-skill="{{key}}">{{signedNum bonus}}</span>
+            </div>
+            {{/each}}
+            {{#if hasBoth}}<hr class="skills-divider">{{/if}}
+            {{#each unmasteredItems}}
             <div class="skill-row" data-skill="{{key}}">
               <span class="skill-profs">{{{profDots mastery 5}}}</span>
               <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">{{label}}</span>
@@ -133,7 +141,15 @@
           {{#each tradeGroups}}
             <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
             <div class="skills-list">
-              {{#each items}}
+              {{#each masteredItems}}
+              <div class="skill-row" data-trade="{{key}}">
+                <span class="skill-profs">{{{profDots mastery 5}}}</span>
+                <span class="skill-name rollable" data-action="rollTrade" data-trade="{{key}}">{{label}}</span>
+                <span class="skill-bonus rollable" data-action="rollTrade" data-trade="{{key}}">{{signedNum bonus}}</span>
+              </div>
+              {{/each}}
+              {{#if hasBoth}}<hr class="skills-divider">{{/if}}
+              {{#each unmasteredItems}}
               <div class="skill-row" data-trade="{{key}}">
                 <span class="skill-profs">{{{profDots mastery 5}}}</span>
                 <span class="skill-name rollable" data-action="rollTrade" data-trade="{{key}}">{{label}}</span>

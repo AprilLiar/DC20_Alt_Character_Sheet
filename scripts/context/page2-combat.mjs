@@ -89,9 +89,9 @@ export async function prepareCombat(actor) {
       // Weapons, spells, maneuvers: always include
     } else {
       // Features/equipment/techniques: include only when they consume a resource.
-      // Mirror the same cost check used in page3-features to stay consistent.
-      const costs = item.system.costs ?? {};
-      const hasResourceCost = ['ap', 'stamina', 'mana', 'grit', 'health'].some(k => costs[k]);
+      // DC20 nests resource costs under costs.resources, not at the costs root.
+      const resources = item.system.costs?.resources ?? {};
+      const hasResourceCost = ['ap', 'stamina', 'mana', 'grit', 'health'].some(k => resources[k]);
       if (!hasResourceCost) continue;
     }
 
@@ -101,7 +101,7 @@ export async function prepareCombat(actor) {
       img:          item.img,
       type:         item.type,
       filterType,
-      costs:        item.system.costs ?? {},
+      costs:        item.system.costs?.resources ?? {},
       rangeType:    item.system.attackFormula?.rangeType ?? '',
       attackBonus:  item.system.attackFormula?.rollBonus ?? 0,
       checkType:    item.system.attackFormula?.checkType ?? item.system.check?.checkKey ?? '',
