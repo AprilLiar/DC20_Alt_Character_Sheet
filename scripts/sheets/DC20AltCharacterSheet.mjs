@@ -70,6 +70,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   _splitOrientation = 'vertical';
   /** Page id currently being dragged (from a tab or the picker) */
   _dragPageId = null;
+  /** True when the next item-row click should be swallowed (popup just closed) */
+  _popupSuppressNext = false;
 
   /* -------------------------------------------- */
   /*  Tab State Persistence                        */
@@ -296,6 +298,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._registerContextMenu();
     this._bindQuickSlots();
     this._bindBiographyAutoSave();
+    this._bindItemPopup();
   }
 
   _bindBiographyAutoSave() {
@@ -315,6 +318,61 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       );
       notesEl.addEventListener('input', () => save(notesEl.value));
     }
+  }
+
+  _bindItemPopup() {
+    // Reuse the popup element across re-renders so it stays above sheet content.
+    let popup = this.element.querySelector('.item-popup');
+    if (!popup) {
+      popup = document.createElement('div');
+      popup.className = 'item-popup hidden';
+      popup.innerHTML =
+        '<div class="item-popup-name"></div>' +
+        '<div class="item-popup-desc"></div>';
+      this.element.appendChild(popup);
+    }
+
+    const showPopup = (itemId, anchorEl) => {
+      if (this._popupSuppressNext) return;
+      const item = this.actor.items.get(itemId);
+      if (!item) return;
+
+      popup.querySelector('.item-popup-name').textContent = item.name;
+      const rawDesc = item.system?.description;
+      popup.querySelector('.item-popup-desc').innerHTML =
+        typeof rawDesc === 'string' ? rawDesc : (rawDesc?.value ?? '');
+
+      // Position below the row, clamped to the viewport.
+      const rect = anchorEl.getBoundingClientRect();
+      const W = 290, H = 320;
+      let left = rect.left;
+      let top  = rect.bottom + 4;
+      if (left + W > window.innerWidth  - 8) left = window.innerWidth  - W - 8;
+      if (top  + H > window.innerHeight - 8) top  = rect.top - H - 4;
+      if (top < 8) top = 8;
+      popup.style.left = `${Math.max(8, left)}px`;
+      popup.style.top  = `${top}px`;
+      popup.classList.remove('hidden');
+
+      // Close on the very next document click (capture phase fires before row handlers).
+      const close = () => {
+        popup.classList.add('hidden');
+        document.removeEventListener('click', close, true);
+        // Suppress the item-row click handler that rides the same event.
+        this._popupSuppressNext = true;
+        Promise.resolve().then(() => { this._popupSuppressNext = false; });
+      };
+      document.addEventListener('click', close, true);
+    };
+
+    const SELECTORS = '.combat-action-row[data-item-id], .item-row[data-item-id]';
+    this.element.querySelectorAll(SELECTORS).forEach(row => {
+      row.addEventListener('click', (e) => {
+        // Let buttons, inputs, selects, and images handle themselves normally.
+        if (e.target.closest('button, select, input, img')) return;
+        showPopup(row.dataset.itemId, row);
+      });
+    });
   }
 
   /* -------------------------------------------- */
