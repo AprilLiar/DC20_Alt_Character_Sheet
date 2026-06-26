@@ -249,8 +249,8 @@
   color: var(--p-ink);
 }
 .dc20-alt-sheet .split-zone .btab-icon {
-  width: 16px;
-  height: 16px;
+  width: calc(16px * var(--dc20-scale));
+  height: calc(16px * var(--dc20-scale));
   background-color: var(--p-ink);
 }
 
@@ -267,13 +267,13 @@
 
 /* ── Compact list tweaks (features / inventory split variants) ── */
 .dc20-alt-sheet .compact-list .item-row {
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: calc(2px * var(--dc20-scale));
+  padding-bottom: calc(2px * var(--dc20-scale));
 }
 .dc20-alt-sheet .compact-list .item-img,
 .dc20-alt-sheet .compact-list .ca-img {
-  width: 20px;
-  height: 20px;
+  width: calc(20px * var(--dc20-scale));
+  height: calc(20px * var(--dc20-scale));
 }
 .dc20-alt-sheet .compact-list .item-name,
 .dc20-alt-sheet .compact-list .ca-name {
