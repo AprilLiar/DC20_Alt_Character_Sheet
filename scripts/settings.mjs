@@ -21,12 +21,12 @@ const HEADING_FONTS = {
 
 export function registerSettings() {
   game.settings.register(MODULE_ID, 'fontScale', {
-    name: 'DC20 Alt Sheet: Font Size',
-    hint: 'Scale applied to all text on the character sheet. 1.0 = original size, 1.5 = default.',
+    name: 'DC20 Alt Sheet: UI Scale',
+    hint: 'Scales all UI elements on the character sheet. 0.75 = compact, 1.5 = default.',
     scope: 'client',
     config: true,
     type: Number,
-    range: { min: 1.0, max: 4.0, step: 0.25 },
+    range: { min: 0.75, max: 3.0, step: 0.25 },
     default: 1.5,
     onChange: applySheetSettings,
   });
