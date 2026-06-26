@@ -23,17 +23,18 @@
   --font-body:    Signika, Arial, sans-serif;
   --font-ui:      Signika, Arial, sans-serif;
 
-  /* ── Font scale (1.0 = original sizes; overridden by module settings) ── */
-  --dc20-scale: 1.5;
+  /* ── Scales (overridden by module settings) ── */
+  --dc20-scale:  1.5;  /* UI layout scale: spacing, element sizes */
+  --font-scale:  1.5;  /* Text scale: font sizes only */
 
-  /* ── Font sizes (all scale with --dc20-scale) ── */
-  --fs-xs:   calc(10px * var(--dc20-scale));
-  --fs-sm:   calc(11px * var(--dc20-scale));
-  --fs-md:   calc(13px * var(--dc20-scale));
-  --fs-lg:   calc(15px * var(--dc20-scale));
-  --fs-xl:   calc(18px * var(--dc20-scale));
-  --fs-2xl:  calc(24px * var(--dc20-scale));
-  --fs-3xl:  calc(32px * var(--dc20-scale));
+  /* ── Font sizes (scale with --font-scale) ── */
+  --fs-xs:   calc(10px * var(--font-scale));
+  --fs-sm:   calc(11px * var(--font-scale));
+  --fs-md:   calc(13px * var(--font-scale));
+  --fs-lg:   calc(15px * var(--font-scale));
+  --fs-xl:   calc(18px * var(--font-scale));
+  --fs-2xl:  calc(24px * var(--font-scale));
+  --fs-3xl:  calc(32px * var(--font-scale));
 
   /* ── Transitions ── */
   --t-fast: 0.12s ease;

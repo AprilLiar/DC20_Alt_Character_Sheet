@@ -181,7 +181,7 @@
   pointer-events: none;
 }
 .dc20-alt-sheet .qs-label {
-  font-size: calc(8px * var(--dc20-scale));
+  font-size: calc(8px * var(--font-scale));
   line-height: 1.1;
   text-align: center;
   color: var(--p-ink);
@@ -193,7 +193,7 @@
   pointer-events: none;
 }
 .dc20-alt-sheet .qs-empty-hint {
-  font-size: calc(16px * var(--dc20-scale));
+  font-size: calc(16px * var(--font-scale));
   color: rgba(255, 255, 255, 0.18);
   line-height: 1;
   user-select: none;
@@ -201,7 +201,7 @@
 }
 .dc20-alt-sheet .qs-abbr {
   font-family: var(--font-heading);
-  font-size: calc(9px * var(--dc20-scale));
+  font-size: calc(9px * var(--font-scale));
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -213,7 +213,7 @@
   flex-shrink: 0;
   width: calc(24px * var(--dc20-scale));
   height: calc(24px * var(--dc20-scale));
-  font-size: calc(16px * var(--dc20-scale));
+  font-size: calc(16px * var(--font-scale));
   line-height: 1;
   color: rgba(255, 255, 255, 0.30);
   background: none;
@@ -335,7 +335,7 @@
   transform: translateY(-50%);
   width: calc(16px * var(--dc20-scale));
   height: calc(16px * var(--dc20-scale));
-  font-size: calc(13px * var(--dc20-scale));
+  font-size: calc(13px * var(--font-scale));
   line-height: 1;
   color: var(--p-ink-muted);
   background: none;
@@ -359,7 +359,7 @@
   align-self: center;   /* center vertically relative to the tab buttons */
   width: calc(20px * var(--dc20-scale));
   height: calc(20px * var(--dc20-scale));
-  font-size: calc(18px * var(--dc20-scale));
+  font-size: calc(18px * var(--font-scale));
   line-height: 1;
   color: var(--p-ink-muted);
   background: none;
