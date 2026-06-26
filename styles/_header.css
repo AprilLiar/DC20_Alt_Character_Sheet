@@ -356,22 +356,24 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  align-self: center;   /* center vertically relative to the tab buttons */
+  /* Align center of + to center of a tab:
+     mb = (tab-height / 2) - (button-height / 2)
+        = (12px*scale + fs-xs) / 2  -  10px*scale
+        = fs-xs / 2  -  4px*scale                  */
+  align-self: flex-end;
+  margin-bottom: calc(var(--fs-xs) / 2 - 4px * var(--dc20-scale));
   width: calc(20px * var(--dc20-scale));
   height: calc(20px * var(--dc20-scale));
   font-size: calc(18px * var(--font-scale));
   line-height: 1;
   color: var(--p-ink-muted);
   background: none;
-  border: 1.5px solid var(--p-border-light);
-  border-radius: var(--r-sm);
+  border: none;
   cursor: pointer;
-  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+  transition: color var(--t-fast);
 }
 .dc20-alt-sheet .btab-add:hover {
   color: var(--p-accent);
-  border-color: var(--p-accent);
-  background: var(--p-hover);
 }
 
 /* ── Page picker overlay ── */
