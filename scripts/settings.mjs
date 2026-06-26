@@ -20,13 +20,24 @@ const HEADING_FONTS = {
 };
 
 export function registerSettings() {
-  game.settings.register(MODULE_ID, 'fontScale', {
+  game.settings.register(MODULE_ID, 'uiScale', {
     name: 'DC20 Alt Sheet: UI Scale',
-    hint: 'Scales all UI elements on the character sheet. 0.75 = compact, 1.5 = default.',
+    hint: 'Scales layout elements (spacing, buttons, images, tab sizes). 0.75 = compact, 1.5 = default.',
     scope: 'client',
     config: true,
     type: Number,
     range: { min: 0.75, max: 3.0, step: 0.25 },
+    default: 1.5,
+    onChange: applySheetSettings,
+  });
+
+  game.settings.register(MODULE_ID, 'fontScale', {
+    name: 'DC20 Alt Sheet: Font Size',
+    hint: 'Scales all text on the character sheet independently of layout. 1.0 = small, 1.5 = default.',
+    scope: 'client',
+    config: true,
+    type: Number,
+    range: { min: 1.0, max: 4.0, step: 0.25 },
     default: 1.5,
     onChange: applySheetSettings,
   });
@@ -55,7 +66,10 @@ export function registerSettings() {
 }
 
 export function applySheetSettings() {
-  const scale   = game.settings.get(MODULE_ID, 'fontScale');
+  const uiScale  = game.settings.get(MODULE_ID, 'uiScale');
+  const fontScale = (() => {
+    try { return game.settings.get(MODULE_ID, 'fontScale'); } catch { return uiScale; }
+  })();
   const body    = game.settings.get(MODULE_ID, 'fontFamily');
   const heading = game.settings.get(MODULE_ID, 'headingFont');
 
@@ -67,7 +81,8 @@ export function applySheetSettings() {
   }
 
   el.textContent = `.dc20-alt-sheet {
-  --dc20-scale:   ${scale};
+  --dc20-scale:   ${uiScale};
+  --font-scale:   ${fontScale};
   --font-body:    ${body};
   --font-ui:      ${body};
   --font-heading: ${heading};

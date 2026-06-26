@@ -42,7 +42,7 @@
 
 .dc20-alt-sheet .attr-score {
   font-family: var(--font-heading);
-  font-size: min(var(--fs-3xl), calc(36px * var(--dc20-scale)));
+  font-size: min(var(--fs-3xl), calc(36px * var(--font-scale)));
   font-weight: 700;
   color: var(--p-accent);
   line-height: 1;
@@ -604,7 +604,7 @@
   display: block;
 }
 .dc20-alt-sheet .basic-cond-icon i {
-  font-size: calc(20px * var(--dc20-scale));
+  font-size: calc(20px * var(--font-scale));
   color: var(--c-hp-light);
   display: flex;
   align-items: center;
@@ -972,7 +972,7 @@
     0 4px 24px rgba(0, 0, 0, 0.55),
     0 0 0 1px var(--p-border-faint);
   padding: var(--gap-md);
-  pointer-events: none;
+  pointer-events: auto;
 }
 .dc20-alt-sheet .item-popup.hidden { display: none; }
 
@@ -989,13 +989,25 @@
 .dc20-alt-sheet .item-popup-desc {
   font-size: var(--fs-sm);
   color: var(--p-ink);
-  line-height: 1.45;
+  line-height: 1.55;
   overflow-y: auto;
   min-height: 0;
 }
 .dc20-alt-sheet .item-popup-desc::-webkit-scrollbar { width: 4px; }
 .dc20-alt-sheet .item-popup-desc::-webkit-scrollbar-track { background: transparent; }
 .dc20-alt-sheet .item-popup-desc::-webkit-scrollbar-thumb { background: var(--p-border-faint); border-radius: 2px; }
-.dc20-alt-sheet .item-popup-desc p { margin: 0 0 var(--gap-xs); }
+/* Rich text formatting inside the popup */
+.dc20-alt-sheet .item-popup-desc p          { margin: 0 0 var(--gap-xs); }
 .dc20-alt-sheet .item-popup-desc p:last-child { margin-bottom: 0; }
-.dc20-alt-sheet .item-popup-desc strong { font-weight: 700; }
+.dc20-alt-sheet .item-popup-desc strong,
+.dc20-alt-sheet .item-popup-desc b          { font-weight: 700; color: var(--p-ink); }
+.dc20-alt-sheet .item-popup-desc em,
+.dc20-alt-sheet .item-popup-desc i          { font-style: italic; }
+.dc20-alt-sheet .item-popup-desc h2,
+.dc20-alt-sheet .item-popup-desc h3,
+.dc20-alt-sheet .item-popup-desc h4         { font-family: var(--font-heading); font-weight: 700; color: var(--p-accent); margin: var(--gap-xs) 0 2px; }
+.dc20-alt-sheet .item-popup-desc ul,
+.dc20-alt-sheet .item-popup-desc ol         { margin: 0 0 var(--gap-xs); padding-left: 1.4em; }
+.dc20-alt-sheet .item-popup-desc li         { margin-bottom: 2px; }
+.dc20-alt-sheet .item-popup-desc hr         { border: none; border-top: 1px solid var(--p-border-faint); margin: var(--gap-xs) 0; }
+.dc20-alt-sheet .item-popup-desc a          { color: var(--p-accent); text-decoration: underline; }

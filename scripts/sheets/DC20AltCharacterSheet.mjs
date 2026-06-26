@@ -342,9 +342,16 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       popup.querySelector('.item-popup-desc').innerHTML =
         typeof rawDesc === 'string' ? rawDesc : (rawDesc?.value ?? '');
 
-      // Position below the row, clamped to the viewport.
+      // Show off-screen to measure actual rendered dimensions (respects CSS scale).
+      popup.style.visibility = 'hidden';
+      popup.style.left = '-9999px';
+      popup.style.top  = '-9999px';
+      popup.classList.remove('hidden');
+      const W = popup.offsetWidth  || 290;
+      const H = popup.offsetHeight || 320;
+
+      // Position below the row, clamped to viewport.
       const rect = anchorEl.getBoundingClientRect();
-      const W = 290, H = 320;
       let left = rect.left;
       let top  = rect.bottom + 4;
       if (left + W > window.innerWidth  - 8) left = window.innerWidth  - W - 8;
@@ -352,10 +359,11 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       if (top < 8) top = 8;
       popup.style.left = `${Math.max(8, left)}px`;
       popup.style.top  = `${top}px`;
-      popup.classList.remove('hidden');
+      popup.style.visibility = '';
 
-      // Close on the very next document click (capture phase fires before row handlers).
-      const close = () => {
+      // Close when clicking outside the popup (capture phase fires before row handlers).
+      const close = (e) => {
+        if (popup.contains(e.target)) return; // click inside popup — allow scrolling/reading
         popup.classList.add('hidden');
         document.removeEventListener('click', close, true);
         // Suppress the item-row click handler that rides the same event.

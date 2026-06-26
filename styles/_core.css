@@ -23,7 +23,7 @@
     "north   north    north"
     "west    portrait east"
     "south   south    south";
-  grid-template-columns: 1fr minmax(180px, 260px) 1fr;
+  grid-template-columns: 1fr minmax(280px, 420px) 1fr;
   grid-template-rows: auto 1fr minmax(calc(120px * var(--dc20-scale)), 35%);
   gap: var(--gap-sm);
 }
@@ -115,9 +115,16 @@
   font-weight: 700;
   cursor: pointer;
   padding: 0;
+  margin: 0;
   text-transform: capitalize;
   appearance: none;
   -webkit-appearance: none;
+  line-height: inherit;
+  height: auto;
+  min-height: 0;
+  vertical-align: baseline;
+  display: inline;
+  max-width: 6em;
 }
 .dc20-alt-sheet .chip-size-select:focus { outline: none; }
 
@@ -135,14 +142,18 @@
   overflow: hidden;
 }
 
-/* Portrait frame fills available vertical space in its zone */
+/* Portrait frame — square, fills column width, capped at zone height */
 .dc20-alt-sheet .portrait-frame {
-  flex: 1;
-  min-height: 0;
+  width: 100%;
+  aspect-ratio: 1;
+  max-height: 100%;
+  box-sizing: border-box;
+  align-self: center;
 }
 .dc20-alt-sheet .portrait-frame-inner {
-  aspect-ratio: unset;
+  width: 100%;
   height: 100%;
+  aspect-ratio: 1;
 }
 
 /* ── Decorative portrait frame ──
@@ -170,6 +181,7 @@
     /* depth gradient */
     linear-gradient(135deg, #4e1258 0%, #2a0035 45%, #3c0056 70%, #4e1258 100%);
   /* triple ring */
+  border-radius: 0;
   border: 1px solid rgba(145, 121, 150, 0.45);
   box-shadow:
     0 0 0 1px rgba(196, 144, 209, 0.18),
@@ -202,7 +214,7 @@
   box-shadow:
     inset 0 0 14px rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(63, 3, 68, 0.55);
-  border-radius: 2px;
+  border-radius: 0;
   aspect-ratio: 1;
   background: var(--p-bg-aged);
 }
@@ -263,6 +275,13 @@
   width: 100%;
   text-align: center;
   flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+/* Section heading pinned above the scroll area in core panels */
+.dc20-alt-sheet .core-panel-header {
+  flex-shrink: 0;
+  padding: var(--gap-xs) var(--gap-sm) 0;
   margin-bottom: 0;
 }
 
