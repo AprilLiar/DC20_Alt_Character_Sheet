@@ -24,7 +24,7 @@
     "west    portrait east"
     "south   south    south";
   grid-template-columns: 1fr minmax(180px, 260px) 1fr;
-  grid-template-rows: auto 1fr minmax(calc(80px * var(--dc20-scale)), 22%);
+  grid-template-rows: auto 1fr minmax(calc(120px * var(--dc20-scale)), 35%);
   gap: var(--gap-sm);
 }
 
@@ -122,28 +122,6 @@
 .dc20-alt-sheet .chip-size-select:focus { outline: none; }
 
 /* Attribute cards in a horizontal row inside the north panel */
-.dc20-alt-sheet .core-attrs-row {
-  display: flex;
-  gap: var(--gap-xs);
-  overflow-x: auto;
-  padding-bottom: 1px;
-}
-.dc20-alt-sheet .core-attrs-row::-webkit-scrollbar { display: none; }
-.dc20-alt-sheet .core-attrs-row .attribute-card {
-  flex: 1;
-  min-width: 58px;
-  padding: 2px;
-}
-.dc20-alt-sheet .core-attrs-row .attr-score {
-  font-size: var(--fs-xl);
-}
-.dc20-alt-sheet .core-attrs-row .attr-actions {
-  gap: 2px;
-}
-.dc20-alt-sheet .core-attrs-row .attr-btn {
-  padding: 2px 1px;
-  font-size: var(--fs-xs);
-}
 
 /* ════════════════════════════════════════
    PORTRAIT ZONE (centre column)

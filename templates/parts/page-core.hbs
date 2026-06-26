@@ -48,19 +48,16 @@
           {{/each}}
         </div>
 
-        <div class="core-attrs-row">
+        <div class="sc-attrs">
           {{#each attributes}}
-          <div class="attribute-card" data-attr="{{key}}">
-            <div class="attr-name">{{label}}</div>
-            <div class="attr-score">{{signedNum check}}</div>
-            <div class="attr-actions">
-              <button type="button" class="attr-btn check-btn rollable"
-                data-action="rollAttribute" data-attr="{{key}}" title="Roll Attribute Check">
-                <i class="fas fa-dice-d20"></i><span>{{signedNum check}}</span>
+          <div class="sc-attr" data-attr="{{key}}">
+            <span class="sc-attr-name">{{label}}</span>
+            <div class="sc-attr-buttons">
+              <button type="button" class="sc-attr-btn rollable" data-action="rollAttribute" data-attr="{{key}}" title="Check">
+                <i class="fas fa-dice-d20"></i>{{signedNum check}}
               </button>
-              <button type="button" class="attr-btn save-btn rollable"
-                data-action="rollSave" data-attr="{{key}}" title="Roll Saving Throw">
-                <i class="fas fa-shield-alt"></i><span>{{signedNum save}}</span>
+              <button type="button" class="sc-attr-btn rollable" data-action="rollSave" data-attr="{{key}}" title="Save">
+                <i class="fas fa-shield-alt"></i>{{signedNum save}}
               </button>
             </div>
           </div>
