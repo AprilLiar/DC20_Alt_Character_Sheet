@@ -13,7 +13,7 @@
   {{#each featureGroups}}
   <div class="feature-group">
     <h4 class="feature-source-heading">{{label}}</h4>
-    <ul class="items-list">
+    <ul class="items-list" data-reorder-list data-reorder-mode="sort">
       {{#each items}}
       <li class="item-row" data-item-id="{{id}}">
         <img class="item-img item-img-rollable" src="{{img}}" alt="{{name}}"

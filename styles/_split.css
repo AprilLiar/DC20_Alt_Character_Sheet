@@ -319,6 +319,15 @@
   text-align: center;
   letter-spacing: 0.05em;
 }
+/* The attribute's actual value, shown large in the middle of the card */
+.dc20-alt-sheet .sc-attr-score {
+  font-family: var(--font-heading);
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  color: var(--p-accent);
+}
 .dc20-alt-sheet .sc-attr-buttons {
   display: flex;
   gap: var(--gap-xs);

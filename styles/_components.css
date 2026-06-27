@@ -1011,3 +1011,9 @@
 .dc20-alt-sheet .item-popup-desc li         { margin-bottom: 2px; }
 .dc20-alt-sheet .item-popup-desc hr         { border: none; border-top: 1px solid var(--p-border-faint); margin: var(--gap-xs) 0; }
 .dc20-alt-sheet .item-popup-desc a          { color: var(--p-accent); text-decoration: underline; }
+
+/* ── Manual drag-to-reorder feedback ── */
+.dc20-alt-sheet [data-reorder-list] > .reordering { opacity: 0.4; }
+.dc20-alt-sheet [data-reorder-list] > .reorder-over {
+  box-shadow: inset 0 2px 0 0 var(--p-accent);
+}

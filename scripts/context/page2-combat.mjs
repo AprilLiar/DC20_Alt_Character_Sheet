@@ -81,7 +81,8 @@ export async function prepareCombat(actor) {
 
   /* ── Combat actions (usable items with resource costs + weapons/spells/maneuvers) ── */
   const combatActions = [];
-  for (const item of actor.items) {
+  const sortedItems = [...actor.items].sort((a, b) => (a.sort || 0) - (b.sort || 0));
+  for (const item of sortedItems) {
     const filterType = TYPE_TO_FILTER[item.type];
     if (!filterType) continue;
 
