@@ -3,25 +3,15 @@
 <div class="hstrip-bar-wrap">
   <div class="hstrip-bar-fill" style="width: {{pct}}%; background: {{color}};"></div>
   <div class="hstrip-bar-text">
-    {{#if (eq kind "tracker")}}
-      <input type="number" class="hstrip-input" value="{{value}}"
-        data-tracker-id="{{trackerId}}" data-tracker-field="value"
-        {{#unless @root.isEditable}}disabled{{/unless}}>
+    <input type="number" class="hstrip-input" name="{{valuePath}}" value="{{value}}"
+      {{#unless @root.isEditable}}disabled{{/unless}}>
+    {{#if hasMax}}
       <span class="hstrip-sep">/</span>
-      <input type="number" class="hstrip-input" value="{{max}}"
-        data-tracker-id="{{trackerId}}" data-tracker-field="max"
-        {{#unless @root.isEditable}}disabled{{/unless}}>
-    {{else}}
-      <input type="number" class="hstrip-input" name="{{valuePath}}" value="{{value}}"
-        {{#unless @root.isEditable}}disabled{{/unless}}>
-      {{#if hasMax}}
-        <span class="hstrip-sep">/</span>
-        {{#if maxPath}}
-          <input type="number" class="hstrip-input" name="{{maxPath}}" value="{{max}}"
-            {{#unless @root.isEditable}}disabled{{/unless}}>
-        {{else}}
-          <span class="hstrip-maxval">{{max}}</span>
-        {{/if}}
+      {{#if maxPath}}
+        <input type="number" class="hstrip-input" name="{{maxPath}}" value="{{max}}"
+          {{#unless @root.isEditable}}disabled{{/unless}}>
+      {{else}}
+        <span class="hstrip-maxval">{{max}}</span>
       {{/if}}
     {{/if}}
   </div>
@@ -70,7 +60,7 @@
         <span class="res-name" data-select-resource="{{key}}" title="Show in header">{{label}}</span>
         {{> resBar this}}
         {{#if removable}}
-        <button type="button" class="res-remove" data-tracker-id="{{trackerId}}" title="Remove tracker">×</button>
+        <button type="button" class="res-remove" data-res-custom-key="{{customKey}}" title="Remove resource">×</button>
         {{/if}}
       </div>
       {{/each}}

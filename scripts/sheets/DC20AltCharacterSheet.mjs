@@ -861,40 +861,36 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       });
     });
 
-    // Edit a tracker's value / max.
-    dd.querySelectorAll('input[data-tracker-id]').forEach(inp => {
-      inp.addEventListener('change', () => {
-        const id    = inp.dataset.trackerId;
-        const field = inp.dataset.trackerField;
-        const val   = Math.trunc(Number(inp.value) || 0);
-        const trackers = [...(this.actor.flags?.[MODULE_ID]?.customTrackers ?? [])];
-        const t = trackers.find(t => t.id === id);
-        if (!t) return;
-        t[field] = val;
-        this.actor.setFlag(MODULE_ID, 'customTrackers', trackers);
-      });
-    });
-
-    // Create a new colour tracker.
-    dd.querySelector('.res-create-btn')?.addEventListener('click', () => {
+    // Create a new resource — a real DC20 custom resource so it can be used
+    // everywhere (token bars, formulas, the system sheet). We keep the chosen
+    // colour in a flag keyed by the resource's key.
+    dd.querySelector('.res-create-btn')?.addEventListener('click', async () => {
       const name  = (dd.querySelector('.res-create-name')?.value || '').trim();
       if (!name) return;
       const color = dd.querySelector('.res-create-color')?.value || '#9988cc';
-      const trackers = [...(this.actor.flags?.[MODULE_ID]?.customTrackers ?? [])];
-      trackers.push({ id: foundry.utils.randomID(), name, color, value: 0, max: 5 });
-      this.actor.setFlag(MODULE_ID, 'customTrackers', trackers);
+      const key   = foundry.utils.randomID(8);
+      const colors = { ...(this.actor.flags?.[MODULE_ID]?.resourceColors ?? {}) };
+      colors[key] = color;
+      await this.actor.update({
+        [`system.resources.custom.${key}`]: {
+          name, img: '', value: 0, max: 0, maxFormula: '5', bonus: 0, reset: '',
+        },
+      });
+      await this.actor.setFlag(MODULE_ID, 'resourceColors', colors);
     });
 
-    // Remove a tracker.
-    dd.querySelectorAll('.res-remove[data-tracker-id]').forEach(btn => {
+    // Remove a resource we created (deletes the system resource + its colour).
+    dd.querySelectorAll('.res-remove[data-res-custom-key]').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         e.stopPropagation();
-        const id = btn.dataset.trackerId;
-        const trackers = (this.actor.flags?.[MODULE_ID]?.customTrackers ?? []).filter(t => t.id !== id);
-        if (this.actor.flags?.[MODULE_ID]?.headerResource === `tracker.${id}`) {
+        const key = btn.dataset.resCustomKey;
+        const colors = { ...(this.actor.flags?.[MODULE_ID]?.resourceColors ?? {}) };
+        delete colors[key];
+        if (this.actor.flags?.[MODULE_ID]?.headerResource === `custom.${key}`) {
           await this.actor.setFlag(MODULE_ID, 'headerResource', 'health');
         }
-        await this.actor.setFlag(MODULE_ID, 'customTrackers', trackers);
+        await this.actor.setFlag(MODULE_ID, 'resourceColors', colors);
+        await this.actor.update({ [`system.resources.custom.-=${key}`]: null });
       });
     });
   }

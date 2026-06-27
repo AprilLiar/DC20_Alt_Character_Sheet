@@ -56,43 +56,31 @@ export function prepareHeader(actor) {
   pushBuiltin('mana',       'MP',   'mp-bar',   true);
   pushBuiltin('restPoints', 'REST', 'rest-bar', false);
 
-  // DC20 native custom resources (e.g. Monk Ki, Legendary points)
+  // DC20 native custom resources (e.g. Monk Ki, Legendary points, and the
+  // trackers created from this sheet — which are real system resources too).
+  // A colour entry in our flag marks a resource as one we created here, which
+  // makes it removable and gives its max an editable numeric formula.
+  const colorMap = flags.resourceColors ?? {};
   for (const [k, c] of Object.entries(res.custom ?? {})) {
     if (!c || typeof c !== 'object') continue;
     const max = c.max ?? 0;
+    const ours = colorMap[k] != null;
     resources.push({
       key:       `custom.${k}`,
+      customKey: k,
       label:     c.name ?? k,
       cls:       'native-bar',
       kind:      'native',
       value:     c.value ?? 0,
       max,
       pct:       clampPct(c.value ?? 0, max),
-      color:     RES_COLOR.native,
-      hasMax:    max > 0,
+      color:     colorMap[k] || RES_COLOR.native,
+      hasMax:    max > 0 || ours,
       valuePath: `system.resources.custom.${k}.value`,
-      maxPath:   null,             // max is formula-derived in the system
-      removable: false,
-    });
-  }
-
-  // Module-managed colour trackers
-  for (const t of (flags.customTrackers ?? [])) {
-    const max = Number(t.max) || 0;
-    resources.push({
-      key:       `tracker.${t.id}`,
-      label:     t.name ?? 'Tracker',
-      cls:       'tracker-bar',
-      kind:      'tracker',
-      value:     Number(t.value) || 0,
-      max,
-      pct:       clampPct(Number(t.value) || 0, max),
-      color:     t.color || 'rgba(120, 130, 200, 0.72)',
-      hasMax:    true,
-      valuePath: null,
-      maxPath:   null,
-      trackerId: t.id,
-      removable: true,
+      // Resources we created store a plain numeric max formula we can edit;
+      // system-granted ones keep their formula-derived max read-only.
+      maxPath:   ours ? `system.resources.custom.${k}.maxFormula` : null,
+      removable: ours,
     });
   }
 
