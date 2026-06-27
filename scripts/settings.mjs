@@ -22,12 +22,12 @@ const HEADING_FONTS = {
 export function registerSettings() {
   game.settings.register(MODULE_ID, 'uiScale', {
     name: 'DC20 Alt Sheet: UI Scale',
-    hint: 'Scales layout elements (spacing, buttons, images, tab sizes). 0.75 = compact, 1.5 = default.',
+    hint: 'Scales layout elements (spacing, buttons, images, tab sizes). 0.75 = compact, 1.0 = default.',
     scope: 'client',
     config: true,
     type: Number,
     range: { min: 0.75, max: 3.0, step: 0.25 },
-    default: 1.5,
+    default: 1.0,
     onChange: applySheetSettings,
   });
 

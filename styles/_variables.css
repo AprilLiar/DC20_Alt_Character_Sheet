@@ -24,7 +24,7 @@
   --font-ui:      Signika, Arial, sans-serif;
 
   /* ── Scales (overridden by module settings) ── */
-  --dc20-scale:  1.5;  /* UI layout scale: spacing, element sizes */
+  --dc20-scale:  1.0;  /* UI layout scale: spacing, element sizes */
   --font-scale:  1.5;  /* Text scale: font sizes only */
 
   /* ── Font sizes (scale with --font-scale) ── */
