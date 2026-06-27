@@ -23,7 +23,7 @@
     "north   north    north"
     "west    portrait east"
     "south   south    south";
-  grid-template-columns: 1fr minmax(280px, 420px) 1fr;
+  grid-template-columns: 1fr minmax(220px, 360px) 1fr;
   grid-template-rows: auto 1fr minmax(calc(120px * var(--dc20-scale)), 35%);
   gap: var(--gap-sm);
 }
