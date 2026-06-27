@@ -66,44 +66,82 @@
       </div>
     </div>
 
-    {{!-- WEST: Skills + Languages --}}
+    {{!-- WEST: Skills / Trades (toggleable sub-tabs) + Languages --}}
     <div class="core-panel core-west">
-      <h3 class="section-heading core-panel-header">Skills</h3>
+      <div class="core-subtabs core-panel-header" role="tablist">
+        <button type="button" class="core-subtab-btn{{#unless (eq coreSkillTab 'trades')}} active{{/unless}}"
+          data-core-subtab="skills">Skills</button>
+        <button type="button" class="core-subtab-btn{{#if (eq coreSkillTab 'trades')}} active{{/if}}"
+          data-core-subtab="trades">Trades</button>
+      </div>
       <div class="core-panel-scroll">
-        {{#each skillGroups}}
-          <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
-          <div class="skills-list">
-            {{#each masteredItems}}
-            <div class="skill-row" data-skill="{{key}}">
-              <span class="skill-profs">{{{profDots mastery 5}}}</span>
-              <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">{{label}}</span>
-              <span class="skill-bonus rollable" data-action="rollSkill" data-skill="{{key}}">{{signedNum bonus}}</span>
-            </div>
-            {{/each}}
-            {{#if hasBoth}}<hr class="skills-divider">{{/if}}
-            {{#each unmasteredItems}}
-            <div class="skill-row" data-skill="{{key}}">
-              <span class="skill-profs">{{{profDots mastery 5}}}</span>
-              <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">{{label}}</span>
-              <span class="skill-bonus rollable" data-action="rollSkill" data-skill="{{key}}">{{signedNum bonus}}</span>
-            </div>
-            {{/each}}
-          </div>
-        {{else}}
-          <p class="empty-note">No skills defined.</p>
-        {{/each}}
 
-        {{#if languages.length}}
-          <h3 class="section-heading mt">Languages</h3>
-          <div class="skills-list">
-            {{#each languages}}
-            <div class="skill-row lang-row">
-              <span class="skill-profs">{{{profDots mastery 2}}}</span>
-              <span class="skill-name">{{label}}</span>
+        {{!-- Skills sub-panel --}}
+        <div class="core-subpanel core-subpanel-skills{{#if (eq coreSkillTab 'trades')}} hidden{{/if}}" data-core-subpanel="skills">
+          {{#each skillGroups}}
+            <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
+            <div class="skills-list">
+              {{#each masteredItems}}
+              <div class="skill-row" data-skill="{{key}}">
+                <span class="skill-profs">{{{profDots mastery 5}}}</span>
+                <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">{{label}}</span>
+                <span class="skill-bonus rollable" data-action="rollSkill" data-skill="{{key}}">{{signedNum bonus}}</span>
+              </div>
+              {{/each}}
+              {{#if hasBoth}}<hr class="skills-divider">{{/if}}
+              {{#each unmasteredItems}}
+              <div class="skill-row" data-skill="{{key}}">
+                <span class="skill-profs">{{{profDots mastery 5}}}</span>
+                <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">{{label}}</span>
+                <span class="skill-bonus rollable" data-action="rollSkill" data-skill="{{key}}">{{signedNum bonus}}</span>
+              </div>
+              {{/each}}
             </div>
+          {{else}}
+            <p class="empty-note">No skills defined.</p>
+          {{/each}}
+
+          {{#if languages.length}}
+            <h3 class="section-heading mt">Languages</h3>
+            <div class="skills-list">
+              {{#each languages}}
+              <div class="skill-row lang-row">
+                <span class="skill-profs">{{{profDots mastery 2}}}</span>
+                <span class="skill-name">{{label}}</span>
+              </div>
+              {{/each}}
+            </div>
+          {{/if}}
+        </div>
+
+        {{!-- Trades sub-panel --}}
+        <div class="core-subpanel core-subpanel-trades{{#unless (eq coreSkillTab 'trades')}} hidden{{/unless}}" data-core-subpanel="trades">
+          {{#if tradeGroups.length}}
+            {{#each tradeGroups}}
+              <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
+              <div class="skills-list">
+                {{#each masteredItems}}
+                <div class="skill-row" data-trade="{{key}}">
+                  <span class="skill-profs">{{{profDots mastery 5}}}</span>
+                  <span class="skill-name rollable" data-action="rollTrade" data-trade="{{key}}">{{label}}</span>
+                  <span class="skill-bonus rollable" data-action="rollTrade" data-trade="{{key}}">{{signedNum bonus}}</span>
+                </div>
+                {{/each}}
+                {{#if hasBoth}}<hr class="skills-divider">{{/if}}
+                {{#each unmasteredItems}}
+                <div class="skill-row" data-trade="{{key}}">
+                  <span class="skill-profs">{{{profDots mastery 5}}}</span>
+                  <span class="skill-name rollable" data-action="rollTrade" data-trade="{{key}}">{{label}}</span>
+                  <span class="skill-bonus rollable" data-action="rollTrade" data-trade="{{key}}">{{signedNum bonus}}</span>
+                </div>
+                {{/each}}
+              </div>
             {{/each}}
-          </div>
-        {{/if}}
+          {{else}}
+            <p class="empty-note">No trades defined.</p>
+          {{/if}}
+        </div>
+
       </div>
     </div>
 
@@ -130,33 +168,33 @@
       </div>
     </div>
 
-    {{!-- EAST: Trades --}}
+    {{!-- EAST: Roll tiles (basic checks + custom rolls) --}}
     <div class="core-panel core-east">
-      {{#if tradeGroups.length}}<h3 class="section-heading core-panel-header">Trades</h3>{{/if}}
+      <h3 class="section-heading core-panel-header">Rolls</h3>
       <div class="core-panel-scroll">
-        {{#if tradeGroups.length}}
-          {{#each tradeGroups}}
-            <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
-            <div class="skills-list">
-              {{#each masteredItems}}
-              <div class="skill-row" data-trade="{{key}}">
-                <span class="skill-profs">{{{profDots mastery 5}}}</span>
-                <span class="skill-name rollable" data-action="rollTrade" data-trade="{{key}}">{{label}}</span>
-                <span class="skill-bonus rollable" data-action="rollTrade" data-trade="{{key}}">{{signedNum bonus}}</span>
-              </div>
-              {{/each}}
-              {{#if hasBoth}}<hr class="skills-divider">{{/if}}
-              {{#each unmasteredItems}}
-              <div class="skill-row" data-trade="{{key}}">
-                <span class="skill-profs">{{{profDots mastery 5}}}</span>
-                <span class="skill-name rollable" data-action="rollTrade" data-trade="{{key}}">{{label}}</span>
-                <span class="skill-bonus rollable" data-action="rollTrade" data-trade="{{key}}">{{signedNum bonus}}</span>
-              </div>
-              {{/each}}
-            </div>
+        <div class="roll-tiles">
+          {{#each basicRolls}}
+          <button type="button" class="roll-tile roll-tile-basic" draggable="true"
+            data-action="rollBasic" data-roll-key="{{key}}" data-roll-label="{{label}}"
+            title="Roll {{label}}">
+            <span class="roll-tile-name">{{label}}</span>
+          </button>
           {{/each}}
-        {{else}}
-          <p class="empty-note">No trades defined.</p>
+
+          {{#each customRolls}}
+          <button type="button" class="roll-tile roll-tile-custom" draggable="true"
+            data-action="rollCustom" data-roll-id="{{id}}" data-roll-name="{{name}}" data-roll-bonus="{{bonus}}"
+            title="Roll {{name}}">
+            <span class="roll-tile-name">{{name}}</span>
+            <span class="roll-tile-bonus">{{signedNum bonus}}</span>
+          </button>
+          {{/each}}
+        </div>
+
+        {{#if isEditable}}
+        <button type="button" class="roll-tile-add" data-action="addCustomRoll" title="Create a custom roll">
+          <i class="fas fa-plus"></i>
+        </button>
         {{/if}}
       </div>
     </div>

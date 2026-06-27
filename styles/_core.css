@@ -286,6 +286,115 @@
 }
 
 /* ════════════════════════════════════════
+   WEST: Skills / Trades sub-tabs
+═══════════════════════════════════════ */
+.dc20-alt-sheet .core-subtabs {
+  display: flex;
+  gap: calc(4px * var(--dc20-scale));
+  flex-shrink: 0;
+  padding: var(--gap-xs) var(--gap-sm) 0;
+}
+.dc20-alt-sheet .core-subtab-btn {
+  flex: 1;
+  padding: calc(4px * var(--dc20-scale)) calc(6px * var(--dc20-scale));
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--p-ink-muted);
+  background: var(--p-bg-aged);
+  border: 1.5px solid var(--p-border-faint);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.dc20-alt-sheet .core-subtab-btn:hover {
+  background: var(--p-hover);
+  color: var(--p-ink);
+}
+.dc20-alt-sheet .core-subtab-btn.active {
+  background: var(--p-bg-card);
+  color: var(--p-accent);
+  border-color: var(--p-accent);
+}
+.dc20-alt-sheet .core-subpanel.hidden { display: none; }
+
+/* ════════════════════════════════════════
+   EAST: Roll tiles (basic + custom)
+═══════════════════════════════════════ */
+.dc20-alt-sheet .roll-tiles {
+  display: flex;
+  flex-direction: column;
+  gap: calc(6px * var(--dc20-scale));
+}
+.dc20-alt-sheet .roll-tile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-sm);
+  width: 100%;
+  padding: calc(8px * var(--dc20-scale)) calc(10px * var(--dc20-scale));
+  background: var(--p-bg-card);
+  border: 1.5px solid var(--p-border-faint);
+  border-left: 3px solid var(--p-accent);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
+}
+.dc20-alt-sheet .roll-tile:hover {
+  background: var(--p-hover);
+  box-shadow: 0 0 6px rgba(100, 150, 255, 0.25);
+}
+.dc20-alt-sheet .roll-tile:active { transform: translateY(1px); }
+.dc20-alt-sheet .roll-tile-custom { border-left-color: var(--p-gold-light); }
+.dc20-alt-sheet .roll-tile-name {
+  font-family: var(--font-heading);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--p-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dc20-alt-sheet .roll-tile-bonus {
+  flex-shrink: 0;
+  font-family: var(--font-heading);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--p-accent);
+}
+.dc20-alt-sheet .roll-tile-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: calc(8px * var(--dc20-scale));
+  padding: calc(6px * var(--dc20-scale));
+  font-size: var(--fs-md);
+  color: var(--p-ink-muted);
+  background: none;
+  border: 1.5px dashed var(--p-border-faint);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.dc20-alt-sheet .roll-tile-add:hover {
+  color: var(--p-accent);
+  border-color: var(--p-accent);
+  background: var(--p-hover);
+}
+
+/* Custom roll dialog form */
+.dc20-custom-roll-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+/* ════════════════════════════════════════
    SOUTH ROW: Favourites | Last Used (50/50)
 ═══════════════════════════════════════ */
 .dc20-alt-sheet .core-south {

@@ -30,6 +30,9 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       toggleAttune:  DC20AltCharacterSheet._onToggleAttune,
       useItem:       DC20AltCharacterSheet._onUseItem,
       resetStats:    DC20AltCharacterSheet._onResetStats,
+      rollBasic:     DC20AltCharacterSheet._onRollBasic,
+      rollCustom:    DC20AltCharacterSheet._onRollCustom,
+      addCustomRoll: DC20AltCharacterSheet._onAddCustomRoll,
     },
     form: { submitOnChange: true, closeOnSubmit: false },
   };
@@ -64,6 +67,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   _tabsInitialized = false;
   /** Active combat filter */
   _combatFilter = 'all';
+  /** Which Core-tab west sub-panel is shown ('skills' | 'trades') */
+  _coreSkillTab = 'skills';
   /** Pending split-tab builder selection (left/right/bottom page ids) */
   _pendingSplit = { left: null, right: null, bottom: null };
   /** Orientation for the pending split ('vertical' or 'horizontal') */
@@ -183,7 +188,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
           }),
           pageDefs: DC20AltCharacterSheet.PAGE_DEFS,
         });
-      case 'page-core':      return Object.assign(context, await prepareCore(this.actor));
+      case 'page-core':      return Object.assign(context, await prepareCore(this.actor), { coreSkillTab: this._coreSkillTab });
       case 'page-combat':    return Object.assign(context, await prepareCombat(this.actor), { combatFilter: this._combatFilter });
       case 'page-features':  return Object.assign(context, await prepareFeatures(this.actor));
       case 'page-inventory': return Object.assign(context, await prepareInventory(this.actor));
@@ -216,10 +221,11 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     const [left, right, bottom] = parts;
     const ratio = this._getSplitRatio(id);
     const common = {
-      isEditable: this.isEditable,
-      moduleId:   MODULE_ID,
-      actor:      this.actor,
-      system:     this.actor.system,
+      isEditable:   this.isEditable,
+      moduleId:     MODULE_ID,
+      actor:        this.actor,
+      system:       this.actor.system,
+      coreSkillTab: this._coreSkillTab,
     };
 
     if (bottom) {
@@ -292,6 +298,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     super._onRender(context, options);
     this._bindBrowserTabs();
     this._bindCombatFilter();
+    this._bindCoreSkillTabs();
     this._bindApPips();
     this._bindSplitBuilder();
     this._bindSplitDivider();
@@ -779,6 +786,23 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   }
 
   /* -------------------------------------------- */
+  /*  Core Skills / Trades Sub-tabs                */
+  /* -------------------------------------------- */
+
+  _bindCoreSkillTabs() {
+    this.element.querySelectorAll('.core-subtab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this._coreSkillTab = btn.dataset.coreSubtab;
+        // Toggle every core panel on the sheet (handles split panes too).
+        this.element.querySelectorAll('.core-subtab-btn').forEach(b =>
+          b.classList.toggle('active', b.dataset.coreSubtab === this._coreSkillTab));
+        this.element.querySelectorAll('.core-subpanel').forEach(p =>
+          p.classList.toggle('hidden', p.dataset.coreSubpanel !== this._coreSkillTab));
+      });
+    });
+  }
+
+  /* -------------------------------------------- */
   /*  AP Pips                                      */
   /* -------------------------------------------- */
 
@@ -840,6 +864,27 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       });
     });
 
+    // Basic check tiles — draggable to quick slots
+    el.querySelectorAll('.roll-tile-basic[data-roll-key]').forEach(tile => {
+      tile.addEventListener('dragstart', e => {
+        const rollKey = tile.dataset.rollKey;
+        const label   = tile.dataset.rollLabel ?? rollKey;
+        e.dataTransfer.effectAllowed = 'copy';
+        e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'roll', rollKey, label }));
+      });
+    });
+
+    // Custom roll tiles — draggable to quick slots
+    el.querySelectorAll('.roll-tile-custom[data-roll-id]').forEach(tile => {
+      tile.addEventListener('dragstart', e => {
+        const id    = tile.dataset.rollId;
+        const label = tile.dataset.rollName ?? '';
+        const bonus = Number(tile.dataset.rollBonus) || 0;
+        e.dataTransfer.effectAllowed = 'copy';
+        e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'customRoll', id, label, bonus }));
+      });
+    });
+
     // Quick slot drag-drop + click events
     el.querySelectorAll('.quick-slot[data-slot-index]').forEach(slot => {
       const idx = parseInt(slot.dataset.slotIndex, 10);
@@ -879,6 +924,12 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       if (item) return item.roll?.();
     } else if (slot.type === 'skill' || slot.type === 'trade' || slot.type === 'language') {
       return this.actor.roll?.(slot.id, 'check');
+    } else if (slot.type === 'roll') {
+      return this._rollBasicCheck(slot.rollKey, slot.label);
+    } else if (slot.type === 'customRoll') {
+      // Prefer the live definition (reflects edits); fall back to the stored snapshot.
+      const live = this._getCustomRolls().find(r => r.id === slot.id);
+      return this._rollCustomCheck(live?.name ?? slot.label, live?.bonus ?? slot.bonus);
     }
   }
 
@@ -922,6 +973,12 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     if (data.type === 'skill' || data.type === 'trade' || data.type === 'language') {
       const abbr = (data.label ?? data.key ?? '').slice(0, 3).toUpperCase();
       entry = { type: data.type, id: data.key, label: data.label, abbr, img: '' };
+    } else if (data.type === 'roll') {
+      const abbr = (data.label ?? '').slice(0, 3).toUpperCase();
+      entry = { type: 'roll', rollKey: data.rollKey, label: data.label, abbr, img: '' };
+    } else if (data.type === 'customRoll') {
+      const abbr = (data.label ?? '').slice(0, 3).toUpperCase();
+      entry = { type: 'customRoll', id: data.id, bonus: data.bonus, label: data.label, abbr, img: '' };
     } else if (data.type === 'item') {
       entry = { type: 'item', id: data.id, label: data.label, img: data.img ?? '', abbr: '' };
     } else if (data.type === 'Item') {
@@ -986,11 +1043,136 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         },
       },
     ], { jQuery: false });
+
+    // Custom roll tiles — edit / remove (basic tiles have no menu)
+    new CM(this.element, '.roll-tile-custom[data-roll-id]', [
+      {
+        name: 'Edit',
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: (el) => this._editCustomRoll(el?.dataset?.rollId),
+      },
+      {
+        name: 'Remove',
+        icon: '<i class="fas fa-trash"></i>',
+        callback: (el) => this._removeCustomRoll(el?.dataset?.rollId),
+      },
+    ], { jQuery: false });
+  }
+
+  /* -------------------------------------------- */
+  /*  Roll Tiles (basic + custom)                  */
+  /* -------------------------------------------- */
+
+  /** Roll one of the fixed DC20 basic checks via the system's roll dialog. */
+  _rollBasicCheck(key, label) {
+    if (!key) return;
+    // 'att' isn't in the system's label map, so pass an explicit label for the chat card.
+    const options = label ? { customLabel: label } : {};
+    return this.actor.roll(key, 'check', options);
+  }
+
+  /**
+   * Roll a custom (name + flat bonus) check through the DC20 roll dialog.
+   * We hand the dialog a pre-built details object with a customFormula so the
+   * system still applies advantage/disadvantage to the d20.
+   */
+  _rollCustomCheck(name, bonus) {
+    const b = Number(bonus) || 0;
+    const formula = b === 0 ? 'd20' : (b > 0 ? `d20 + ${b}` : `d20 - ${Math.abs(b)}`);
+    const label = name || 'Custom Roll';
+    const details = {
+      roll:          formula,
+      customFormula: formula,
+      label,
+      rollTitle:     label,
+      type:          'flat',
+      against:       null,
+      checkKey:      'flat',
+      statuses:      [],
+    };
+    return this.actor.roll(null, 'check', {}, details);
+  }
+
+  _getCustomRolls() {
+    return [...(this.actor.flags?.[MODULE_ID]?.customRolls ?? [])];
+  }
+
+  /** Dialog to capture a custom roll's name + bonus. Returns {name, bonus} or null. */
+  async _promptCustomRoll(existing = null) {
+    const nameVal  = (existing?.name ?? '').replaceAll('"', '&quot;');
+    const bonusVal = existing?.bonus ?? 0;
+    const content = `
+      <div class="dc20-custom-roll-form">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" name="name" value="${nameVal}" placeholder="e.g. Initiative (Adv)" autofocus>
+        </div>
+        <div class="form-group">
+          <label>Bonus</label>
+          <input type="number" name="bonus" value="${bonusVal}" step="1">
+        </div>
+      </div>`;
+    const result = await foundry.applications.api.DialogV2.wait({
+      window:  { title: existing ? 'Edit Custom Roll' : 'New Custom Roll' },
+      content,
+      rejectClose: false,
+      buttons: [
+        {
+          action: 'save',
+          label:  'Save',
+          default: true,
+          callback: (event, button) => {
+            const form = button.form;
+            return {
+              name:  form.elements.name.value.trim(),
+              bonus: Math.trunc(Number(form.elements.bonus.value) || 0),
+            };
+          },
+        },
+        { action: 'cancel', label: 'Cancel' },
+      ],
+    });
+    if (!result || result === 'cancel' || !result.name) return null;
+    return result;
+  }
+
+  async _editCustomRoll(id) {
+    const rolls = this._getCustomRolls();
+    const existing = rolls.find(r => r.id === id);
+    if (!existing) return;
+    const data = await this._promptCustomRoll(existing);
+    if (!data) return;
+    const updated = rolls.map(r => (r.id === id ? { ...r, name: data.name, bonus: data.bonus } : r));
+    await this.actor.setFlag(MODULE_ID, 'customRolls', updated);
+    this.render();
+  }
+
+  async _removeCustomRoll(id) {
+    const rolls = this._getCustomRolls().filter(r => r.id !== id);
+    await this.actor.setFlag(MODULE_ID, 'customRolls', rolls);
+    this.render();
   }
 
   /* -------------------------------------------- */
   /*  Static Action Handlers                       */
   /* -------------------------------------------- */
+
+  static async _onRollBasic(event, target) {
+    return this._rollBasicCheck(target.dataset.rollKey, target.dataset.rollLabel);
+  }
+
+  static async _onRollCustom(event, target) {
+    return this._rollCustomCheck(target.dataset.rollName, target.dataset.rollBonus);
+  }
+
+  static async _onAddCustomRoll() {
+    const data = await this._promptCustomRoll();
+    if (!data) return;
+    const rolls = this._getCustomRolls();
+    rolls.push({ id: foundry.utils.randomID(), name: data.name, bonus: data.bonus });
+    await this.actor.setFlag(MODULE_ID, 'customRolls', rolls);
+    this.render();
+  }
 
   static async _onRollAttribute(event, target) {
     const attrKey = target.closest('[data-attr]').dataset.attr;

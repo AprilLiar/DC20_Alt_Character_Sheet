@@ -1,4 +1,13 @@
 import { getFavourites, getLastUsed } from '../helpers/tracking.mjs';
+import { MODULE_ID } from '../constants.mjs';
+
+/** The four fixed DC20 basic checks (rolled via actor.roll(key, 'check')). */
+const BASIC_ROLLS = [
+  { key: 'att',   label: 'Attack Check'  },
+  { key: 'spe',   label: 'Spell Check'   },
+  { key: 'mar',   label: 'Martial Check' },
+  { key: 'prime', label: 'Prime Check'   },
+];
 
 const ATTR_CONFIG = {
   mig: { label: 'Might',        abbr: 'MIG' },
@@ -78,6 +87,13 @@ export async function prepareCore(actor) {
   const skillGroupsMastered = groupByAttr(skills.filter(s => s.mastery));
   const tradeGroupsMastered = groupByAttr(trades.filter(t => t.mastery));
 
+  // Custom user-defined rolls (name + flat bonus)
+  const customRolls = (actor.flags?.[MODULE_ID]?.customRolls ?? []).map(r => ({
+    id:    r.id,
+    name:  r.name,
+    bonus: Number(r.bonus) || 0,
+  }));
+
   function splitGroups(allGroups) {
     return allGroups.map(g => ({
       ...g,
@@ -98,6 +114,8 @@ export async function prepareCore(actor) {
     languages,
     movement,
     senses,
+    basicRolls: BASIC_ROLLS,
+    customRolls,
     favourites,
     lastUsed,
     details: system.details ?? {},

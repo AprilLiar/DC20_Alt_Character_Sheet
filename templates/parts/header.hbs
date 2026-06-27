@@ -8,6 +8,20 @@
     </div>
   </div>
 
+  {{!-- Defences: PD / AD --}}
+  {{#if (or (ne header.pd null) (ne header.ad null))}}
+  <div class="hstrip-defences" title="Precision Defence / Area Defence">
+    <div class="hstrip-def pd-def">
+      <span class="hstrip-def-label">PD</span>
+      <span class="hstrip-def-val">{{#if (ne header.pd null)}}{{header.pd}}{{else}}—{{/if}}</span>
+    </div>
+    <div class="hstrip-def ad-def">
+      <span class="hstrip-def-label">AD</span>
+      <span class="hstrip-def-val">{{#if (ne header.ad null)}}{{header.ad}}{{else}}—{{/if}}</span>
+    </div>
+  </div>
+  {{/if}}
+
   <div class="hstrip-divider"></div>
 
   {{!-- Hit Points --}}
