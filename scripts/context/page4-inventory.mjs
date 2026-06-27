@@ -2,7 +2,8 @@ export async function prepareInventory(actor) {
   const system = actor.system;
   const groups = { weapons: [], equipment: [], consumables: [], loot: [] };
 
-  for (const item of actor.items) {
+  const items = [...actor.items].sort((a, b) => (a.sort || 0) - (b.sort || 0));
+  for (const item of items) {
     const base = {
       id:       item.id,
       name:     item.name,

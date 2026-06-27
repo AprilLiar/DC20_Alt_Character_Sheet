@@ -5,6 +5,7 @@
     {{#each attributes}}
     <div class="sc-attr" data-attr="{{key}}">
       <span class="sc-attr-name">{{label}}</span>
+      <span class="sc-attr-score">{{signedNum value}}</span>
       <div class="sc-attr-buttons">
         <button type="button" class="sc-attr-btn rollable" data-action="rollAttribute" data-attr="{{key}}" title="Check">
           <i class="fas fa-dice-d20"></i>{{signedNum check}}
@@ -64,7 +65,7 @@
   <div class="sc-items-grid">
     <div class="sc-panel sc-panel-stretch">
       <div class="sc-panel-heading">Favourites</div>
-      <div class="sc-panel-scroll">
+      <div class="sc-panel-scroll" data-reorder-list data-reorder-mode="flag" data-reorder-key="favourites">
         {{#if favourites.length}}
           {{#each favourites}}
           <div class="sc-item-row" data-item-id="{{id}}">
@@ -79,7 +80,7 @@
     </div>
     <div class="sc-panel sc-panel-stretch">
       <div class="sc-panel-heading">Last Used</div>
-      <div class="sc-panel-scroll">
+      <div class="sc-panel-scroll" data-reorder-list data-reorder-mode="flag" data-reorder-key="lastUsed">
         {{#if lastUsed.length}}
           {{#each lastUsed}}
           <div class="sc-item-row" data-item-id="{{id}}">

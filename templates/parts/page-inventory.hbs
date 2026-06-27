@@ -36,7 +36,7 @@
       {{/if}}
     </div>
     {{#if itemGroups.weapons.length}}
-    <ul class="items-list">
+    <ul class="items-list" data-reorder-list data-reorder-mode="sort">
       {{#each itemGroups.weapons}}
       <li class="item-row{{#if equipped}} equipped{{/if}}{{#if attuned}} attuned{{/if}}" data-item-id="{{id}}">
         <img class="item-img item-img-rollable" src="{{img}}" alt="{{name}}" data-action="useItem" title="Use {{name}}">
@@ -75,7 +75,7 @@
       {{/if}}
     </div>
     {{#if itemGroups.equipment.length}}
-    <ul class="items-list">
+    <ul class="items-list" data-reorder-list data-reorder-mode="sort">
       {{#each itemGroups.equipment}}
       <li class="item-row{{#if equipped}} equipped{{/if}}{{#if attuned}} attuned{{/if}}" data-item-id="{{id}}">
         <img class="item-img" src="{{img}}" alt="{{name}}">
@@ -114,7 +114,7 @@
       {{/if}}
     </div>
     {{#if itemGroups.consumables.length}}
-    <ul class="items-list">
+    <ul class="items-list" data-reorder-list data-reorder-mode="sort">
       {{#each itemGroups.consumables}}
       <li class="item-row" data-item-id="{{id}}">
         <img class="item-img item-img-rollable" src="{{img}}" alt="{{name}}" data-action="useItem" title="Use {{name}}">
@@ -149,7 +149,7 @@
       </button>
       {{/if}}
     </div>
-    <ul class="items-list">
+    <ul class="items-list" data-reorder-list data-reorder-mode="sort">
       {{#each itemGroups.loot}}
       <li class="item-row" data-item-id="{{id}}">
         <img class="item-img" src="{{img}}" alt="{{name}}">

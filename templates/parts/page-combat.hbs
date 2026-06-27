@@ -44,7 +44,7 @@
   {{/if}}
 
   {{!-- Combat Actions --}}
-  <div class="combat-actions">
+  <div class="combat-actions" data-reorder-list data-reorder-mode="sort">
     {{#each combatActions}}
     <div class="combat-action-row{{#if isEquipped}} equipped{{/if}}{{#if isAttuned}} attuned{{/if}}" data-item-id="{{id}}" data-filter-type="{{filterType}}">
       <img class="ca-img" src="{{img}}" alt="{{name}}"

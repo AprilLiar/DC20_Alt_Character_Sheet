@@ -37,7 +37,7 @@
           {{#each movement}}
           <div class="core-chip">
             <span class="chip-label">{{label}}</span>
-            <span class="chip-val">{{value}}<span class="chip-unit"> ft</span></span>
+            <span class="chip-val">{{value}}</span>
           </div>
           {{/each}}
           {{#each senses}}
@@ -52,6 +52,7 @@
           {{#each attributes}}
           <div class="sc-attr" data-attr="{{key}}">
             <span class="sc-attr-name">{{label}}</span>
+            <span class="sc-attr-score">{{signedNum value}}</span>
             <div class="sc-attr-buttons">
               <button type="button" class="sc-attr-btn rollable" data-action="rollAttribute" data-attr="{{key}}" title="Check">
                 <i class="fas fa-dice-d20"></i>{{signedNum check}}
@@ -206,7 +207,7 @@
         <h3 class="section-heading core-panel-header">Favourites</h3>
         <div class="core-panel-scroll">
           {{#if favourites.length}}
-            <ul class="qol-list">
+            <ul class="qol-list" data-reorder-list data-reorder-mode="flag" data-reorder-key="favourites">
               {{#each favourites}}
               <li class="qol-row" data-item-id="{{id}}">
                 <img class="qol-img" src="{{img}}" alt="{{name}}"
@@ -225,7 +226,7 @@
         <h3 class="section-heading core-panel-header">Last Used</h3>
         <div class="core-panel-scroll">
           {{#if lastUsed.length}}
-            <ul class="qol-list">
+            <ul class="qol-list" data-reorder-list data-reorder-mode="flag" data-reorder-key="lastUsed">
               {{#each lastUsed}}
               <li class="qol-row" data-item-id="{{id}}">
                 <img class="qol-img" src="{{img}}" alt="{{name}}"

@@ -75,6 +75,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   _splitOrientation = 'vertical';
   /** Page id currently being dragged (from a tab or the picker) */
   _dragPageId = null;
+  /** Active list-reorder drag, or null. { listEl, id } */
+  _reorderState = null;
   /** True when the next item-row click should be swallowed (popup just closed) */
   _popupSuppressNext = false;
 
@@ -304,6 +306,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindSplitDivider();
     this._registerContextMenu();
     this._bindQuickSlots();
+    this._bindListReorder();
     this._bindBiographyAutoSave();
     this._bindItemPopup();
   }
@@ -997,6 +1000,81 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     slots[idx] = entry;
     await this.actor.setFlag(MODULE_ID, 'quickSlots', slots);
     this.render();
+  }
+
+  /* -------------------------------------------- */
+  /*  Manual List Reordering (drag to sort)        */
+  /* -------------------------------------------- */
+
+  /**
+   * Make rows inside any [data-reorder-list] container drag-sortable.
+   * Two persistence modes:
+   *   - "flag": reorder a flag array of item ids (Favourites, Last Used).
+   *   - "sort": reassign each item's Foundry `sort` field (Combat, Inventory, Features).
+   * Coexists with quick-slot dragging — the drop target decides the behaviour.
+   */
+  _bindListReorder() {
+    this.element.querySelectorAll('[data-reorder-list]').forEach(list => {
+      const rows = [...list.children].filter(c => c.dataset && c.dataset.itemId);
+      rows.forEach(row => {
+        row.setAttribute('draggable', 'true');
+
+        row.addEventListener('dragstart', () => {
+          this._reorderState = { listEl: list, id: row.dataset.itemId };
+          row.classList.add('reordering');
+        });
+
+        row.addEventListener('dragend', () => {
+          row.classList.remove('reordering');
+          rows.forEach(r => r.classList.remove('reorder-over'));
+          this._reorderState = null;
+        });
+
+        row.addEventListener('dragover', e => {
+          if (!this._reorderState || this._reorderState.listEl !== list) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          rows.forEach(r => r.classList.remove('reorder-over'));
+          if (row.dataset.itemId !== this._reorderState.id) row.classList.add('reorder-over');
+        });
+
+        row.addEventListener('drop', e => {
+          if (!this._reorderState || this._reorderState.listEl !== list) return;
+          e.preventDefault();
+          e.stopPropagation();
+          const srcId = this._reorderState.id;
+          const tgtId = row.dataset.itemId;
+          row.classList.remove('reorder-over');
+          if (srcId && tgtId && srcId !== tgtId) this._reorderList(list, srcId, tgtId);
+        });
+      });
+    });
+  }
+
+  /** Compute the new id order for a list after moving srcId before tgtId, then persist. */
+  async _reorderList(list, srcId, tgtId) {
+    const ids = [...list.children].filter(c => c.dataset?.itemId).map(c => c.dataset.itemId);
+    const from = ids.indexOf(srcId);
+    if (from === -1) return;
+    ids.splice(from, 1);
+    const to = ids.indexOf(tgtId);
+    if (to === -1) return;
+    ids.splice(to, 0, srcId);
+
+    if (list.dataset.reorderMode === 'flag') {
+      const key = list.dataset.reorderKey;
+      if (!key) return;
+      // Preserve any stored ids that aren't currently displayed (e.g. unresolved items).
+      const current = this.actor.getFlag(MODULE_ID, key) ?? [];
+      const extras  = current.filter(id => !ids.includes(id));
+      await this.actor.setFlag(MODULE_ID, key, [...ids, ...extras]);
+      this.render();
+    } else {
+      // "sort" mode — reassign Foundry sort values; the item update re-renders the sheet.
+      const density = CONST?.SORT_INTEGER_DENSITY ?? 100000;
+      const updates = ids.map((id, i) => ({ _id: id, sort: (i + 1) * density }));
+      await this.actor.updateEmbeddedDocuments('Item', updates);
+    }
   }
 
   /* -------------------------------------------- */

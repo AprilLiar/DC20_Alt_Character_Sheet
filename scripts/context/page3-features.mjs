@@ -4,7 +4,8 @@ export async function prepareFeatures(actor) {
   const typeGroups = new Map(); // featureType label → items[]
   const activeItems = [];
 
-  for (const item of actor.items) {
+  const items = [...actor.items].sort((a, b) => (a.sort || 0) - (b.sort || 0));
+  for (const item of items) {
     if (item.type !== 'feature') continue;
     const resources = item.system.costs?.resources ?? {};
     const isActive  = RESOURCE_KEYS.some(k => resources[k]);
