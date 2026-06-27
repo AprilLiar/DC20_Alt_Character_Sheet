@@ -166,6 +166,152 @@
 .dc20-alt-sheet .hstrip-input::-webkit-outer-spin-button { -webkit-appearance: none; }
 .dc20-alt-sheet .hstrip-input:focus { color: var(--p-gold-light) !important; }
 .dc20-alt-sheet .hstrip-input:disabled { opacity: 1; cursor: default; }
+.dc20-alt-sheet .hstrip-maxval {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  padding: 0 2px;
+  pointer-events: none;
+}
+
+/* ── Collapsed resource dropdown ── */
+.dc20-alt-sheet .hstrip-dd {
+  position: relative;
+}
+.dc20-alt-sheet .hstrip-dd-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xs);
+  padding: 2px 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.dc20-alt-sheet .hstrip-dd-label {
+  color: var(--p-light);
+}
+.dc20-alt-sheet .hstrip-dd-caret {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: var(--fs-sm);
+  transition: color var(--t-fast), transform var(--t-fast);
+}
+.dc20-alt-sheet .hstrip-dd-toggle:hover .hstrip-dd-caret { color: var(--p-light); }
+.dc20-alt-sheet .hstrip-dd.open .hstrip-dd-caret { transform: rotate(180deg); }
+
+.dc20-alt-sheet .hstrip-dd-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 60;
+  min-width: calc(220px * var(--dc20-scale));
+  padding: var(--gap-sm);
+  background: var(--p-bg);
+  border: 1.5px solid var(--p-border);
+  border-radius: var(--r-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: calc(4px * var(--dc20-scale));
+}
+.dc20-alt-sheet .hstrip-dd-panel.hidden { display: none; }
+.dc20-alt-sheet .hstrip-dd-title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--p-ink-muted);
+  margin-bottom: 2px;
+}
+
+.dc20-alt-sheet .res-row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  padding: 2px 4px;
+  border-radius: var(--r-sm);
+}
+.dc20-alt-sheet .res-row.selected { background: var(--p-hover); }
+.dc20-alt-sheet .res-name {
+  flex: 1;
+  min-width: calc(42px * var(--dc20-scale));
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--p-ink);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: var(--r-sm);
+  white-space: nowrap;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.dc20-alt-sheet .res-name:hover {
+  background: var(--p-accent);
+  color: var(--p-light);
+}
+.dc20-alt-sheet .res-row.selected .res-name { color: var(--p-accent); }
+.dc20-alt-sheet .res-row.selected .res-name:hover { color: var(--p-light); }
+
+/* Bars inside the dropdown sit on a darker track for contrast */
+.dc20-alt-sheet .res-row .hstrip-bar-wrap { background: rgba(0, 0, 0, 0.22); }
+.dc20-alt-sheet .res-row .hstrip-input,
+.dc20-alt-sheet .res-row .hstrip-sep,
+.dc20-alt-sheet .res-row .hstrip-maxval { color: var(--p-ink) !important; }
+
+.dc20-alt-sheet .res-remove {
+  flex-shrink: 0;
+  width: calc(18px * var(--dc20-scale));
+  height: calc(18px * var(--dc20-scale));
+  line-height: 1;
+  color: var(--p-ink-muted);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color var(--t-fast), background var(--t-fast);
+}
+.dc20-alt-sheet .res-remove:hover { color: var(--c-hp-light); background: rgba(0,0,0,0.1); }
+
+.dc20-alt-sheet .res-create {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xs);
+  margin-top: 4px;
+  padding-top: var(--gap-xs);
+  border-top: 1px solid var(--p-border-faint);
+}
+.dc20-alt-sheet .res-create-name {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-sm);
+  padding: 3px 6px;
+  background: var(--p-bg-card);
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-sm);
+  color: var(--p-ink);
+}
+.dc20-alt-sheet .res-create-color {
+  flex-shrink: 0;
+  width: calc(24px * var(--dc20-scale));
+  height: calc(24px * var(--dc20-scale));
+  padding: 0;
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-sm);
+  background: none;
+  cursor: pointer;
+}
+.dc20-alt-sheet .res-create-btn {
+  flex-shrink: 0;
+  width: calc(24px * var(--dc20-scale));
+  height: calc(24px * var(--dc20-scale));
+  color: var(--p-ink-muted);
+  background: none;
+  border: 1px dashed var(--p-border-faint);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.dc20-alt-sheet .res-create-btn:hover { color: var(--p-accent); border-color: var(--p-accent); }
 
 /* ── Quick Access Slots ── */
 .dc20-alt-sheet .hstrip-quick-slots {

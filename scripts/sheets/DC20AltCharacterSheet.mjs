@@ -17,7 +17,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   static DEFAULT_OPTIONS = {
     classes: ['dc20-alt-sheet'],
     window: { resizable: true },
-    position: { width: 1346, height: 980 },
+    position: { width: 810, height: 980 },
     actions: {
       rollAttribute: DC20AltCharacterSheet._onRollAttribute,
       rollSave:      DC20AltCharacterSheet._onRollSave,
@@ -307,6 +307,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindCombatFilter();
     this._bindCoreSkillTabs();
     this._bindApPips();
+    this._bindResourceDropdown();
     this._bindSplitBuilder();
     this._bindSplitDivider();
     this._registerContextMenu();
@@ -819,6 +820,82 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     // Track active filter on the container so CSS can show/hide the type badge
     this.element.querySelectorAll('.combat-actions').forEach(el => {
       el.dataset.activeFilter = filter;
+    });
+  }
+
+  /* -------------------------------------------- */
+  /*  Header Resource Dropdown                      */
+  /* -------------------------------------------- */
+
+  _bindResourceDropdown() {
+    const dd = this.element.querySelector('.hstrip-dd');
+    if (!dd) return;
+    const toggle = dd.querySelector('.hstrip-dd-toggle');
+    const panel  = dd.querySelector('.hstrip-dd-panel');
+    if (!toggle || !panel) return;
+
+    const closePanel = () => {
+      panel.classList.add('hidden');
+      dd.classList.remove('open');
+      document.removeEventListener('mousedown', onDoc, true);
+    };
+    const onDoc = (ev) => { if (!dd.contains(ev.target)) closePanel(); };
+
+    toggle.addEventListener('click', (e) => {
+      // Editing the collapsed bar inputs shouldn't toggle the panel.
+      if (e.target.closest('input')) return;
+      if (panel.classList.contains('hidden')) {
+        panel.classList.remove('hidden');
+        dd.classList.add('open');
+        document.addEventListener('mousedown', onDoc, true);
+      } else {
+        closePanel();
+      }
+    });
+
+    // Pick which resource shows collapsed in the header.
+    dd.querySelectorAll('.res-name[data-select-resource]').forEach(name => {
+      name.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.actor.setFlag(MODULE_ID, 'headerResource', name.dataset.selectResource);
+      });
+    });
+
+    // Edit a tracker's value / max.
+    dd.querySelectorAll('input[data-tracker-id]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const id    = inp.dataset.trackerId;
+        const field = inp.dataset.trackerField;
+        const val   = Math.trunc(Number(inp.value) || 0);
+        const trackers = [...(this.actor.flags?.[MODULE_ID]?.customTrackers ?? [])];
+        const t = trackers.find(t => t.id === id);
+        if (!t) return;
+        t[field] = val;
+        this.actor.setFlag(MODULE_ID, 'customTrackers', trackers);
+      });
+    });
+
+    // Create a new colour tracker.
+    dd.querySelector('.res-create-btn')?.addEventListener('click', () => {
+      const name  = (dd.querySelector('.res-create-name')?.value || '').trim();
+      if (!name) return;
+      const color = dd.querySelector('.res-create-color')?.value || '#9988cc';
+      const trackers = [...(this.actor.flags?.[MODULE_ID]?.customTrackers ?? [])];
+      trackers.push({ id: foundry.utils.randomID(), name, color, value: 0, max: 5 });
+      this.actor.setFlag(MODULE_ID, 'customTrackers', trackers);
+    });
+
+    // Remove a tracker.
+    dd.querySelectorAll('.res-remove[data-tracker-id]').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.trackerId;
+        const trackers = (this.actor.flags?.[MODULE_ID]?.customTrackers ?? []).filter(t => t.id !== id);
+        if (this.actor.flags?.[MODULE_ID]?.headerResource === `tracker.${id}`) {
+          await this.actor.setFlag(MODULE_ID, 'headerResource', 'health');
+        }
+        await this.actor.setFlag(MODULE_ID, 'customTrackers', trackers);
+      });
     });
   }
 

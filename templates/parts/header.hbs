@@ -1,3 +1,33 @@
+{{!-- Reusable resource bar (value / max) — branches on resource kind --}}
+{{#*inline "resBar"}}
+<div class="hstrip-bar-wrap">
+  <div class="hstrip-bar-fill" style="width: {{pct}}%; background: {{color}};"></div>
+  <div class="hstrip-bar-text">
+    {{#if (eq kind "tracker")}}
+      <input type="number" class="hstrip-input" value="{{value}}"
+        data-tracker-id="{{trackerId}}" data-tracker-field="value"
+        {{#unless @root.isEditable}}disabled{{/unless}}>
+      <span class="hstrip-sep">/</span>
+      <input type="number" class="hstrip-input" value="{{max}}"
+        data-tracker-id="{{trackerId}}" data-tracker-field="max"
+        {{#unless @root.isEditable}}disabled{{/unless}}>
+    {{else}}
+      <input type="number" class="hstrip-input" name="{{valuePath}}" value="{{value}}"
+        {{#unless @root.isEditable}}disabled{{/unless}}>
+      {{#if hasMax}}
+        <span class="hstrip-sep">/</span>
+        {{#if maxPath}}
+          <input type="number" class="hstrip-input" name="{{maxPath}}" value="{{max}}"
+            {{#unless @root.isEditable}}disabled{{/unless}}>
+        {{else}}
+          <span class="hstrip-maxval">{{max}}</span>
+        {{/if}}
+      {{/if}}
+    {{/if}}
+  </div>
+</div>
+{{/inline}}
+
 <div class="sheet-header-strip">
 
   {{!-- Action Points: pips --}}
@@ -24,78 +54,34 @@
 
   <div class="hstrip-divider"></div>
 
-  {{!-- Hit Points --}}
-  <div class="hstrip-resource hp-strip">
-    <span class="hstrip-label hp-label">HP</span>
-    <div class="hstrip-bar-wrap hp-bar">
-      <div class="hstrip-bar-fill" style="width: {{percent header.hp.value header.hp.max}}%"></div>
-      <div class="hstrip-bar-text">
-        <input type="number" name="system.resources.health.value"
-          value="{{header.hp.value}}" class="hstrip-input"
-          {{#unless isEditable}}disabled{{/unless}}>
-        <span class="hstrip-sep">/</span>
-        <input type="number" name="system.resources.health.max"
-          value="{{header.hp.max}}" class="hstrip-input"
-          {{#unless isEditable}}disabled{{/unless}}>
+  {{!-- Resource dropdown: collapsed selected resource + full list --}}
+  {{#if header.selected}}
+  <div class="hstrip-resource hstrip-dd">
+    <button type="button" class="hstrip-dd-toggle" title="Switch / manage resources">
+      <span class="hstrip-label hstrip-dd-label">{{header.selected.label}}</span>
+      {{> resBar header.selected}}
+      <i class="fas fa-caret-down hstrip-dd-caret"></i>
+    </button>
+
+    <div class="hstrip-dd-panel hidden">
+      <div class="hstrip-dd-title">Resources</div>
+      {{#each header.resources}}
+      <div class="res-row{{#if (eq key @root.header.selected.key)}} selected{{/if}}" data-res-key="{{key}}">
+        <span class="res-name" data-select-resource="{{key}}" title="Show in header">{{label}}</span>
+        {{> resBar this}}
+        {{#if removable}}
+        <button type="button" class="res-remove" data-tracker-id="{{trackerId}}" title="Remove tracker">×</button>
+        {{/if}}
       </div>
-    </div>
-  </div>
+      {{/each}}
 
-  <div class="hstrip-divider"></div>
-
-  {{!-- Stamina Points --}}
-  <div class="hstrip-resource sp-strip">
-    <span class="hstrip-label sp-label">SP</span>
-    <div class="hstrip-bar-wrap sp-bar">
-      <div class="hstrip-bar-fill" style="width: {{percent header.stamina.value header.stamina.max}}%"></div>
-      <div class="hstrip-bar-text">
-        <input type="number" name="system.resources.stamina.value"
-          value="{{header.stamina.value}}" class="hstrip-input"
-          {{#unless isEditable}}disabled{{/unless}}>
-        <span class="hstrip-sep">/</span>
-        <input type="number" name="system.resources.stamina.max"
-          value="{{header.stamina.max}}" class="hstrip-input"
-          {{#unless isEditable}}disabled{{/unless}}>
+      {{#if isEditable}}
+      <div class="res-create">
+        <input type="text" class="res-create-name" placeholder="New tracker…" maxlength="24">
+        <input type="color" class="res-create-color" value="#9988cc" title="Bar colour">
+        <button type="button" class="res-create-btn" title="Create tracker"><i class="fas fa-plus"></i></button>
       </div>
-    </div>
-  </div>
-
-  <div class="hstrip-divider"></div>
-
-  {{!-- Mana Points --}}
-  <div class="hstrip-resource mp-strip">
-    <span class="hstrip-label mp-label">MP</span>
-    <div class="hstrip-bar-wrap mp-bar">
-      <div class="hstrip-bar-fill" style="width: {{percent header.mana.value header.mana.max}}%"></div>
-      <div class="hstrip-bar-text">
-        <input type="number" name="system.resources.mana.value"
-          value="{{header.mana.value}}" class="hstrip-input"
-          {{#unless isEditable}}disabled{{/unless}}>
-        <span class="hstrip-sep">/</span>
-        <input type="number" name="system.resources.mana.max"
-          value="{{header.mana.max}}" class="hstrip-input"
-          {{#unless isEditable}}disabled{{/unless}}>
-      </div>
-    </div>
-  </div>
-
-  {{#if header.rest.max}}
-  <div class="hstrip-divider"></div>
-
-  {{!-- Rest Points --}}
-  <div class="hstrip-resource rest-strip">
-    <span class="hstrip-label rest-label">REST</span>
-    <div class="hstrip-bar-wrap rest-bar">
-      <div class="hstrip-bar-fill" style="width: {{percent header.rest.value header.rest.max}}%"></div>
-      <div class="hstrip-bar-text">
-        <input type="number" name="system.resources.restPoints.value"
-          value="{{header.rest.value}}" class="hstrip-input"
-          {{#unless isEditable}}disabled{{/unless}}>
-        <span class="hstrip-sep">/</span>
-        <input type="number" name="system.resources.restPoints.max"
-          value="{{header.rest.max}}" class="hstrip-input"
-          {{#unless isEditable}}disabled{{/unless}}>
-      </div>
+      {{/if}}
     </div>
   </div>
   {{/if}}

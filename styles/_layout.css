@@ -46,8 +46,9 @@
 .dc20-alt-sheet .page-scroll {
   display: none;
   height: 100%;
+  width: 100%;
   overflow-y: auto;
-  padding: var(--gap-lg) var(--gap-xl) var(--gap-lg) var(--gap-lg);
+  padding: var(--gap-lg);
   box-sizing: border-box;
 }
 .dc20-alt-sheet .page-scroll.active {
