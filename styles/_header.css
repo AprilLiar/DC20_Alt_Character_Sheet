@@ -416,8 +416,11 @@
 
 .dc20-alt-sheet .browser-tab-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
+  align-content: flex-end;
   gap: calc(3px * var(--dc20-scale));
+  row-gap: calc(4px * var(--dc20-scale));
   padding: calc(6px * var(--dc20-scale)) var(--gap-md) 0 var(--gap-md);
   background: var(--p-bg-aged);
   border-bottom: 2px solid var(--p-border);

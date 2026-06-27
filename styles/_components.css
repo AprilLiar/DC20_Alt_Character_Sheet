@@ -649,17 +649,15 @@
   border-radius: var(--r-sm);
   cursor: pointer;
   user-select: none;
-  opacity: 0.55;
-  filter: grayscale(0.75);
-  transition: opacity var(--t-fast), filter var(--t-fast), background var(--t-fast);
+  opacity: 0.75;
+  transition: opacity var(--t-fast), background var(--t-fast);
 }
 .dc20-alt-sheet .cond-cell:hover {
-  opacity: 0.9;
+  opacity: 1;
   background: var(--p-hover);
 }
 .dc20-alt-sheet .cond-cell.active {
   opacity: 1;
-  filter: none;
   background: var(--cond-bg);
 }
 .dc20-alt-sheet .cond-cell-icon {
@@ -668,14 +666,20 @@
   width: calc(44px * var(--dc20-scale));
   height: calc(44px * var(--dc20-scale));
 }
-/* Status SVGs are monochrome silhouettes — mask + tint them with palette colours */
+/* Status SVGs are monochrome silhouettes — mask + tint them with palette colours.
+   mask-image is set inline (per cell) so the system image URL resolves against
+   the document root; here we only set sizing + colour. */
 .dc20-alt-sheet .cond-cell-img {
   width: 100%;
   height: 100%;
   display: block;
-  background-color: var(--p-ink-muted);
-  -webkit-mask: var(--cond-mask) center / 88% no-repeat;
-  mask: var(--cond-mask) center / 88% no-repeat;
+  background-color: var(--p-ink);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-size: 88%;
+          mask-size: 88%;
   transition: background-color var(--t-fast), filter var(--t-fast);
 }
 .dc20-alt-sheet .cond-cell-icon i {
@@ -685,7 +689,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(24px * var(--font-scale));
-  color: var(--p-ink-muted);
+  color: var(--p-ink);
 }
 .dc20-alt-sheet .cond-cell.active .cond-cell-img {
   background-color: var(--p-accent);
