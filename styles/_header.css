@@ -350,30 +350,29 @@
   background: rgba(0,0,0,0.12);
 }
 
-/* + add tab button */
+/* + add tab button — styled as a narrow tab with no label */
 .dc20-alt-sheet .btab-add {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  /* Align center of + to center of a tab:
-     mb = (tab-height / 2) - (button-height / 2)
-        = (12px*scale + fs-xs) / 2  -  10px*scale
-        = fs-xs / 2  -  4px*scale                  */
-  align-self: flex-end;
-  margin-bottom: calc(var(--fs-xs) / 2 - 4px * var(--dc20-scale));
-  width: calc(20px * var(--dc20-scale));
-  height: calc(20px * var(--dc20-scale));
-  font-size: calc(18px * var(--font-scale));
+  padding: calc(5px * var(--dc20-scale)) var(--gap-xs) calc(7px * var(--dc20-scale));
+  background: var(--tab-inactive-bg);
+  border: 1.5px solid var(--p-border-light);
+  border-bottom: none;
+  border-radius: var(--r-md) var(--r-md) 0 0;
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
   line-height: 1;
-  color: var(--p-ink-muted);
-  background: none;
-  border: none;
+  color: var(--tab-inactive-text);
   cursor: pointer;
-  transition: color var(--t-fast);
+  user-select: none;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
 }
 .dc20-alt-sheet .btab-add:hover {
+  background: var(--p-hover);
   color: var(--p-accent);
+  border-color: var(--p-border);
 }
 
 /* ── Page picker overlay ── */
