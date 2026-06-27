@@ -28,6 +28,7 @@ Hooks.once('init', () => {
     'dc20-split-inventory': `${components}/split-inventory.hbs`,
     'dc20-split-biography':   `${components}/split-biography.hbs`,
     'dc20-split-statistics':  `${components}/split-statistics.hbs`,
+    'dc20-split-conditions':  `${components}/split-conditions.hbs`,
   });
 });
 

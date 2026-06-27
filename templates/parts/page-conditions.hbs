@@ -1,0 +1,62 @@
+<section class="page-scroll" data-page="conditions">
+
+  {{!-- Basic Conditions grid --}}
+  <div class="cond-grid-section">
+    <div class="page-section-header">
+      <h3 class="section-heading">Conditions</h3>
+      <span class="cond-hint muted">Left-click to apply · Right-click to remove</span>
+    </div>
+    {{#if conditions.length}}
+    <div class="cond-grid">
+      {{#each conditions}}
+      <div class="cond-cell{{#if active}} active{{/if}}" data-status-id="{{id}}"
+        title="{{label}}{{#if stackable}} (stackable){{/if}}">
+        <span class="cond-cell-icon">
+          {{#if img}}<img src="{{img}}" alt="{{label}}">
+          {{else}}<i class="fas fa-circle-exclamation"></i>{{/if}}
+          {{#if active}}{{#if stackable}}<span class="cond-stack-badge">{{stacks}}</span>{{/if}}{{/if}}
+        </span>
+        <span class="cond-cell-label">{{label}}</span>
+      </div>
+      {{/each}}
+    </div>
+    {{else}}
+    <p class="empty-note">No conditions defined in the system.</p>
+    {{/if}}
+  </div>
+
+  {{!-- Active Effects --}}
+  <div class="effects-section">
+    <h3 class="section-heading">Active Effects</h3>
+
+    {{#if passiveEffects.length}}
+      <h4 class="subsection-heading">Passive</h4>
+      <div class="effects-list">
+        {{#each passiveEffects}}
+        <div class="effect-row">
+          {{#if icon}}<img class="fx-icon" src="{{icon}}" alt="{{name}}">{{/if}}
+          <span class="fx-name">{{name}}</span>
+        </div>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if temporaryEffects.length}}
+      <h4 class="subsection-heading">Temporary</h4>
+      <div class="effects-list">
+        {{#each temporaryEffects}}
+        <div class="effect-row">
+          {{#if icon}}<img class="fx-icon" src="{{icon}}" alt="{{name}}">{{/if}}
+          <span class="fx-name">{{name}}</span>
+          {{#if duration}}<span class="fx-dur muted">{{duration}}</span>{{/if}}
+        </div>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#unless passiveEffects.length}}{{#unless temporaryEffects.length}}
+      <p class="empty-note">No active effects.</p>
+    {{/unless}}{{/unless}}
+  </div>
+
+</section>

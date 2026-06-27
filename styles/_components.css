@@ -628,6 +628,74 @@
   border: 1px solid var(--p-light);
 }
 
+/* ── Conditions tab: interactive condition grid ── */
+.dc20-alt-sheet .cond-hint {
+  font-size: var(--fs-xs);
+}
+.dc20-alt-sheet .cond-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-sm);
+  margin-bottom: var(--gap-lg);
+}
+.dc20-alt-sheet .cond-cell {
+  position: relative;
+  width: calc(72px * var(--dc20-scale));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(3px * var(--dc20-scale));
+  padding: calc(5px * var(--dc20-scale));
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  user-select: none;
+  opacity: 0.55;
+  filter: grayscale(0.75);
+  transition: opacity var(--t-fast), filter var(--t-fast), background var(--t-fast);
+}
+.dc20-alt-sheet .cond-cell:hover {
+  opacity: 0.9;
+  background: var(--p-hover);
+}
+.dc20-alt-sheet .cond-cell.active {
+  opacity: 1;
+  filter: none;
+  background: var(--cond-bg);
+}
+.dc20-alt-sheet .cond-cell-icon {
+  position: relative;
+  display: inline-block;
+  width: calc(44px * var(--dc20-scale));
+  height: calc(44px * var(--dc20-scale));
+}
+.dc20-alt-sheet .cond-cell-icon img,
+.dc20-alt-sheet .cond-cell-icon i {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: var(--r-sm);
+  display: block;
+}
+.dc20-alt-sheet .cond-cell-icon i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(24px * var(--font-scale));
+  color: var(--p-ink-muted);
+}
+.dc20-alt-sheet .cond-cell.active .cond-cell-icon img,
+.dc20-alt-sheet .cond-cell.active .cond-cell-icon i {
+  border: 1.5px solid var(--c-hp-light);
+  box-shadow: var(--cond-glow);
+}
+.dc20-alt-sheet .cond-cell-label {
+  font-size: var(--fs-xs);
+  line-height: 1.1;
+  text-align: center;
+  color: var(--p-ink);
+  word-break: break-word;
+}
+
 /* Active Effects */
 .dc20-alt-sheet .effects-list {
   display: flex;

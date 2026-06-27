@@ -6,6 +6,7 @@ import { prepareFeatures }  from '../context/page3-features.mjs';
 import { prepareInventory } from '../context/page4-inventory.mjs';
 import { prepareBiography }  from '../context/page5-biography.mjs';
 import { prepareStatistics } from '../context/page6-statistics.mjs';
+import { prepareConditions } from '../context/page-conditions.mjs';
 import { resetLifetimeStats } from '../helpers/stats.mjs';
 import { addFavourite, removeFavourite, isFavourite, recordItemUse } from '../helpers/tracking.mjs';
 
@@ -16,7 +17,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   static DEFAULT_OPTIONS = {
     classes: ['dc20-alt-sheet'],
     window: { resizable: true },
-    position: { width: 1020, height: 980 },
+    position: { width: 1224, height: 980 },
     actions: {
       rollAttribute: DC20AltCharacterSheet._onRollAttribute,
       rollSave:      DC20AltCharacterSheet._onRollSave,
@@ -46,6 +47,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     'page-inventory': { template: `modules/${MODULE_ID}/templates/parts/page-inventory.hbs`, scrollable: ['.page-scroll'] },
     'page-biography':   { template: `modules/${MODULE_ID}/templates/parts/page-biography.hbs`,   scrollable: ['.page-scroll'] },
     'page-statistics':  { template: `modules/${MODULE_ID}/templates/parts/page-statistics.hbs`,  scrollable: ['.page-scroll'] },
+    'page-conditions':  { template: `modules/${MODULE_ID}/templates/parts/page-conditions.hbs`,  scrollable: ['.page-scroll'] },
     'page-split':       { template: `modules/${MODULE_ID}/templates/parts/page-split.hbs`,        scrollable: ['.split-pane'] },
   };
 
@@ -57,6 +59,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     { id: 'inventory', label: 'Inventory'   },
     { id: 'biography',   label: 'Info'        },
     { id: 'statistics',  label: 'Statistics'  },
+    { id: 'conditions',  label: 'Conditions'  },
   ];
 
   /** Ordered list of currently-open tab page ids */
@@ -196,6 +199,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       case 'page-inventory': return Object.assign(context, await prepareInventory(this.actor));
       case 'page-biography':  return Object.assign(context, await prepareBiography(this.actor));
       case 'page-statistics': return Object.assign(context, await prepareStatistics(this.actor));
+      case 'page-conditions': return Object.assign(context, prepareConditions(this.actor));
       case 'page-split':      return Object.assign(context, await this._prepareSplitContext());
     }
     return context;
@@ -210,6 +214,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       case 'inventory': return prepareInventory(this.actor);
       case 'biography':  return prepareBiography(this.actor);
       case 'statistics': return prepareStatistics(this.actor);
+      case 'conditions': return prepareConditions(this.actor);
     }
     return {};
   }
@@ -307,6 +312,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._registerContextMenu();
     this._bindQuickSlots();
     this._bindListReorder();
+    this._bindConditionToggles();
     this._bindBiographyAutoSave();
     this._bindItemPopup();
   }
@@ -802,6 +808,29 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         this.element.querySelectorAll('.core-subpanel').forEach(p =>
           p.classList.toggle('hidden', p.dataset.coreSubpanel !== this._coreSkillTab));
       });
+    });
+  }
+
+  /* -------------------------------------------- */
+  /*  Conditions (apply / remove)                  */
+  /* -------------------------------------------- */
+
+  /**
+   * Left-click a condition cell to apply it (adds a stack for stackable
+   * conditions); right-click to remove one stack. Delegates to the DC20
+   * system's toggleStatusEffect so stacking/immunity rules are respected.
+   */
+  _bindConditionToggles() {
+    if (!this.isEditable) return;
+    this.element.querySelectorAll('.cond-cell[data-status-id]').forEach(cell => {
+      const statusId = cell.dataset.statusId;
+      cell.addEventListener('mousedown', e => {
+        if (e.button !== 0 && e.button !== 2) return;
+        e.preventDefault();
+        this.actor.toggleStatusEffect(statusId, { active: e.button === 0 });
+      });
+      // Suppress the browser context menu so right-click can remove a stack.
+      cell.addEventListener('contextmenu', e => e.preventDefault());
     });
   }
 
