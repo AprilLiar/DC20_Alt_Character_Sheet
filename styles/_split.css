@@ -351,6 +351,38 @@
 .dc20-alt-sheet .sc-attr-btn i { font-size: var(--fs-xs); }
 .dc20-alt-sheet .sc-attr-btn:hover { background: var(--p-bg-aged); border-color: var(--c-ap); }
 
+/* Movement / senses chips (Speed etc.) */
+.dc20-alt-sheet .sc-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-xs);
+  margin-bottom: var(--gap-xs);
+}
+.dc20-alt-sheet .sc-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  background: var(--p-bg-card);
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-md);
+  white-space: nowrap;
+}
+.dc20-alt-sheet .sc-stat-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--p-ink-muted);
+}
+.dc20-alt-sheet .sc-stat-val {
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--p-accent);
+}
+
 /* Rounded-rectangle panel used for every knowledge/items group */
 .dc20-alt-sheet .sc-panel {
   background: var(--p-light);

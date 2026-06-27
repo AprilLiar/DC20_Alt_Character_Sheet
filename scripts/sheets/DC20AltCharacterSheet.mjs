@@ -317,6 +317,41 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindConditionEffects();
     this._bindBiographyAutoSave();
     this._bindItemPopup();
+    this._bindPortraitFit();
+  }
+
+  /**
+   * Keep the Core portrait a centred square that shrinks to the largest size
+   * fitting its zone, so it scales down as the window is resized.
+   */
+  _bindPortraitFit() {
+    this._portraitRO?.disconnect();
+    const zones = [...this.element.querySelectorAll('.core-portrait-zone')];
+    if (!zones.length) { this._portraitRO = null; return; }
+
+    const fit = (zone) => {
+      const frame = zone.querySelector('.portrait-frame');
+      if (!frame) return;
+      const identity = zone.querySelector('.identity-block');
+      const cs   = getComputedStyle(zone);
+      const gap  = parseFloat(cs.rowGap) || parseFloat(cs.gap) || 0;
+      const padV = (parseFloat(cs.paddingTop)  || 0) + (parseFloat(cs.paddingBottom) || 0);
+      const padH = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight)  || 0);
+      const availH = zone.clientHeight - padV - (identity ? identity.offsetHeight + gap : 0);
+      const availW = zone.clientWidth  - padH;
+      const side   = Math.max(40, Math.floor(Math.min(availW, availH)));
+      frame.style.width  = `${side}px`;
+      frame.style.height = `${side}px`;
+    };
+
+    this._portraitRO = new ResizeObserver(() => zones.forEach(fit));
+    zones.forEach(z => { this._portraitRO.observe(z); fit(z); });
+  }
+
+  _onClose(options) {
+    this._portraitRO?.disconnect();
+    this._portraitRO = null;
+    super._onClose(options);
   }
 
   _bindBiographyAutoSave() {
@@ -391,7 +426,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   }
 
   _bindItemPopup() {
-    const SELECTORS = '.combat-action-row[data-item-id], .item-row[data-item-id]';
+    const SELECTORS = '.combat-action-row[data-item-id], .item-row[data-item-id], .qol-row[data-item-id], .sc-item-row[data-item-id]';
     this.element.querySelectorAll(SELECTORS).forEach(row => {
       row.addEventListener('click', (e) => {
         // Let buttons, inputs, selects, and images handle themselves normally.
@@ -879,11 +914,13 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       await this.actor.setFlag(MODULE_ID, 'resourceColors', colors);
     });
 
-    // Remove a resource we created (deletes the system resource + its colour).
-    dd.querySelectorAll('.res-remove[data-res-custom-key]').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
+    // Right-click a resource we created to remove it (deletes the system
+    // resource + its colour entry).
+    dd.querySelectorAll('.res-row[data-res-custom-key]').forEach(row => {
+      row.addEventListener('contextmenu', async (e) => {
+        e.preventDefault();
         e.stopPropagation();
-        const key = btn.dataset.resCustomKey;
+        const key = row.dataset.resCustomKey;
         const colors = { ...(this.actor.flags?.[MODULE_ID]?.resourceColors ?? {}) };
         delete colors[key];
         if (this.actor.flags?.[MODULE_ID]?.headerResource === `custom.${key}`) {

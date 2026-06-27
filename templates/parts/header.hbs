@@ -56,12 +56,11 @@
     <div class="hstrip-dd-panel hidden">
       <div class="hstrip-dd-title">Resources</div>
       {{#each header.resources}}
-      <div class="res-row{{#if (eq key @root.header.selected.key)}} selected{{/if}}" data-res-key="{{key}}">
-        <span class="res-name" data-select-resource="{{key}}" title="Show in header">{{label}}</span>
+      <div class="res-row{{#if (eq key @root.header.selected.key)}} selected{{/if}}{{#if removable}} res-removable{{/if}}"
+        data-res-key="{{key}}"{{#if removable}} data-res-custom-key="{{customKey}}"{{/if}}>
+        <span class="res-name" data-select-resource="{{key}}"
+          title="{{#if removable}}Show in header · right-click row to remove{{else}}Show in header{{/if}}">{{label}}</span>
         {{> resBar this}}
-        {{#if removable}}
-        <button type="button" class="res-remove" data-res-custom-key="{{customKey}}" title="Remove resource">×</button>
-        {{/if}}
       </div>
       {{/each}}
 

@@ -18,6 +18,18 @@
     {{/each}}
   </div>
 
+  {{!-- Movement / senses stats --}}
+  {{#if (or movement.length senses.length)}}
+  <div class="sc-stats">
+    {{#each movement}}
+    <span class="sc-stat"><span class="sc-stat-label">{{label}}</span><span class="sc-stat-val">{{value}}</span></span>
+    {{/each}}
+    {{#each senses}}
+    <span class="sc-stat"><span class="sc-stat-label">{{label}}</span><span class="sc-stat-val">{{range}}</span></span>
+    {{/each}}
+  </div>
+  {{/if}}
+
   {{!-- Knowledge half: Skills + Trades in rounded panels --}}
   <div class="sc-knowledge">
 

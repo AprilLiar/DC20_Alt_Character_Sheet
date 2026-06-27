@@ -12,7 +12,7 @@
       <div class="cond-cell{{#if active}} active{{/if}}" data-status-id="{{id}}"
         title="{{label}}{{#if stackable}} (stackable){{/if}}">
         <span class="cond-cell-icon">
-          {{#if img}}<span class="cond-cell-img" style="--cond-mask: url('{{img}}');" role="img" aria-label="{{label}}"></span>
+          {{#if img}}<span class="cond-cell-img" style="-webkit-mask-image: url('{{img}}'); mask-image: url('{{img}}');" role="img" aria-label="{{label}}"></span>
           {{else}}<i class="fas fa-circle-exclamation"></i>{{/if}}
           {{#if active}}{{#if stackable}}<span class="cond-stack-badge">{{stacks}}</span>{{/if}}{{/if}}
         </span>
