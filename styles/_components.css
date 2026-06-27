@@ -668,25 +668,32 @@
   width: calc(44px * var(--dc20-scale));
   height: calc(44px * var(--dc20-scale));
 }
-.dc20-alt-sheet .cond-cell-icon img,
+/* Status SVGs are monochrome silhouettes — mask + tint them with palette colours */
+.dc20-alt-sheet .cond-cell-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-color: var(--p-ink-muted);
+  -webkit-mask: var(--cond-mask) center / 88% no-repeat;
+  mask: var(--cond-mask) center / 88% no-repeat;
+  transition: background-color var(--t-fast), filter var(--t-fast);
+}
 .dc20-alt-sheet .cond-cell-icon i {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  border-radius: var(--r-sm);
-  display: block;
-}
-.dc20-alt-sheet .cond-cell-icon i {
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: calc(24px * var(--font-scale));
   color: var(--p-ink-muted);
 }
-.dc20-alt-sheet .cond-cell.active .cond-cell-icon img,
+.dc20-alt-sheet .cond-cell.active .cond-cell-img {
+  background-color: var(--p-accent);
+  filter: drop-shadow(0 0 calc(3px * var(--dc20-scale)) var(--p-accent-soft, rgba(196, 144, 209, 0.55)));
+}
 .dc20-alt-sheet .cond-cell.active .cond-cell-icon i {
-  border: 1.5px solid var(--c-hp-light);
-  box-shadow: var(--cond-glow);
+  color: var(--p-accent);
+  text-shadow: 0 0 calc(4px * var(--dc20-scale)) var(--p-accent-soft, rgba(196, 144, 209, 0.55));
 }
 .dc20-alt-sheet .cond-cell-label {
   font-size: var(--fs-xs);
@@ -721,6 +728,8 @@
 }
 .dc20-alt-sheet .fx-name { flex: 1; color: var(--p-ink); }
 .dc20-alt-sheet .fx-dur  { font-size: var(--fs-xs); white-space: nowrap; }
+.dc20-alt-sheet .effect-row.fx-interactive { cursor: pointer; border-radius: var(--r-sm); }
+.dc20-alt-sheet .effect-row.fx-interactive:hover { background: var(--p-hover); }
 
 /* ════════════════════════════════════════
    ITEM ROWS (Features, Inventory)

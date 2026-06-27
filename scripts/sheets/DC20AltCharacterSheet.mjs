@@ -17,7 +17,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   static DEFAULT_OPTIONS = {
     classes: ['dc20-alt-sheet'],
     window: { resizable: true },
-    position: { width: 1224, height: 980 },
+    position: { width: 1346, height: 980 },
     actions: {
       rollAttribute: DC20AltCharacterSheet._onRollAttribute,
       rollSave:      DC20AltCharacterSheet._onRollSave,
@@ -313,6 +313,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindQuickSlots();
     this._bindListReorder();
     this._bindConditionToggles();
+    this._bindConditionEffects();
     this._bindBiographyAutoSave();
     this._bindItemPopup();
   }
@@ -336,8 +337,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     }
   }
 
-  _bindItemPopup() {
-    // Reuse the popup element across re-renders so it stays above sheet content.
+  /** Reuse a single popup element across re-renders so it stays above sheet content. */
+  _ensurePopup() {
     let popup = this.element.querySelector('.item-popup');
     if (!popup) {
       popup = document.createElement('div');
@@ -347,54 +348,81 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         '<div class="item-popup-desc"></div>';
       this.element.appendChild(popup);
     }
+    return popup;
+  }
 
-    const showPopup = (itemId, anchorEl) => {
-      if (this._popupSuppressNext) return;
-      const item = this.actor.items.get(itemId);
-      if (!item) return;
+  /** Open the shared read-only popup with a title + rich HTML body, anchored to an element. */
+  _openPopup(name, descHtml, anchorEl) {
+    if (this._popupSuppressNext) return;
+    const popup = this._ensurePopup();
+    popup.querySelector('.item-popup-name').textContent = name ?? '';
+    popup.querySelector('.item-popup-desc').innerHTML = descHtml ?? '';
 
-      popup.querySelector('.item-popup-name').textContent = item.name;
-      const rawDesc = item.system?.description;
-      popup.querySelector('.item-popup-desc').innerHTML =
-        typeof rawDesc === 'string' ? rawDesc : (rawDesc?.value ?? '');
+    // Show off-screen to measure actual rendered dimensions (respects CSS scale).
+    popup.style.visibility = 'hidden';
+    popup.style.left = '-9999px';
+    popup.style.top  = '-9999px';
+    popup.classList.remove('hidden');
+    const W = popup.offsetWidth  || 290;
+    const H = popup.offsetHeight || 320;
 
-      // Show off-screen to measure actual rendered dimensions (respects CSS scale).
-      popup.style.visibility = 'hidden';
-      popup.style.left = '-9999px';
-      popup.style.top  = '-9999px';
-      popup.classList.remove('hidden');
-      const W = popup.offsetWidth  || 290;
-      const H = popup.offsetHeight || 320;
+    // Position below the anchor, clamped to viewport.
+    const rect = anchorEl.getBoundingClientRect();
+    let left = rect.left;
+    let top  = rect.bottom + 4;
+    if (left + W > window.innerWidth  - 8) left = window.innerWidth  - W - 8;
+    if (top  + H > window.innerHeight - 8) top  = rect.top - H - 4;
+    if (top < 8) top = 8;
+    popup.style.left = `${Math.max(8, left)}px`;
+    popup.style.top  = `${top}px`;
+    popup.style.visibility = '';
 
-      // Position below the row, clamped to viewport.
-      const rect = anchorEl.getBoundingClientRect();
-      let left = rect.left;
-      let top  = rect.bottom + 4;
-      if (left + W > window.innerWidth  - 8) left = window.innerWidth  - W - 8;
-      if (top  + H > window.innerHeight - 8) top  = rect.top - H - 4;
-      if (top < 8) top = 8;
-      popup.style.left = `${Math.max(8, left)}px`;
-      popup.style.top  = `${top}px`;
-      popup.style.visibility = '';
-
-      // Close when clicking outside the popup (capture phase fires before row handlers).
-      const close = (e) => {
-        if (popup.contains(e.target)) return; // click inside popup — allow scrolling/reading
-        popup.classList.add('hidden');
-        document.removeEventListener('click', close, true);
-        // Suppress the item-row click handler that rides the same event.
-        this._popupSuppressNext = true;
-        Promise.resolve().then(() => { this._popupSuppressNext = false; });
-      };
-      document.addEventListener('click', close, true);
+    // Close when clicking outside the popup (capture phase fires before row handlers).
+    const close = (e) => {
+      if (popup.contains(e.target)) return; // click inside popup — allow scrolling/reading
+      popup.classList.add('hidden');
+      document.removeEventListener('click', close, true);
+      // Suppress the row click handler that rides the same event.
+      this._popupSuppressNext = true;
+      Promise.resolve().then(() => { this._popupSuppressNext = false; });
     };
+    document.addEventListener('click', close, true);
+  }
 
+  _bindItemPopup() {
     const SELECTORS = '.combat-action-row[data-item-id], .item-row[data-item-id]';
     this.element.querySelectorAll(SELECTORS).forEach(row => {
       row.addEventListener('click', (e) => {
         // Let buttons, inputs, selects, and images handle themselves normally.
         if (e.target.closest('button, select, input, img')) return;
-        showPopup(row.dataset.itemId, row);
+        const item = this.actor.items.get(row.dataset.itemId);
+        if (!item) return;
+        const rawDesc = item.system?.description;
+        const html = typeof rawDesc === 'string' ? rawDesc : (rawDesc?.value ?? '');
+        this._openPopup(item.name, html, row);
+      });
+    });
+  }
+
+  /** Find an effect by id across the actor's own + item-transferred effects. */
+  _findEffect(effectId) {
+    const all = this.actor.allEffects ?? this.actor.effects ?? [];
+    for (const e of all) if (e.id === effectId) return e;
+    return null;
+  }
+
+  /** Conditions tab: left-click an Active Effect to read it, right-click to edit it. */
+  _bindConditionEffects() {
+    this.element.querySelectorAll('.effect-row[data-effect-id]').forEach(row => {
+      const effectId = row.dataset.effectId;
+      row.addEventListener('click', () => {
+        const eff = this._findEffect(effectId);
+        if (!eff) return;
+        this._openPopup(eff.name, eff.description ?? '', row);
+      });
+      row.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        this._findEffect(effectId)?.sheet?.render(true);
       });
     });
   }
@@ -1163,7 +1191,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         icon: '<i class="fas fa-trash"></i>',
         callback: (el) => this._removeCustomRoll(el?.dataset?.rollId),
       },
-    ], { jQuery: false });
+    ], { jQuery: false, fixed: true });
   }
 
   /* -------------------------------------------- */
