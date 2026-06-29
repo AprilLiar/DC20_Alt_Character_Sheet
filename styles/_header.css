@@ -500,6 +500,7 @@
 .dc20-alt-sheet .btab-icon-biography   { mask-image: url('../assets/icons/tab-biography.svg');   -webkit-mask-image: url('../assets/icons/tab-biography.svg'); }
 .dc20-alt-sheet .btab-icon-statistics  { mask-image: url('../assets/icons/tab-statistics.svg');  -webkit-mask-image: url('../assets/icons/tab-statistics.svg'); }
 .dc20-alt-sheet .btab-icon-conditions  { mask-image: url('../assets/icons/tab-conditions.svg');  -webkit-mask-image: url('../assets/icons/tab-conditions.svg'); }
+.dc20-alt-sheet .btab-icon-activities  { mask-image: url('../assets/icons/tab-activities.svg');  -webkit-mask-image: url('../assets/icons/tab-activities.svg'); }
 
 /* Tab label */
 .dc20-alt-sheet .btab-label {

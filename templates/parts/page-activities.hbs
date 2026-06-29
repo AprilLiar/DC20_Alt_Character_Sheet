@@ -1,0 +1,61 @@
+<section class="page-scroll" data-page="activities">
+  <div class="activities-grid">
+
+    {{!-- Level & progression --}}
+    <div class="activity-widget">
+      <h3 class="activity-widget-title">Level &amp; Progression</h3>
+      <div class="lvl-stats">
+        <div class="lvl-stat">
+          <span class="lvl-stat-label">Level</span>
+          <span class="lvl-stat-val">{{level}}</span>
+        </div>
+        <div class="lvl-stat">
+          <span class="lvl-stat-label">Combat Mastery</span>
+          <span class="lvl-stat-val">{{signedNum combatMastery}}</span>
+        </div>
+      </div>
+
+      <div class="lvl-actions">
+        <button type="button" class="lvl-up-btn" data-action="levelUp"
+          {{#if levelDisabled}}disabled{{/if}}
+          title="{{#unless hasClass}}Assign a class first{{else}}{{#unless canLevelUp}}Fill the XP bar first{{else}}Level up{{/unless}}{{/unless}}">
+          <i class="fas fa-arrow-up"></i> Level up!
+        </button>
+
+        <label class="xp-toggle" title="Track experience points">
+          <input type="checkbox" class="xp-toggle-input" {{#if trackXP}}checked{{/if}}
+            {{#unless isEditable}}disabled{{/unless}}>
+          <span>Track XP</span>
+        </label>
+      </div>
+
+      {{#if trackXP}}
+      <div class="xp-bar-wrap">
+        <div class="xp-bar-fill" style="width: {{xpPct}}%"></div>
+        <div class="xp-bar-text">
+          <input type="number" class="xp-input" data-xp-field="value" value="{{xpValue}}"
+            {{#unless isEditable}}disabled{{/unless}}>
+          <span class="xp-sep">/</span>
+          <input type="number" class="xp-input" data-xp-field="max" value="{{xpMax}}"
+            {{#unless isEditable}}disabled{{/unless}}>
+          <span class="xp-suffix">XP</span>
+        </div>
+      </div>
+      {{/if}}
+    </div>
+
+    {{!-- Rest --}}
+    <div class="activity-widget">
+      <h3 class="activity-widget-title">Rest</h3>
+      <div class="rest-btns">
+        {{#each restTypes}}
+        <button type="button" class="rest-btn" data-action="rest" data-rest-type="{{type}}" title="{{label}}">
+          <i class="fas {{icon}}"></i>
+          <span>{{label}}</span>
+        </button>
+        {{/each}}
+      </div>
+    </div>
+
+  </div>
+</section>

@@ -1093,6 +1093,168 @@
 .dc20-alt-sheet .item-popup-desc hr         { border: none; border-top: 1px solid var(--p-border-faint); margin: var(--gap-xs) 0; }
 .dc20-alt-sheet .item-popup-desc a          { color: var(--p-accent); text-decoration: underline; }
 
+/* ════════════════════════════════════════
+   ACTIVITIES TAB — widgets
+═══════════════════════════════════════ */
+.dc20-alt-sheet .activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(240px * var(--dc20-scale)), 1fr));
+  gap: var(--gap-lg);
+  align-items: start;
+}
+.dc20-alt-sheet .activity-widget {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  padding: var(--gap-md);
+  background: var(--p-light);
+  border: 1.5px solid var(--p-border-faint);
+  border-radius: var(--r-md);
+}
+.dc20-alt-sheet .activity-widget-title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--p-accent);
+  letter-spacing: 0.04em;
+  margin: 0 0 var(--gap-xs);
+  padding-bottom: var(--gap-xs);
+  border-bottom: 1px solid var(--p-border-faint);
+}
+
+.dc20-alt-sheet .lvl-stats {
+  display: flex;
+  gap: var(--gap-md);
+}
+.dc20-alt-sheet .lvl-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  padding: var(--gap-xs);
+  background: var(--p-bg-card);
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-sm);
+}
+.dc20-alt-sheet .lvl-stat-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--p-ink-muted);
+}
+.dc20-alt-sheet .lvl-stat-val {
+  font-family: var(--font-heading);
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--p-accent);
+}
+
+.dc20-alt-sheet .lvl-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+  flex-wrap: wrap;
+}
+.dc20-alt-sheet .lvl-up-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-xs);
+  padding: calc(6px * var(--dc20-scale)) var(--gap-md);
+  font-family: var(--font-heading);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--p-light);
+  background: var(--p-accent);
+  border: none;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: filter var(--t-fast), opacity var(--t-fast);
+}
+.dc20-alt-sheet .lvl-up-btn:hover:not(:disabled) { filter: brightness(1.15); }
+.dc20-alt-sheet .lvl-up-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.dc20-alt-sheet .xp-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fs-sm);
+  color: var(--p-ink);
+  cursor: pointer;
+  user-select: none;
+}
+
+.dc20-alt-sheet .xp-bar-wrap {
+  position: relative;
+  height: calc(22px * var(--dc20-scale));
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+.dc20-alt-sheet .xp-bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--p-gold-light);
+  transition: width var(--t-mid);
+}
+.dc20-alt-sheet .xp-bar-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  z-index: 1;
+}
+.dc20-alt-sheet .xp-input {
+  width: calc(44px * var(--dc20-scale));
+  background: transparent;
+  border: none;
+  text-align: center;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  color: var(--p-ink);
+  -moz-appearance: textfield;
+}
+.dc20-alt-sheet .xp-input::-webkit-inner-spin-button,
+.dc20-alt-sheet .xp-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.dc20-alt-sheet .xp-sep { font-weight: 700; color: var(--p-ink-muted); }
+.dc20-alt-sheet .xp-suffix {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--p-ink-muted);
+  margin-left: 2px;
+}
+
+.dc20-alt-sheet .rest-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-sm);
+}
+.dc20-alt-sheet .rest-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--gap-sm);
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--p-ink);
+  background: var(--p-bg-card);
+  border: 1.5px solid var(--p-border-faint);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+.dc20-alt-sheet .rest-btn i { font-size: var(--fs-lg); color: var(--p-accent); }
+.dc20-alt-sheet .rest-btn:hover {
+  background: var(--p-hover);
+  border-color: var(--p-accent);
+}
+
 /* ── Manual drag-to-reorder feedback ── */
 .dc20-alt-sheet [data-reorder-list] > .reordering { opacity: 0.4; }
 .dc20-alt-sheet [data-reorder-list] > .reorder-over {
