@@ -37,6 +37,10 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       addCustomRoll: DC20AltCharacterSheet._onAddCustomRoll,
       levelUp:       DC20AltCharacterSheet._onLevelUp,
       rest:          DC20AltCharacterSheet._onRest,
+      masteryUp:     DC20AltCharacterSheet._onMasteryUp,
+      masteryDown:   DC20AltCharacterSheet._onMasteryDown,
+      toggleExpertise: DC20AltCharacterSheet._onToggleExpertise,
+      convertPoints: DC20AltCharacterSheet._onConvertPoints,
     },
     form: { submitOnChange: true, closeOnSubmit: false },
   };
@@ -1490,6 +1494,28 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       return;
     }
     mod.RestDialog.open(this.actor, { preselected: type });
+  }
+
+  /* ── Skill / Trade / Language manager (delegates to the system) ── */
+  static async _onMasteryUp(event, target) {
+    const { skillType, skillKey } = target.dataset;
+    return this.actor.skillAndLanguage?.[skillType]?.[skillKey]?.masteryUp?.();
+  }
+
+  static async _onMasteryDown(event, target) {
+    const { skillType, skillKey } = target.dataset;
+    return this.actor.skillAndLanguage?.[skillType]?.[skillKey]?.masteryDown?.();
+  }
+
+  static async _onToggleExpertise(event, target) {
+    if (target.disabled) return;
+    const { skillType, skillKey } = target.dataset;
+    return this.actor.skillAndLanguage?.[skillType]?.[skillKey]?.expertiseToggle?.();
+  }
+
+  static async _onConvertPoints(event, target) {
+    const { from, to, op, rate } = target.dataset;
+    return this.actor.skillAndLanguage?.convertPoints?.(from, to, op, rate);
   }
 
   static async _onRollAttribute(event, target) {

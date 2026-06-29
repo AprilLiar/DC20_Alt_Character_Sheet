@@ -8,9 +8,50 @@ const REST_TYPES = [
   { type: 'full',  label: 'Full Rest',  icon: 'fa-house-chimney' },
 ];
 
+/** Read the computed point pool for one knowledge type. */
+function pickPoints(p) {
+  return {
+    left:      p?.left ?? 0,
+    max:       p?.max ?? 0,
+    converted: p?.converted ?? 0,
+    over:      (p?.left ?? 0) < 0,
+  };
+}
+
 export function prepareActivities(actor) {
-  const details = actor.system.details ?? {};
+  const system  = actor.system ?? {};
+  const details = system.details ?? {};
   const flags   = actor.flags?.[MODULE_ID] ?? {};
+
+  /* ── Skill / Trade / Language manager ── */
+  const expAutomated = new Set(system.expertise?.automated ?? []);
+  const expManual    = new Set(system.expertise?.manual ?? []);
+  const mapSkill = ([key, s]) => ({
+    key,
+    label:            s.label ?? key,
+    mastery:          s.mastery ?? 0,
+    masteryLimit:     s.masteryLimit ?? 1,
+    masteryLabel:     s.masteryLabel ?? '',
+    modifier:         s.modifier ?? 0,
+    expertise:        expManual.has(key) || expAutomated.has(key),
+    expertiseGranted: expAutomated.has(key),
+  });
+  const skills = Object.entries(system.skills ?? {}).map(mapSkill);
+  const trades = Object.entries(system.trades ?? {}).map(mapSkill);
+  const languages = Object.entries(system.languages ?? {})
+    .filter(([key]) => key !== 'com')          // Common is always known / free
+    .map(([key, l]) => ({
+      key,
+      label:        l.label ?? key,
+      mastery:      l.mastery ?? 0,
+      masteryLimit: 2,
+      masteryLabel: l.masteryLabel ?? '',
+    }));
+  const points = {
+    skill:    pickPoints(system.skillPoints?.skill),
+    trade:    pickPoints(system.skillPoints?.trade),
+    language: pickPoints(system.skillPoints?.language),
+  };
 
   const trackXP  = !!flags.trackXP;
   const xpValue  = Number(flags.xpValue) || 0;
@@ -33,5 +74,9 @@ export function prepareActivities(actor) {
     canLevelUp,
     levelDisabled,
     restTypes:     REST_TYPES,
+    skills,
+    trades,
+    languages,
+    points,
   };
 }
