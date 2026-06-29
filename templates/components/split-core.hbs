@@ -33,19 +33,16 @@
   {{!-- Knowledge half: Skills + Trades in rounded panels --}}
   <div class="sc-knowledge">
 
-    {{!-- Skills panel: only proficient (mastery > 0), grouped by attribute --}}
+    {{!-- Skills panel: only proficient (mastery > 0) --}}
     <div class="sc-panel">
       <div class="sc-panel-heading">Skills</div>
       <div class="sc-skill-grid">
-        {{#each skillGroupsMastered}}
-        {{#if items.length}}
-        <div class="sc-attr-group-label">{{label}}</div>
-        {{#each items}}
+        {{#each skills}}
+        {{#if mastery}}
         <div class="sc-skill-row rollable" data-action="rollSkill" data-skill="{{key}}" title="{{label}}">
           <span class="sc-skill-name">{{label}}</span>
           <span class="sc-skill-bonus">{{signedNum bonus}}</span>
         </div>
-        {{/each}}
         {{/if}}
         {{/each}}
       </div>
@@ -56,15 +53,12 @@
     <div class="sc-panel">
       <div class="sc-panel-heading">Trades</div>
       <div class="sc-skill-grid">
-        {{#each tradeGroupsMastered}}
-        {{#if items.length}}
-        <div class="sc-attr-group-label">{{label}}</div>
-        {{#each items}}
+        {{#each trades}}
+        {{#if mastery}}
         <div class="sc-skill-row rollable" data-action="rollTrade" data-trade="{{key}}" title="{{label}}">
           <span class="sc-skill-name">{{label}}</span>
           <span class="sc-skill-bonus">{{signedNum bonus}}</span>
         </div>
-        {{/each}}
         {{/if}}
         {{/each}}
       </div>
