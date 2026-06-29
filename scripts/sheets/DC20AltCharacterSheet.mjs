@@ -7,6 +7,7 @@ import { prepareInventory } from '../context/page4-inventory.mjs';
 import { prepareBiography }  from '../context/page5-biography.mjs';
 import { prepareStatistics } from '../context/page6-statistics.mjs';
 import { prepareConditions } from '../context/page-conditions.mjs';
+import { prepareActivities } from '../context/page-activities.mjs';
 import { resetLifetimeStats } from '../helpers/stats.mjs';
 import { addFavourite, removeFavourite, isFavourite, recordItemUse } from '../helpers/tracking.mjs';
 
@@ -34,6 +35,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       rollBasic:     DC20AltCharacterSheet._onRollBasic,
       rollCustom:    DC20AltCharacterSheet._onRollCustom,
       addCustomRoll: DC20AltCharacterSheet._onAddCustomRoll,
+      levelUp:       DC20AltCharacterSheet._onLevelUp,
+      rest:          DC20AltCharacterSheet._onRest,
     },
     form: { submitOnChange: true, closeOnSubmit: false },
   };
@@ -48,6 +51,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     'page-biography':   { template: `modules/${MODULE_ID}/templates/parts/page-biography.hbs`,   scrollable: ['.page-scroll'] },
     'page-statistics':  { template: `modules/${MODULE_ID}/templates/parts/page-statistics.hbs`,  scrollable: ['.page-scroll'] },
     'page-conditions':  { template: `modules/${MODULE_ID}/templates/parts/page-conditions.hbs`,  scrollable: ['.page-scroll'] },
+    'page-activities':  { template: `modules/${MODULE_ID}/templates/parts/page-activities.hbs`,  scrollable: ['.page-scroll'] },
     'page-split':       { template: `modules/${MODULE_ID}/templates/parts/page-split.hbs`,        scrollable: ['.split-pane'] },
   };
 
@@ -60,6 +64,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     { id: 'biography',   label: 'Info'        },
     { id: 'statistics',  label: 'Statistics'  },
     { id: 'conditions',  label: 'Conditions'  },
+    { id: 'activities',  label: 'Activities'  },
   ];
 
   /** Ordered list of currently-open tab page ids */
@@ -200,6 +205,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       case 'page-biography':  return Object.assign(context, await prepareBiography(this.actor));
       case 'page-statistics': return Object.assign(context, await prepareStatistics(this.actor));
       case 'page-conditions': return Object.assign(context, prepareConditions(this.actor));
+      case 'page-activities': return Object.assign(context, prepareActivities(this.actor));
       case 'page-split':      return Object.assign(context, await this._prepareSplitContext());
     }
     return context;
@@ -215,6 +221,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       case 'biography':  return prepareBiography(this.actor);
       case 'statistics': return prepareStatistics(this.actor);
       case 'conditions': return prepareConditions(this.actor);
+      case 'activities': return prepareActivities(this.actor);
     }
     return {};
   }
@@ -315,6 +322,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindListReorder();
     this._bindConditionToggles();
     this._bindConditionEffects();
+    this._bindActivities();
     this._bindBiographyAutoSave();
     this._bindItemPopup();
     this._bindPortraitFit();
@@ -933,6 +941,40 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   }
 
   /* -------------------------------------------- */
+  /*  Activities (XP toggle + bar edits)           */
+  /* -------------------------------------------- */
+
+  _bindActivities() {
+    if (!this.isEditable) return;
+    // Track-XP toggle
+    this.element.querySelectorAll('.xp-toggle-input').forEach(box => {
+      box.addEventListener('change', () => {
+        this.actor.setFlag(MODULE_ID, 'trackXP', box.checked);
+      });
+    });
+    // XP value / max edits
+    this.element.querySelectorAll('.xp-input[data-xp-field]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const field = inp.dataset.xpField === 'max' ? 'xpMax' : 'xpValue';
+        const val   = Math.max(0, Math.trunc(Number(inp.value) || 0));
+        this.actor.setFlag(MODULE_ID, field, val);
+      });
+    });
+  }
+
+  /** Dynamically import a module from the running DC20 system. */
+  async _systemImport(relPath) {
+    try {
+      const p = `systems/dc20rpg/module/${relPath}`;
+      const route = (foundry.utils?.getRoute) ? foundry.utils.getRoute(p) : `/${p}`;
+      return await import(route);
+    } catch (err) {
+      console.error('DC20 Alt Sheet | failed to load system module', relPath, err);
+      return null;
+    }
+  }
+
+  /* -------------------------------------------- */
   /*  Core Skills / Trades Sub-tabs                */
   /* -------------------------------------------- */
 
@@ -1417,6 +1459,37 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     rolls.push({ id: foundry.utils.randomID(), name: data.name, bonus: data.bonus });
     await this.actor.setFlag(MODULE_ID, 'customRolls', rolls);
     this.render();
+  }
+
+  /** Launch the DC20 level-up flow on the character's class item. */
+  static async _onLevelUp(event, target) {
+    if (target?.disabled) return;
+    const classId = this.actor.system.details?.class?.id;
+    if (!classId) {
+      ui.notifications?.warn('No class assigned — add a class before levelling up.');
+      return;
+    }
+    const mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
+    if (!mod?.changeLevel) {
+      ui.notifications?.error('Could not access the DC20 level-up flow.');
+      return;
+    }
+    await mod.changeLevel('true', classId, this.actor);
+    // Reset the XP bar after levelling, when tracking is enabled.
+    if (this.actor.flags?.[MODULE_ID]?.trackXP) {
+      await this.actor.setFlag(MODULE_ID, 'xpValue', 0);
+    }
+  }
+
+  /** Open the DC20 rest dialog preselected to a rest type. */
+  static async _onRest(event, target) {
+    const type = target.dataset.restType || 'long';
+    const mod = await this._systemImport('dialogs/rest.mjs');
+    if (!mod?.RestDialog) {
+      ui.notifications?.error('Could not access the DC20 rest flow.');
+      return;
+    }
+    mod.RestDialog.open(this.actor, { preselected: type });
   }
 
   static async _onRollAttribute(event, target) {
