@@ -968,14 +968,26 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   /** Dynamically import a module from the running DC20 system. */
   async _systemImport(relPath) {
+    const p = `systems/dc20rpg/module/${relPath}`;
+    // Build candidate URLs — always absolute, so import() never resolves them
+    // relative to this module (getRoute may return a slash-less path).
+    const candidates = [];
     try {
-      const p = `systems/dc20rpg/module/${relPath}`;
-      const route = (foundry.utils?.getRoute) ? foundry.utils.getRoute(p) : `/${p}`;
-      return await import(route);
-    } catch (err) {
-      console.error('DC20 Alt Sheet | failed to load system module', relPath, err);
-      return null;
+      const r = foundry.utils?.getRoute?.(p);
+      if (r) candidates.push(r.includes('://') || r.startsWith('/') ? r : `/${r}`);
+    } catch { /* getRoute unavailable */ }
+    candidates.push(`/${p}`);
+    try { candidates.push(new URL(`/${p}`, window.location.origin).href); } catch { /* ignore */ }
+
+    let lastErr;
+    for (const url of candidates) {
+      try {
+        const mod = await import(url);
+        if (mod) return mod;
+      } catch (err) { lastErr = err; }
     }
+    console.error('DC20 Alt Sheet | failed to load system module', relPath, lastErr);
+    return null;
   }
 
   /* -------------------------------------------- */
@@ -1468,9 +1480,10 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /** Launch the DC20 level-up flow on the character's class item. */
   static async _onLevelUp(event, target) {
     if (target?.disabled) return;
-    const classId = this.actor.system.details?.class?.id;
+    const classId = this.actor.system.details?.class?.id
+      || this.actor.items.find(i => i.type === 'class')?.id;
     if (!classId) {
-      ui.notifications?.warn('No class assigned — add a class before levelling up.');
+      ui.notifications?.warn('No class found to level up.');
       return;
     }
     const mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
@@ -1488,12 +1501,15 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /** Open the DC20 rest dialog preselected to a rest type. */
   static async _onRest(event, target) {
     const type = target.dataset.restType || 'long';
-    const mod = await this._systemImport('dialogs/rest.mjs');
-    if (!mod?.RestDialog) {
+    // The system exposes RestDialog globally (window.DC20.dialog) — use that
+    // directly so it's the same instance the official sheet uses.
+    const RestDialog = globalThis.DC20?.dialog?.RestDialog
+      ?? (await this._systemImport('dialogs/rest.mjs'))?.RestDialog;
+    if (!RestDialog) {
       ui.notifications?.error('Could not access the DC20 rest flow.');
       return;
     }
-    mod.RestDialog.open(this.actor, { preselected: type });
+    RestDialog.open(this.actor, { preselected: type });
   }
 
   /* ── Skill / Trade / Language manager (delegates to the system) ── */

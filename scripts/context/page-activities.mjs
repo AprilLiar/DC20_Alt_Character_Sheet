@@ -58,10 +58,11 @@ export function prepareActivities(actor) {
   const xpMax    = Number(flags.xpMax) || 100;
   const xpPct    = xpMax > 0 ? Math.max(0, Math.min(100, Math.round((xpValue / xpMax) * 100))) : 0;
 
-  const hasClass    = !!details.class?.id;
+  const hasClass    = !!details.class?.id || !!actor.items?.find(i => i.type === 'class');
   // When XP tracking is on, level-up is gated on a full bar; otherwise always allowed.
   const canLevelUp  = !trackXP || (xpMax > 0 && xpValue >= xpMax);
-  const levelDisabled = !hasClass || !canLevelUp;
+  // Only gate the button on the XP rule; a missing class is reported on click.
+  const levelDisabled = !canLevelUp;
 
   return {
     level:         details.level ?? 1,
