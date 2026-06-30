@@ -13,6 +13,12 @@
       </div>
     </div>
     <div class="lvl-actions">
+      {{#if isEditable}}
+      <button type="button" class="lvl-down-btn" data-action="levelDown"
+        {{#unless canLevelDown}}disabled{{/unless}} title="Level down">
+        <i class="fas fa-arrow-down"></i>
+      </button>
+      {{/if}}
       <button type="button" class="lvl-up-btn" data-action="levelUp"
         {{#if levelDisabled}}disabled{{/if}} title="Level up">
         <i class="fas fa-arrow-up"></i> Level up!
@@ -24,22 +30,47 @@
       </label>
     </div>
     {{#if trackXP}}
-    <div class="xp-row">
-      {{#if isEditable}}<button type="button" class="xp-adj" data-action="xpAdjust" data-xp-delta="-1" title="Remove 1 XP">&minus;</button>{{/if}}
-      <div class="xp-bar-wrap">
-        <div class="xp-bar-fill" style="width: {{xpPct}}%"></div>
-        <div class="xp-bar-text">
-          <input type="number" class="xp-input" data-xp-field="value" value="{{xpValue}}"
-            {{#unless isEditable}}disabled{{/unless}}>
-          <span class="xp-sep">/</span>
-          <input type="number" class="xp-input" data-xp-field="max" value="{{xpMax}}"
-            {{#unless isEditable}}disabled{{/unless}}>
-          <span class="xp-suffix">XP</span>
-        </div>
+    <div class="xp-bar-wrap">
+      <div class="xp-bar-fill" style="width: {{xpPct}}%"></div>
+      <div class="xp-bar-text">
+        <input type="number" class="xp-input" data-xp-field="value" value="{{xpValue}}"
+          {{#unless isEditable}}disabled{{/unless}}>
+        <span class="xp-sep">/</span>
+        <input type="number" class="xp-input" data-xp-field="max" value="{{xpMax}}"
+          {{#unless isEditable}}disabled{{/unless}}>
+        <span class="xp-suffix">XP</span>
       </div>
-      {{#if isEditable}}<button type="button" class="xp-adj" data-action="xpAdjust" data-xp-delta="1" title="Add 1 XP">+</button>{{/if}}
+    </div>
+    {{#if isEditable}}
+    <div class="xp-apply">
+      <button type="button" class="xp-apply-btn" data-action="xpApply" data-xp-sign="-1" title="Subtract this amount">&minus;</button>
+      <input type="number" class="xp-amount" value="1" min="0" title="Amount of XP to add or subtract">
+      <button type="button" class="xp-apply-btn" data-action="xpApply" data-xp-sign="1" title="Add this amount">+</button>
     </div>
     {{/if}}
+    {{/if}}
+  </div>
+
+  <div class="activity-widget">
+    <h3 class="activity-widget-title">Character</h3>
+    <div class="char-slots">
+      {{#each charSlots}}
+      <div class="char-slot{{#if item}} filled{{/if}}" data-slot-type="{{type}}">
+        <span class="char-slot-label">{{label}}</span>
+        {{#if item}}
+        <div class="char-slot-item" data-item-id="{{item.id}}">
+          <img class="char-slot-img" src="{{item.img}}" alt="{{item.name}}">
+          <span class="char-slot-name">{{item.name}}</span>
+          {{#if @root.isEditable}}
+          <button type="button" class="char-slot-remove" data-action="removeCharItem" data-item-id="{{item.id}}" title="Remove">×</button>
+          {{/if}}
+        </div>
+        {{else}}
+        <span class="char-slot-empty">Drop {{label}}…</span>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
   </div>
 
   <div class="activity-widget">

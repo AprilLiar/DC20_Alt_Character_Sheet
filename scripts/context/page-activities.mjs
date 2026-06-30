@@ -58,6 +58,23 @@ export function prepareActivities(actor) {
   const xpMax    = Number(flags.xpMax) || 100;
   const xpPct    = xpMax > 0 ? Math.max(0, Math.min(100, Math.round((xpValue / xpMax) * 100))) : 0;
 
+  // Character build slots (Ancestry / Background / Class / Subclass).
+  const slotItem = (id) => {
+    const it = id ? actor.items.get(id) : null;
+    return it ? { id: it.id, name: it.name, img: it.img } : null;
+  };
+  let classSlot = slotItem(details.class?.id);
+  if (!classSlot) {
+    const c = actor.items.find(i => i.type === 'class');
+    if (c) classSlot = { id: c.id, name: c.name, img: c.img };
+  }
+  const charSlots = [
+    { type: 'ancestry',   label: 'Ancestry',   item: slotItem(details.ancestry?.id) },
+    { type: 'background', label: 'Background',  item: slotItem(details.background?.id) },
+    { type: 'class',      label: 'Class',       item: classSlot },
+    { type: 'subclass',   label: 'Subclass',    item: slotItem(details.subclass?.id) },
+  ];
+
   const hasClass    = !!details.class?.id || !!actor.items?.find(i => i.type === 'class');
   // When XP tracking is on, level-up is gated on a full bar; otherwise always allowed.
   const canLevelUp  = !trackXP || (xpMax > 0 && xpValue >= xpMax);
@@ -74,6 +91,8 @@ export function prepareActivities(actor) {
     xpPct,
     canLevelUp,
     levelDisabled,
+    canLevelDown:  (details.level ?? 0) > 0 || !!classSlot,
+    charSlots,
     restTypes:     REST_TYPES,
     skills,
     trades,
