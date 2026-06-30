@@ -79,18 +79,9 @@
 
         {{!-- Skills sub-panel --}}
         <div class="core-subpanel core-subpanel-skills{{#if (eq coreSkillTab 'trades')}} hidden{{/if}}" data-core-subpanel="skills">
-          {{#each skillGroups}}
-            <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
+          {{#if skills.length}}
             <div class="skills-list">
-              {{#each masteredItems}}
-              <div class="skill-row" data-skill="{{key}}">
-                <span class="skill-profs">{{{profDots mastery 5}}}</span>
-                <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">{{label}}</span>
-                <span class="skill-bonus rollable" data-action="rollSkill" data-skill="{{key}}">{{signedNum bonus}}</span>
-              </div>
-              {{/each}}
-              {{#if hasBoth}}<hr class="skills-divider">{{/if}}
-              {{#each unmasteredItems}}
+              {{#each skills}}
               <div class="skill-row" data-skill="{{key}}">
                 <span class="skill-profs">{{{profDots mastery 5}}}</span>
                 <span class="skill-name rollable" data-action="rollSkill" data-skill="{{key}}">{{label}}</span>
@@ -100,7 +91,7 @@
             </div>
           {{else}}
             <p class="empty-note">No skills defined.</p>
-          {{/each}}
+          {{/if}}
 
           {{#if languages.length}}
             <h3 class="section-heading mt">Languages</h3>
@@ -117,27 +108,16 @@
 
         {{!-- Trades sub-panel --}}
         <div class="core-subpanel core-subpanel-trades{{#unless (eq coreSkillTab 'trades')}} hidden{{/unless}}" data-core-subpanel="trades">
-          {{#if tradeGroups.length}}
-            {{#each tradeGroups}}
-              <h4 class="subsection-heading{{#unless @first}} mt{{/unless}}">{{label}}</h4>
-              <div class="skills-list">
-                {{#each masteredItems}}
-                <div class="skill-row" data-trade="{{key}}">
-                  <span class="skill-profs">{{{profDots mastery 5}}}</span>
-                  <span class="skill-name rollable" data-action="rollTrade" data-trade="{{key}}">{{label}}</span>
-                  <span class="skill-bonus rollable" data-action="rollTrade" data-trade="{{key}}">{{signedNum bonus}}</span>
-                </div>
-                {{/each}}
-                {{#if hasBoth}}<hr class="skills-divider">{{/if}}
-                {{#each unmasteredItems}}
-                <div class="skill-row" data-trade="{{key}}">
-                  <span class="skill-profs">{{{profDots mastery 5}}}</span>
-                  <span class="skill-name rollable" data-action="rollTrade" data-trade="{{key}}">{{label}}</span>
-                  <span class="skill-bonus rollable" data-action="rollTrade" data-trade="{{key}}">{{signedNum bonus}}</span>
-                </div>
-                {{/each}}
+          {{#if trades.length}}
+            <div class="skills-list">
+              {{#each trades}}
+              <div class="skill-row" data-trade="{{key}}">
+                <span class="skill-profs">{{{profDots mastery 5}}}</span>
+                <span class="skill-name rollable" data-action="rollTrade" data-trade="{{key}}">{{label}}</span>
+                <span class="skill-bonus rollable" data-action="rollTrade" data-trade="{{key}}">{{signedNum bonus}}</span>
               </div>
-            {{/each}}
+              {{/each}}
+            </div>
           {{else}}
             <p class="empty-note">No trades defined.</p>
           {{/if}}

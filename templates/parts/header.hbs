@@ -47,9 +47,10 @@
   {{!-- Resource dropdown: collapsed selected resource + full list --}}
   {{#if header.selected}}
   <div class="hstrip-resource hstrip-dd">
+    {{!-- Collapsed resource: label + editable bar (NOT inside the button, so inputs work) --}}
+    <span class="hstrip-label hstrip-dd-label">{{header.selected.label}}</span>
+    {{> resBar header.selected}}
     <button type="button" class="hstrip-dd-toggle" title="Switch / manage resources">
-      <span class="hstrip-label hstrip-dd-label">{{header.selected.label}}</span>
-      {{> resBar header.selected}}
       <i class="fas fa-caret-down hstrip-dd-caret"></i>
     </button>
 

@@ -177,12 +177,18 @@
 /* ── Collapsed resource dropdown ── */
 .dc20-alt-sheet .hstrip-dd {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(4px * var(--dc20-scale));
 }
 .dc20-alt-sheet .hstrip-dd-toggle {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--gap-xs);
-  padding: 2px 4px;
+  justify-content: center;
+  flex-shrink: 0;
+  width: calc(16px * var(--dc20-scale));
+  height: calc(20px * var(--dc20-scale));
+  padding: 0;
   background: none;
   border: none;
   cursor: pointer;
@@ -192,7 +198,7 @@
 }
 .dc20-alt-sheet .hstrip-dd-caret {
   color: rgba(255, 255, 255, 0.55);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-md);
   transition: color var(--t-fast), transform var(--t-fast);
 }
 .dc20-alt-sheet .hstrip-dd-toggle:hover .hstrip-dd-caret { color: var(--p-light); }

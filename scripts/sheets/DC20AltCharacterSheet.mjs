@@ -41,6 +41,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       masteryDown:   DC20AltCharacterSheet._onMasteryDown,
       toggleExpertise: DC20AltCharacterSheet._onToggleExpertise,
       convertPoints: DC20AltCharacterSheet._onConvertPoints,
+      xpAdjust:      DC20AltCharacterSheet._onXpAdjust,
     },
     form: { submitOnChange: true, closeOnSubmit: false },
   };
@@ -399,12 +400,29 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     return popup;
   }
 
+  /** Enrich raw HTML so @UUID[…] references become clickable content links. */
+  async _enrichHTML(html) {
+    if (!html) return '';
+    try {
+      const TE = foundry.applications?.ux?.TextEditor?.implementation ?? globalThis.TextEditor;
+      return await TE.enrichHTML(html, {
+        secrets:    this.actor.isOwner,
+        rollData:   this.actor.getRollData?.() ?? {},
+        relativeTo: this.actor,
+      });
+    } catch (err) {
+      console.error('DC20 Alt Sheet | enrichHTML failed', err);
+      return html;
+    }
+  }
+
   /** Open the shared read-only popup with a title + rich HTML body, anchored to an element. */
-  _openPopup(name, descHtml, anchorEl) {
+  async _openPopup(name, descHtml, anchorEl) {
     if (this._popupSuppressNext) return;
     const popup = this._ensurePopup();
     popup.querySelector('.item-popup-name').textContent = name ?? '';
-    popup.querySelector('.item-popup-desc').innerHTML = descHtml ?? '';
+    // Enrich so @UUID links render as clickable buttons that open the document.
+    popup.querySelector('.item-popup-desc').innerHTML = await this._enrichHTML(descHtml ?? '');
 
     // Show off-screen to measure actual rendered dimensions (respects CSS scale).
     popup.style.visibility = 'hidden';
@@ -1480,21 +1498,53 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /** Launch the DC20 level-up flow on the character's class item. */
   static async _onLevelUp(event, target) {
     if (target?.disabled) return;
-    const classId = this.actor.system.details?.class?.id
-      || this.actor.items.find(i => i.type === 'class')?.id;
-    if (!classId) {
-      ui.notifications?.warn('No class found to level up.');
+    // Resolve the class item: prefer the stored id, fall back to the actual
+    // class item if that id is stale/missing.
+    const storedId = this.actor.system.details?.class?.id;
+    let classItem = storedId ? this.actor.items.get(storedId) : null;
+    if (!classItem) classItem = this.actor.items.find(i => i.type === 'class');
+    if (!classItem) {
+      ui.notifications?.warn('No class found to level up. Add a class item first.');
       return;
     }
+
+    const resetXp = async () => {
+      if (this.actor.flags?.[MODULE_ID]?.trackXP) {
+        await this.actor.setFlag(MODULE_ID, 'xpValue', 0);
+      }
+    };
+
+    // Preferred path: the system's full advancement flow (the same one the
+    // core sheet uses). changeLevel isn't on the public API, so it's imported.
     const mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
-    if (!mod?.changeLevel) {
-      ui.notifications?.error('Could not access the DC20 level-up flow.');
+    if (mod?.changeLevel) {
+      try {
+        await mod.changeLevel('true', classItem.id, this.actor);
+        await resetXp();
+        return;
+      } catch (err) {
+        console.error('DC20 Alt Sheet | changeLevel failed', err);
+        ui.notifications?.error(`Level-up failed: ${err?.message ?? err}`);
+        return;
+      }
+    }
+
+    // Fallback: the system module couldn't be loaded — at least raise the
+    // class level directly so the button still does something visible.
+    const current = Number(classItem.system?.level) || 0;
+    if (current >= 20) {
+      ui.notifications?.info('Already at maximum level (20).');
       return;
     }
-    await mod.changeLevel('true', classId, this.actor);
-    // Reset the XP bar after levelling, when tracking is enabled.
-    if (this.actor.flags?.[MODULE_ID]?.trackXP) {
-      await this.actor.setFlag(MODULE_ID, 'xpValue', 0);
+    try {
+      await classItem.update({ 'system.level': current + 1 });
+      await resetXp();
+      ui.notifications?.warn(
+        'Raised the class level, but the DC20 advancement dialog could not be opened automatically.',
+      );
+    } catch (err) {
+      console.error('DC20 Alt Sheet | level-up fallback failed', err);
+      ui.notifications?.error(`Level-up failed: ${err?.message ?? err}`);
     }
   }
 
@@ -1510,6 +1560,17 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       return;
     }
     RestDialog.open(this.actor, { preselected: type });
+  }
+
+  /** Adjust the tracked XP value by a delta, clamped to [0, max]. */
+  static async _onXpAdjust(event, target) {
+    const delta = Number(target.dataset.xpDelta) || 0;
+    const flags = this.actor.flags?.[MODULE_ID] ?? {};
+    const max   = Number(flags.xpMax) || 100;
+    const cur   = Number(flags.xpValue) || 0;
+    const next  = Math.max(0, Math.min(max, cur + delta));
+    if (next === cur) return;
+    await this.actor.setFlag(MODULE_ID, 'xpValue', next);
   }
 
   /* ── Skill / Trade / Language manager (delegates to the system) ── */

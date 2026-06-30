@@ -10,7 +10,7 @@
           <span class="lvl-stat-val">{{level}}</span>
         </div>
         <div class="lvl-stat">
-          <span class="lvl-stat-label">Combat Mastery</span>
+          <span class="lvl-stat-label">CM</span>
           <span class="lvl-stat-val">{{signedNum combatMastery}}</span>
         </div>
       </div>
@@ -30,16 +30,24 @@
       </div>
 
       {{#if trackXP}}
-      <div class="xp-bar-wrap">
-        <div class="xp-bar-fill" style="width: {{xpPct}}%"></div>
-        <div class="xp-bar-text">
-          <input type="number" class="xp-input" data-xp-field="value" value="{{xpValue}}"
-            {{#unless isEditable}}disabled{{/unless}}>
-          <span class="xp-sep">/</span>
-          <input type="number" class="xp-input" data-xp-field="max" value="{{xpMax}}"
-            {{#unless isEditable}}disabled{{/unless}}>
-          <span class="xp-suffix">XP</span>
+      <div class="xp-row">
+        {{#if isEditable}}
+        <button type="button" class="xp-adj" data-action="xpAdjust" data-xp-delta="-1" title="Remove 1 XP">&minus;</button>
+        {{/if}}
+        <div class="xp-bar-wrap">
+          <div class="xp-bar-fill" style="width: {{xpPct}}%"></div>
+          <div class="xp-bar-text">
+            <input type="number" class="xp-input" data-xp-field="value" value="{{xpValue}}"
+              {{#unless isEditable}}disabled{{/unless}}>
+            <span class="xp-sep">/</span>
+            <input type="number" class="xp-input" data-xp-field="max" value="{{xpMax}}"
+              {{#unless isEditable}}disabled{{/unless}}>
+            <span class="xp-suffix">XP</span>
+          </div>
         </div>
+        {{#if isEditable}}
+        <button type="button" class="xp-adj" data-action="xpAdjust" data-xp-delta="1" title="Add 1 XP">+</button>
+        {{/if}}
       </div>
       {{/if}}
     </div>
@@ -51,7 +59,7 @@
         {{#each restTypes}}
         <button type="button" class="rest-btn" data-action="rest" data-rest-type="{{type}}" title="{{label}}">
           <i class="fas {{icon}}"></i>
-          <span>{{label}}</span>
+          <span>{{short}}</span>
         </button>
         {{/each}}
       </div>
