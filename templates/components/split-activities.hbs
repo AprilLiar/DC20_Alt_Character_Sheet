@@ -24,16 +24,20 @@
       </label>
     </div>
     {{#if trackXP}}
-    <div class="xp-bar-wrap">
-      <div class="xp-bar-fill" style="width: {{xpPct}}%"></div>
-      <div class="xp-bar-text">
-        <input type="number" class="xp-input" data-xp-field="value" value="{{xpValue}}"
-          {{#unless isEditable}}disabled{{/unless}}>
-        <span class="xp-sep">/</span>
-        <input type="number" class="xp-input" data-xp-field="max" value="{{xpMax}}"
-          {{#unless isEditable}}disabled{{/unless}}>
-        <span class="xp-suffix">XP</span>
+    <div class="xp-row">
+      {{#if isEditable}}<button type="button" class="xp-adj" data-action="xpAdjust" data-xp-delta="-1" title="Remove 1 XP">&minus;</button>{{/if}}
+      <div class="xp-bar-wrap">
+        <div class="xp-bar-fill" style="width: {{xpPct}}%"></div>
+        <div class="xp-bar-text">
+          <input type="number" class="xp-input" data-xp-field="value" value="{{xpValue}}"
+            {{#unless isEditable}}disabled{{/unless}}>
+          <span class="xp-sep">/</span>
+          <input type="number" class="xp-input" data-xp-field="max" value="{{xpMax}}"
+            {{#unless isEditable}}disabled{{/unless}}>
+          <span class="xp-suffix">XP</span>
+        </div>
       </div>
+      {{#if isEditable}}<button type="button" class="xp-adj" data-action="xpAdjust" data-xp-delta="1" title="Add 1 XP">+</button>{{/if}}
     </div>
     {{/if}}
   </div>
@@ -47,6 +51,78 @@
         <span>{{short}}</span>
       </button>
       {{/each}}
+    </div>
+  </div>
+
+  {{!-- Skill / Trade / Language manager — stacked in a single column --}}
+  {{#*inline "kRow"}}
+  <div class="knowledge-row">
+    <span class="kr-name" title="{{masteryLabel}} ({{signedNum modifier}})">{{label}}</span>
+    <span class="kr-mastery">{{masteryLabel}} <span class="kr-mod">{{signedNum modifier}}</span></span>
+    {{#if @root.isEditable}}
+    <span class="kr-controls">
+      <button type="button" class="kr-btn" data-action="masteryDown" data-skill-key="{{key}}" data-skill-type="{{stype}}" title="Lower mastery">&minus;</button>
+      <span class="kr-level">{{mastery}}/{{masteryLimit}}</span>
+      <button type="button" class="kr-btn" data-action="masteryUp" data-skill-key="{{key}}" data-skill-type="{{stype}}" title="Raise mastery (+2)">+</button>
+      {{#unless noExpertise}}
+      <button type="button" class="kr-exp{{#if expertise}} active{{/if}}" data-action="toggleExpertise"
+        data-skill-key="{{key}}" data-skill-type="{{stype}}" {{#if expertiseGranted}}disabled{{/if}}
+        title="{{#if expertiseGranted}}Mastery limit raised by a feature{{else}}Toggle Expertise — raises mastery cap by 1 (costs 1 point){{/if}}">
+        <i class="fas fa-star"></i>
+      </button>
+      {{/unless}}
+    </span>
+    {{/if}}
+  </div>
+  {{/inline}}
+
+  <div class="activity-widget">
+    <div class="knowledge-head">
+      <span class="knowledge-title">Skills</span>
+      <span class="knowledge-points{{#if points.skill.over}} over{{/if}}">{{points.skill.left}}<span class="kp-sep">/</span>{{points.skill.max}}</span>
+    </div>
+    {{#if isEditable}}
+    <div class="knowledge-convert">
+      <button type="button" class="kc-btn" data-action="convertPoints" data-from="skill" data-to="trade" data-op="convert" data-rate="2"
+        title="Convert 1 Skill Point into 2 Trade Points">1 Skill ▸ 2 Trade</button>
+    </div>
+    {{/if}}
+    <div class="knowledge-list">
+      {{#each skills}}{{> kRow stype="skills"}}{{/each}}
+    </div>
+  </div>
+
+  <div class="activity-widget">
+    <div class="knowledge-head">
+      <span class="knowledge-title">Trades</span>
+      <span class="knowledge-points{{#if points.trade.over}} over{{/if}}">{{points.trade.left}}<span class="kp-sep">/</span>{{points.trade.max}}</span>
+    </div>
+    {{#if isEditable}}
+    <div class="knowledge-convert">
+      <button type="button" class="kc-btn" data-action="convertPoints" data-from="trade" data-to="language" data-op="convert" data-rate="2"
+        title="Convert 1 Trade Point into 2 Language Points">1 Trade ▸ 2 Lang</button>
+      <button type="button" class="kc-btn revert" data-action="convertPoints" data-from="trade" data-to="skill" data-op="revert" data-rate="2"
+        title="Revert a Skill→Trade conversion">↶ Skill</button>
+    </div>
+    {{/if}}
+    <div class="knowledge-list">
+      {{#each trades}}{{> kRow stype="trades"}}{{/each}}
+    </div>
+  </div>
+
+  <div class="activity-widget">
+    <div class="knowledge-head">
+      <span class="knowledge-title">Languages</span>
+      <span class="knowledge-points{{#if points.language.over}} over{{/if}}">{{points.language.left}}<span class="kp-sep">/</span>{{points.language.max}}</span>
+    </div>
+    {{#if isEditable}}
+    <div class="knowledge-convert">
+      <button type="button" class="kc-btn revert" data-action="convertPoints" data-from="language" data-to="trade" data-op="revert" data-rate="2"
+        title="Revert a Trade→Language conversion">↶ Trade</button>
+    </div>
+    {{/if}}
+    <div class="knowledge-list">
+      {{#each languages}}{{> kRow stype="languages" noExpertise=true}}{{/each}}
     </div>
   </div>
 

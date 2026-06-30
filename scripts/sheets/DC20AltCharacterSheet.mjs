@@ -41,6 +41,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       masteryDown:   DC20AltCharacterSheet._onMasteryDown,
       toggleExpertise: DC20AltCharacterSheet._onToggleExpertise,
       convertPoints: DC20AltCharacterSheet._onConvertPoints,
+      xpAdjust:      DC20AltCharacterSheet._onXpAdjust,
     },
     form: { submitOnChange: true, closeOnSubmit: false },
   };
@@ -1559,6 +1560,17 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       return;
     }
     RestDialog.open(this.actor, { preselected: type });
+  }
+
+  /** Adjust the tracked XP value by a delta, clamped to [0, max]. */
+  static async _onXpAdjust(event, target) {
+    const delta = Number(target.dataset.xpDelta) || 0;
+    const flags = this.actor.flags?.[MODULE_ID] ?? {};
+    const max   = Number(flags.xpMax) || 100;
+    const cur   = Number(flags.xpValue) || 0;
+    const next  = Math.max(0, Math.min(max, cur + delta));
+    if (next === cur) return;
+    await this.actor.setFlag(MODULE_ID, 'xpValue', next);
   }
 
   /* ── Skill / Trade / Language manager (delegates to the system) ── */
