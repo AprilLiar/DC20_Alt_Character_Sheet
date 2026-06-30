@@ -36,12 +36,14 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       rollCustom:    DC20AltCharacterSheet._onRollCustom,
       addCustomRoll: DC20AltCharacterSheet._onAddCustomRoll,
       levelUp:       DC20AltCharacterSheet._onLevelUp,
+      levelDown:     DC20AltCharacterSheet._onLevelDown,
       rest:          DC20AltCharacterSheet._onRest,
       masteryUp:     DC20AltCharacterSheet._onMasteryUp,
       masteryDown:   DC20AltCharacterSheet._onMasteryDown,
       toggleExpertise: DC20AltCharacterSheet._onToggleExpertise,
       convertPoints: DC20AltCharacterSheet._onConvertPoints,
-      xpAdjust:      DC20AltCharacterSheet._onXpAdjust,
+      xpApply:       DC20AltCharacterSheet._onXpApply,
+      removeCharItem: DC20AltCharacterSheet._onRemoveCharItem,
     },
     form: { submitOnChange: true, closeOnSubmit: false },
   };
@@ -328,6 +330,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindConditionToggles();
     this._bindConditionEffects();
     this._bindActivities();
+    this._bindCharSlots();
     this._bindBiographyAutoSave();
     this._bindItemPopup();
     this._bindPortraitFit();
@@ -984,6 +987,63 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     });
   }
 
+  /**
+   * Enable drag-to-assign for character build slots (Ancestry / Background /
+   * Class / Subclass). Accepts standard Foundry Item drops; validates that
+   * the dragged item's type matches the slot, removes any existing item of
+   * that type, then creates the new one so DC20's _onCreate advancement fires.
+   */
+  _bindCharSlots() {
+    if (!this.isEditable) return;
+
+    this.element.querySelectorAll('.char-slot[data-slot-type]').forEach(slot => {
+      const slotType = slot.dataset.slotType;
+
+      slot.addEventListener('dragover', e => {
+        // Ignore tab-builder page drags (those carry a string pageId, not Item JSON)
+        if (this._dragPageId) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        slot.classList.add('drag-over');
+      });
+      slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+
+      slot.addEventListener('drop', async e => {
+        slot.classList.remove('drag-over');
+        if (this._dragPageId) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        let data;
+        try {
+          const raw = e.dataTransfer.getData('application/json') || e.dataTransfer.getData('text/plain');
+          data = JSON.parse(raw);
+        } catch { return; }
+
+        if (data.type !== 'Item') return;
+
+        let source;
+        try { source = await fromUuid(data.uuid ?? ''); } catch { return; }
+        if (!source) return;
+
+        if (source.type !== slotType) {
+          ui.notifications?.warn(`This slot only accepts items of type "${slotType}".`);
+          return;
+        }
+
+        // If already on this actor, do nothing (already assigned)
+        if (source.parent?.id === this.actor.id) return;
+
+        // Remove any existing item of this type so only one can occupy the slot
+        const existing = this.actor.items.filter(i => i.type === slotType);
+        for (const ex of existing) await ex.delete();
+
+        // Create — DC20's _onCreate hook fires and opens the advancement dialog
+        await Item.create(source.toObject(), { parent: this.actor });
+      });
+    });
+  }
+
   /** Dynamically import a module from the running DC20 system. */
   async _systemImport(relPath) {
     const p = `systems/dc20rpg/module/${relPath}`;
@@ -1546,6 +1606,68 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       console.error('DC20 Alt Sheet | level-up fallback failed', err);
       ui.notifications?.error(`Level-up failed: ${err?.message ?? err}`);
     }
+  }
+
+  /** Reduce the character's class level by 1 via DC20's changeLevel flow. */
+  static async _onLevelDown(event, target) {
+    const storedId = this.actor.system.details?.class?.id;
+    let classItem = storedId ? this.actor.items.get(storedId) : null;
+    if (!classItem) classItem = this.actor.items.find(i => i.type === 'class');
+    if (!classItem) {
+      ui.notifications?.warn('No class found to level down.');
+      return;
+    }
+
+    const current = Number(classItem.system?.level) || 0;
+    if (current <= 0) {
+      ui.notifications?.info('Already at minimum level.');
+      return;
+    }
+
+    const mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
+    if (mod?.changeLevel) {
+      try {
+        await mod.changeLevel('false', classItem.id, this.actor);
+        return;
+      } catch (err) {
+        console.error('DC20 Alt Sheet | changeLevel(false) failed', err);
+      }
+    }
+
+    // Fallback: directly decrement the class level
+    try {
+      await classItem.update({ 'system.level': current - 1 });
+    } catch (err) {
+      console.error('DC20 Alt Sheet | level-down fallback failed', err);
+      ui.notifications?.error(`Level-down failed: ${err?.message ?? err}`);
+    }
+  }
+
+  /** Apply ± an amount of XP (read from the sibling .xp-amount input). */
+  static async _onXpApply(event, target) {
+    const sign = Number(target.dataset.xpSign) || 1;
+    const amtInput = target.closest('.xp-apply')?.querySelector('.xp-amount');
+    const amount = Math.max(0, Math.trunc(Number(amtInput?.value) || 0));
+    if (amount === 0) return;
+
+    const flags = this.actor.flags?.[MODULE_ID] ?? {};
+    const max   = Number(flags.xpMax) || 100;
+    const cur   = Number(flags.xpValue) || 0;
+    const next  = Math.max(0, Math.min(max, cur + sign * amount));
+    if (next === cur) return;
+    await this.actor.setFlag(MODULE_ID, 'xpValue', next);
+  }
+
+  /**
+   * Remove a character-build item (Ancestry / Background / Class / Subclass)
+   * by calling item.delete(). DC20's _preDelete hook fires and handles
+   * de-advancement automatically.
+   */
+  static async _onRemoveCharItem(event, target) {
+    const itemId = target.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    if (!item) return;
+    item.delete();
   }
 
   /** Open the DC20 rest dialog preselected to a rest type. */
