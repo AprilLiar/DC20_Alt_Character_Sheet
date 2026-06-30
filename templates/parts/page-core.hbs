@@ -50,8 +50,8 @@
 
         <div class="sc-attrs">
           {{#each attributes}}
-          <div class="sc-attr" data-attr="{{key}}">
-            <span class="sc-attr-name">{{label}}</span>
+          <div class="sc-attr" data-attr="{{key}}" title="{{label}}">
+            <span class="sc-attr-name">{{abbr}}</span>
             <span class="sc-attr-score">{{signedNum value}}</span>
             <div class="sc-attr-buttons">
               <button type="button" class="sc-attr-btn rollable" data-action="rollAttribute" data-attr="{{key}}" title="Check">
