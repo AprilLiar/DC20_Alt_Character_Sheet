@@ -297,65 +297,65 @@
 }
 
 .dc20-alt-sheet .sc-attrs {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: row;
   gap: 3px;
   margin-bottom: var(--gap-xs);
 }
 .dc20-alt-sheet .sc-attr {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: var(--gap-sm);
-  padding: calc(4px * var(--dc20-scale)) var(--gap-sm);
+  gap: 1px;
+  padding: calc(3px * var(--dc20-scale)) calc(4px * var(--dc20-scale));
   background: var(--p-light);
   border: 1px solid var(--p-border-light);
   border-radius: var(--r-sm);
+  flex: 1;
+  min-width: 0;
 }
 .dc20-alt-sheet .sc-attr-name {
   font-family: var(--font-heading);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   font-weight: 700;
-  color: var(--p-ink);
-  flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  letter-spacing: 0.03em;
+  color: var(--p-ink-muted);
+  text-align: center;
+  letter-spacing: 0.07em;
+  line-height: 1.1;
 }
 .dc20-alt-sheet .sc-attr-score {
   font-family: var(--font-heading);
-  font-size: var(--fs-lg);
+  font-size: var(--fs-xl);
   font-weight: 800;
   line-height: 1;
+  text-align: center;
   color: var(--p-accent);
-  flex-shrink: 0;
-  min-width: calc(28px * var(--dc20-scale));
-  text-align: right;
 }
 .dc20-alt-sheet .sc-attr-buttons {
   display: flex;
-  gap: calc(3px * var(--dc20-scale));
-  flex-shrink: 0;
+  gap: 2px;
+  width: 100%;
 }
 .dc20-alt-sheet .sc-attr-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
   background: var(--p-bg-card);
   border: 1px solid var(--p-border-faint);
   border-radius: var(--r-sm);
-  padding: calc(3px * var(--dc20-scale)) var(--gap-xs);
-  font-size: var(--fs-sm);
+  padding: calc(2px * var(--dc20-scale)) 2px;
+  font-size: var(--fs-xs);
   font-family: var(--font-body);
   color: var(--p-ink);
   cursor: pointer;
   font-weight: 600;
   white-space: nowrap;
+  overflow: hidden;
 }
-.dc20-alt-sheet .sc-attr-btn i { font-size: var(--fs-xs); }
+.dc20-alt-sheet .sc-attr-btn i { font-size: calc(var(--fs-xs) * 0.85); flex-shrink: 0; }
 .dc20-alt-sheet .sc-attr-btn:hover { background: var(--p-bg-aged); border-color: var(--c-ap); }
 
 /* Movement / senses chips (Speed etc.) */
