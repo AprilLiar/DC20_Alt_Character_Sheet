@@ -7,10 +7,10 @@
       <span class="sc-attr-name">{{abbr}}</span>
       <span class="sc-attr-score">{{signedNum value}}</span>
       <div class="sc-attr-buttons">
-        <button type="button" class="sc-attr-btn rollable" data-action="rollAttribute" data-attr="{{key}}" title="Check">
+        <button type="button" class="sc-attr-btn rollable" data-action="rollAttribute" data-attr="{{key}}" title="{{localize "DC20AltSheet.core.check"}}">
           <i class="fas fa-dice-d20"></i>{{signedNum check}}
         </button>
-        <button type="button" class="sc-attr-btn rollable" data-action="rollSave" data-attr="{{key}}" title="Save">
+        <button type="button" class="sc-attr-btn rollable" data-action="rollSave" data-attr="{{key}}" title="{{localize "DC20AltSheet.core.save"}}">
           <i class="fas fa-shield-alt"></i>{{signedNum save}}
         </button>
       </div>
@@ -35,7 +35,7 @@
 
     {{!-- Skills panel: only proficient (mastery > 0) --}}
     <div class="sc-panel">
-      <div class="sc-panel-heading">Skills</div>
+      <div class="sc-panel-heading">{{localize "DC20AltSheet.core.skills"}}</div>
       <div class="sc-skill-grid">
         {{#each skills}}
         {{#if mastery}}
@@ -51,7 +51,7 @@
     {{!-- Trades panel --}}
     {{#if tradeGroupsMastered.length}}
     <div class="sc-panel">
-      <div class="sc-panel-heading">Trades</div>
+      <div class="sc-panel-heading">{{localize "DC20AltSheet.core.trades"}}</div>
       <div class="sc-skill-grid">
         {{#each trades}}
         {{#if mastery}}
@@ -70,12 +70,12 @@
   {{!-- Items half: Favourites + Last Used — fills remaining vertical space --}}
   <div class="sc-items-grid">
     <div class="sc-panel sc-panel-stretch">
-      <div class="sc-panel-heading">Favourites</div>
+      <div class="sc-panel-heading">{{localize "DC20AltSheet.core.favourites"}}</div>
       <div class="sc-panel-scroll" data-reorder-list data-reorder-mode="flag" data-reorder-key="favourites">
         {{#if favourites.length}}
           {{#each favourites}}
           <div class="sc-item-row" data-item-id="{{id}}">
-            <img class="sc-item-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+            <img class="sc-item-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="{{localize "DC20AltSheet.use"}} {{name}}">
             <span class="sc-item-name">{{name}}</span>
           </div>
           {{/each}}
@@ -85,12 +85,12 @@
       </div>
     </div>
     <div class="sc-panel sc-panel-stretch">
-      <div class="sc-panel-heading">Last Used</div>
+      <div class="sc-panel-heading">{{localize "DC20AltSheet.core.lastUsed"}}</div>
       <div class="sc-panel-scroll" data-reorder-list data-reorder-mode="flag" data-reorder-key="lastUsed">
         {{#if lastUsed.length}}
           {{#each lastUsed}}
           <div class="sc-item-row" data-item-id="{{id}}">
-            <img class="sc-item-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+            <img class="sc-item-img" src="{{img}}" alt="{{name}}" data-action="useItem" data-item-id="{{id}}" title="{{localize "DC20AltSheet.use"}} {{name}}">
             <span class="sc-item-name">{{name}}</span>
           </div>
           {{/each}}

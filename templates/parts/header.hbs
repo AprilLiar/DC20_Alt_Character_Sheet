@@ -17,7 +17,7 @@
   </div>
 </div>
 {{#if tempPath}}
-<div class="hstrip-temp-hp" title="Temporary Hit Points">
+<div class="hstrip-temp-hp" title="{{localize "DC20AltSheet.header.tempHp"}}">
   <span class="hstrip-temp-label">THP</span>
   <input type="number" class="hstrip-input hstrip-temp-input" name="{{tempPath}}" value="{{temp}}"
     min="0" {{#unless @root.isEditable}}disabled{{/unless}}>
@@ -57,26 +57,26 @@
     {{!-- Collapsed resource: label + editable bar (NOT inside the button, so inputs work) --}}
     <span class="hstrip-label hstrip-dd-label">{{header.selected.label}}</span>
     {{> resBar header.selected}}
-    <button type="button" class="hstrip-dd-toggle" title="Switch / manage resources">
+    <button type="button" class="hstrip-dd-toggle" title="{{localize "DC20AltSheet.header.switchResources"}}">
       <i class="fas fa-caret-down hstrip-dd-caret"></i>
     </button>
 
     <div class="hstrip-dd-panel hidden">
-      <div class="hstrip-dd-title">Resources</div>
+      <div class="hstrip-dd-title">{{localize "DC20AltSheet.header.resources"}}</div>
       {{#each header.resources}}
       <div class="res-row{{#if (eq key @root.header.selected.key)}} selected{{/if}}{{#if removable}} res-removable{{/if}}"
         data-res-key="{{key}}"{{#if removable}} data-res-custom-key="{{customKey}}"{{/if}}>
         <span class="res-name" data-select-resource="{{key}}"
-          title="{{#if removable}}Show in header · right-click row to remove{{else}}Show in header{{/if}}">{{label}}</span>
+          title="{{#if removable}}{{localize "DC20AltSheet.header.showInHeaderRemovable"}}{{else}}{{localize "DC20AltSheet.header.showInHeader"}}{{/if}}">{{label}}</span>
         {{> resBar this}}
       </div>
       {{/each}}
 
       {{#if isEditable}}
       <div class="res-create">
-        <input type="text" class="res-create-name" placeholder="New tracker…" maxlength="24">
-        <input type="color" class="res-create-color" value="#9988cc" title="Bar colour">
-        <button type="button" class="res-create-btn" title="Create tracker"><i class="fas fa-plus"></i></button>
+        <input type="text" class="res-create-name" placeholder="{{localize "DC20AltSheet.header.newTracker"}}" maxlength="24">
+        <input type="color" class="res-create-color" value="#9988cc" title="{{localize "DC20AltSheet.header.barColour"}}">
+        <button type="button" class="res-create-btn" title="{{localize "DC20AltSheet.header.createTracker"}}"><i class="fas fa-plus"></i></button>
       </div>
       {{/if}}
     </div>
@@ -96,7 +96,7 @@
       {{/if}}
     </div>
     {{/each}}
-    <button type="button" class="qs-add-btn" title="Add quick slot">+</button>
+    <button type="button" class="qs-add-btn" title="{{localize "DC20AltSheet.header.addQuickSlot"}}">+</button>
   </div>
 
 </div>

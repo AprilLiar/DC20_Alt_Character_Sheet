@@ -4,7 +4,7 @@
   <div class="page-section-header">
     <button type="button" class="add-btn"
       data-action="createItem" data-type="feature">
-      <i class="fas fa-plus"></i> Add Feature
+      <i class="fas fa-plus"></i> {{localize "DC20AltSheet.features.add"}}
     </button>
   </div>
   {{/if}}
@@ -16,11 +16,11 @@
       {{#each items}}
       <li class="item-row" data-item-id="{{id}}">
         <img class="item-img item-img-rollable" src="{{img}}" alt="{{name}}"
-          data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+          data-action="useItem" data-item-id="{{id}}" title="{{localize "DC20AltSheet.use"}} {{name}}">
         <span class="item-name">{{name}}</span>
         {{#if ../../isEditable}}
         <div class="item-controls">
-          <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Delete">
+          <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="{{localize "DC20AltSheet.delete"}}">
             <i class="fas fa-trash"></i>
           </button>
         </div>
@@ -30,7 +30,7 @@
     </ul>
   </div>
   {{else}}
-  <p class="empty-note">No passive features.</p>
+  <p class="empty-note">{{localize "DC20AltSheet.empty.passiveFeatures"}}</p>
   {{/each}}
 
 </div>

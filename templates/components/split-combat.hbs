@@ -2,31 +2,31 @@
 
   {{!-- Filter tabs --}}
   <div class="combat-filter-bar">
-    <button type="button" class="combat-filter-btn active" data-filter="all">All</button>
-    <button type="button" class="combat-filter-btn" data-filter="weapon">Wpn</button>
-    <button type="button" class="combat-filter-btn" data-filter="equipment">Eqp</button>
-    <button type="button" class="combat-filter-btn" data-filter="spell">Spell</button>
-    <button type="button" class="combat-filter-btn" data-filter="maneuver">Mnvr</button>
-    <button type="button" class="combat-filter-btn" data-filter="feature">Feat</button>
+    <button type="button" class="combat-filter-btn active" data-filter="all">{{localize "DC20AltSheet.combat.filterAll"}}</button>
+    <button type="button" class="combat-filter-btn" data-filter="weapon">{{localize "DC20AltSheet.combat.filterWeaponAbbr"}}</button>
+    <button type="button" class="combat-filter-btn" data-filter="equipment">{{localize "DC20AltSheet.combat.filterEquipmentAbbr"}}</button>
+    <button type="button" class="combat-filter-btn" data-filter="spell">{{localize "DC20AltSheet.combat.filterSpellAbbr"}}</button>
+    <button type="button" class="combat-filter-btn" data-filter="maneuver">{{localize "DC20AltSheet.combat.filterManeuverAbbr"}}</button>
+    <button type="button" class="combat-filter-btn" data-filter="feature">{{localize "DC20AltSheet.combat.filterFeatureAbbr"}}</button>
   </div>
 
   {{!-- Per-filter Create buttons (shown only when a specific filter is active) --}}
   {{#if isEditable}}
   <div class="combat-create-bar">
     <button type="button" class="combat-create-btn hidden" data-create-filter="weapon"    data-action="createItem" data-type="weapon">
-      <i class="fas fa-plus"></i> Weapon
+      <i class="fas fa-plus"></i> {{localize "DC20AltSheet.combat.createWeapon"}}
     </button>
     <button type="button" class="combat-create-btn hidden" data-create-filter="equipment" data-action="createItem" data-type="equipment">
-      <i class="fas fa-plus"></i> Equipment
+      <i class="fas fa-plus"></i> {{localize "DC20AltSheet.combat.createEquipment"}}
     </button>
     <button type="button" class="combat-create-btn hidden" data-create-filter="spell"     data-action="createItem" data-type="spell">
-      <i class="fas fa-plus"></i> Spell
+      <i class="fas fa-plus"></i> {{localize "DC20AltSheet.combat.createSpell"}}
     </button>
     <button type="button" class="combat-create-btn hidden" data-create-filter="maneuver"  data-action="createItem" data-type="maneuver">
-      <i class="fas fa-plus"></i> Maneuver
+      <i class="fas fa-plus"></i> {{localize "DC20AltSheet.combat.createManeuver"}}
     </button>
     <button type="button" class="combat-create-btn hidden" data-create-filter="feature"   data-action="createItem" data-type="feature">
-      <i class="fas fa-plus"></i> Feature
+      <i class="fas fa-plus"></i> {{localize "DC20AltSheet.combat.createFeature"}}
     </button>
   </div>
   {{/if}}
@@ -36,7 +36,7 @@
     {{#each combatActions}}
     <div class="combat-action-row" data-item-id="{{id}}" data-filter-type="{{filterType}}">
       <img class="ca-img" src="{{img}}" alt="{{name}}"
-        data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+        data-action="useItem" data-item-id="{{id}}" title="{{localize "DC20AltSheet.use"}} {{name}}">
       <span class="ca-name">{{name}}</span>
       <span class="ca-type">{{filterType}}</span>
       <span class="ca-cost">{{itemCost costs}}</span>
@@ -45,26 +45,26 @@
       <div class="ca-controls">
         <button type="button" class="ca-btn equip-btn{{#if isEquipped}} active{{/if}}"
           data-action="toggleEquip" data-item-id="{{id}}"
-          title="{{#if isEquipped}}Unequip{{else}}Equip{{/if}}">
+          title="{{#if isEquipped}}{{localize "DC20AltSheet.combat.unequip"}}{{else}}{{localize "DC20AltSheet.combat.equip"}}{{/if}}">
           <i class="fas fa-shield-alt"></i>
         </button>
         {{#if canAttune}}
         <button type="button" class="ca-btn attune-btn{{#if isAttuned}} active{{/if}}"
           data-action="toggleAttune" data-item-id="{{id}}"
-          title="{{#if isAttuned}}Unattune{{else}}Attune{{/if}}">
+          title="{{#if isAttuned}}{{localize "DC20AltSheet.combat.unattune"}}{{else}}{{localize "DC20AltSheet.combat.attune"}}{{/if}}">
           <i class="fas fa-gem"></i>
         </button>
         {{/if}}
         {{#if ../isEditable}}
         <button type="button" class="ca-btn del-btn"
-          data-action="deleteItem" data-item-id="{{id}}" title="Delete">
+          data-action="deleteItem" data-item-id="{{id}}" title="{{localize "DC20AltSheet.delete"}}">
           <i class="fas fa-trash"></i>
         </button>
         {{/if}}
       </div>
     </div>
     {{else}}
-    <p class="empty-note">No combat actions.</p>
+    <p class="empty-note">{{localize "DC20AltSheet.empty.combat"}}</p>
     {{/each}}
   </div>
 

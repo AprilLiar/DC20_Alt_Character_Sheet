@@ -14,9 +14,9 @@
 
   {{!-- Weapons --}}
   <div class="item-section-hdr mt">
-    <h4 class="section-heading">Weapons</h4>
+    <h4 class="section-heading">{{localize "DC20AltSheet.section.weapons"}}</h4>
     {{#if isEditable}}
-    <button type="button" class="add-btn icon-btn" data-action="createItem" data-type="weapon" title="Add Weapon">
+    <button type="button" class="add-btn icon-btn" data-action="createItem" data-type="weapon" title="{{localize "DC20AltSheet.create.weapon"}}">
       <i class="fas fa-plus"></i>
     </button>
     {{/if}}
@@ -25,16 +25,16 @@
   <ul class="items-list">
     {{#each itemGroups.weapons}}
     <li class="item-row {{#if equipped}}equipped{{/if}}" data-item-id="{{id}}">
-      <img class="item-img item-img-rollable" src="{{img}}" alt="{{name}}" data-action="useItem" title="Use {{name}}">
+      <img class="item-img item-img-rollable" src="{{img}}" alt="{{name}}" data-action="useItem" title="{{localize "DC20AltSheet.use"}} {{name}}">
       <span class="item-name">{{name}}</span>
       <span class="item-qty muted">×{{quantity}}</span>
       <div class="item-controls">
         <button type="button" class="{{#if equipped}}active{{/if}}"
-          data-action="toggleEquip" data-item-id="{{id}}" title="Equip/Unequip">
+          data-action="toggleEquip" data-item-id="{{id}}" title="{{localize "DC20AltSheet.equip"}}">
           <i class="fas fa-shield-alt"></i>
         </button>
         {{#if ../isEditable}}
-        <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Delete">
+        <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="{{localize "DC20AltSheet.delete"}}">
           <i class="fas fa-trash"></i>
         </button>
         {{/if}}
@@ -43,14 +43,14 @@
     {{/each}}
   </ul>
   {{else}}
-  <p class="empty-note">No weapons.</p>
+  <p class="empty-note">{{localize "DC20AltSheet.empty.weapons"}}</p>
   {{/if}}
 
   {{!-- Equipment --}}
   <div class="item-section-hdr mt">
-    <h4 class="section-heading">Equipment</h4>
+    <h4 class="section-heading">{{localize "DC20AltSheet.section.equipment"}}</h4>
     {{#if isEditable}}
-    <button type="button" class="add-btn icon-btn" data-action="createItem" data-type="equipment" title="Add Equipment">
+    <button type="button" class="add-btn icon-btn" data-action="createItem" data-type="equipment" title="{{localize "DC20AltSheet.create.equipment"}}">
       <i class="fas fa-plus"></i>
     </button>
     {{/if}}
@@ -64,11 +64,11 @@
       <span class="item-qty muted">×{{quantity}}</span>
       <div class="item-controls">
         <button type="button" class="{{#if equipped}}active{{/if}}"
-          data-action="toggleEquip" data-item-id="{{id}}" title="Equip/Unequip">
+          data-action="toggleEquip" data-item-id="{{id}}" title="{{localize "DC20AltSheet.equip"}}">
           <i class="fas fa-shield-alt"></i>
         </button>
         {{#if ../isEditable}}
-        <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Delete">
+        <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="{{localize "DC20AltSheet.delete"}}">
           <i class="fas fa-trash"></i>
         </button>
         {{/if}}
@@ -77,14 +77,14 @@
     {{/each}}
   </ul>
   {{else}}
-  <p class="empty-note">No equipment.</p>
+  <p class="empty-note">{{localize "DC20AltSheet.empty.equipment"}}</p>
   {{/if}}
 
   {{!-- Consumables --}}
   <div class="item-section-hdr mt">
-    <h4 class="section-heading">Consumables</h4>
+    <h4 class="section-heading">{{localize "DC20AltSheet.section.consumables"}}</h4>
     {{#if isEditable}}
-    <button type="button" class="add-btn icon-btn" data-action="createItem" data-type="consumable" title="Add Consumable">
+    <button type="button" class="add-btn icon-btn" data-action="createItem" data-type="consumable" title="{{localize "DC20AltSheet.create.consumable"}}">
       <i class="fas fa-plus"></i>
     </button>
     {{/if}}
@@ -93,12 +93,12 @@
   <ul class="items-list">
     {{#each itemGroups.consumables}}
     <li class="item-row" data-item-id="{{id}}">
-      <img class="item-img item-img-rollable" src="{{img}}" alt="{{name}}" data-action="useItem" title="Use {{name}}">
+      <img class="item-img item-img-rollable" src="{{img}}" alt="{{name}}" data-action="useItem" title="{{localize "DC20AltSheet.use"}} {{name}}">
       <span class="item-name">{{name}}</span>
       <span class="item-qty muted">×{{quantity}}</span>
       <div class="item-controls">
         {{#if ../isEditable}}
-        <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Delete">
+        <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="{{localize "DC20AltSheet.delete"}}">
           <i class="fas fa-trash"></i>
         </button>
         {{/if}}
@@ -107,15 +107,15 @@
     {{/each}}
   </ul>
   {{else}}
-  <p class="empty-note">No consumables.</p>
+  <p class="empty-note">{{localize "DC20AltSheet.empty.consumables"}}</p>
   {{/if}}
 
   {{!-- Loot --}}
   {{#if itemGroups.loot.length}}
   <div class="item-section-hdr mt">
-    <h4 class="section-heading">Loot</h4>
+    <h4 class="section-heading">{{localize "DC20AltSheet.section.loot"}}</h4>
     {{#if isEditable}}
-    <button type="button" class="add-btn icon-btn" data-action="createItem" data-type="loot" title="Add Loot">
+    <button type="button" class="add-btn icon-btn" data-action="createItem" data-type="loot" title="{{localize "DC20AltSheet.create.loot"}}">
       <i class="fas fa-plus"></i>
     </button>
     {{/if}}
@@ -128,7 +128,7 @@
       <span class="item-qty muted">×{{quantity}}</span>
       <div class="item-controls">
         {{#if ../isEditable}}
-        <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="Delete">
+        <button type="button" data-action="deleteItem" data-item-id="{{id}}" title="{{localize "DC20AltSheet.delete"}}">
           <i class="fas fa-trash"></i>
         </button>
         {{/if}}

@@ -68,14 +68,14 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   /** All pages the user can open, in display order */
   static PAGE_DEFS = [
-    { id: 'core',      label: 'Core Stats'  },
-    { id: 'combat',    label: 'Combat'      },
-    { id: 'features',  label: 'Features'    },
-    { id: 'inventory', label: 'Inventory'   },
-    { id: 'biography',   label: 'Info'        },
-    { id: 'statistics',  label: 'Statistics'  },
-    { id: 'conditions',  label: 'Conditions'  },
-    { id: 'activities',  label: 'Activities'  },
+    { id: 'core',       label: 'DC20AltSheet.tabs.core'       },
+    { id: 'combat',     label: 'DC20AltSheet.tabs.combat'     },
+    { id: 'features',   label: 'DC20AltSheet.tabs.features'   },
+    { id: 'inventory',  label: 'DC20AltSheet.tabs.inventory'  },
+    { id: 'biography',  label: 'DC20AltSheet.tabs.biography'  },
+    { id: 'statistics', label: 'DC20AltSheet.tabs.statistics' },
+    { id: 'conditions', label: 'DC20AltSheet.tabs.conditions' },
+    { id: 'activities', label: 'DC20AltSheet.tabs.activities' },
   ];
 
   /** Ordered list of currently-open tab page ids */
@@ -125,7 +125,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   /** Human-readable label for a single page id. */
   _labelOf(id) {
-    return DC20AltCharacterSheet.PAGE_DEFS.find(p => p.id === id)?.label ?? id;
+    const key = DC20AltCharacterSheet.PAGE_DEFS.find(p => p.id === id)?.label ?? id;
+    return game.i18n.localize(key);
   }
 
   _loadTabState() {
@@ -711,7 +712,9 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         const side = zone.dataset.splitSide;
         this._pendingSplit[side] = null;
         zone.classList.remove('filled');
-        const hint = side === 'bottom' ? 'optional bottom panel…' : 'drop a tab here…';
+        const hint = side === 'bottom'
+          ? game.i18n.localize('DC20AltSheet.nav.optionalBottom')
+          : game.i18n.localize('DC20AltSheet.nav.dropHere');
         zone.innerHTML = `<span class="split-zone-hint">${hint}</span>`;
         this._updateSplitBuilder();
       });
@@ -765,7 +768,9 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._pendingSplit = { left: null, right: null, bottom: null };
     this.element?.querySelectorAll('.split-zone').forEach(z => {
       z.classList.remove('filled');
-      const hint = z.dataset.splitSide === 'bottom' ? 'optional bottom panel…' : 'put the tab here…';
+      const hint = z.dataset.splitSide === 'bottom'
+        ? game.i18n.localize('DC20AltSheet.nav.optionalBottom')
+        : game.i18n.localize('DC20AltSheet.nav.dropHere');
       z.innerHTML = `<span class="split-zone-hint">${hint}</span>`;
     });
     this.element?.querySelector('.split-bottom-wrap')?.classList.add('hidden');
@@ -1032,7 +1037,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         if (!source) return;
 
         if (source.type !== slotType) {
-          ui.notifications?.warn(`This slot only accepts items of type "${slotType}".`);
+          ui.notifications?.warn(game.i18n.format('DC20AltSheet.notify.slotTypeError', { type: slotType }));
           return;
         }
 
@@ -1085,7 +1090,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
         const actions = [...(this.actor.flags?.[MODULE_ID]?.campActions ?? [])];
         const already = actions.some(a => a.itemId === source.id);
-        if (already) { ui.notifications?.info(`${source.name} is already a camp action.`); return; }
+        if (already) { ui.notifications?.info(game.i18n.format('DC20AltSheet.notify.campAlready', { name: source.name })); return; }
 
         actions.push({
           id:          foundry.utils.randomID(),
@@ -1485,12 +1490,12 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     // Custom roll tiles — edit / remove (basic tiles have no menu)
     new CM(this.element, '.roll-tile-custom[data-roll-id]', [
       {
-        name: 'Edit',
+        name: game.i18n.localize('DC20AltSheet.edit'),
         icon: '<i class="fas fa-pencil-alt"></i>',
         callback: (el) => this._editCustomRoll(el?.dataset?.rollId),
       },
       {
-        name: 'Remove',
+        name: game.i18n.localize('DC20AltSheet.remove'),
         icon: '<i class="fas fa-trash"></i>',
         callback: (el) => this._removeCustomRoll(el?.dataset?.rollId),
       },
@@ -1539,25 +1544,26 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   async _promptCustomRoll(existing = null) {
     const nameVal  = (existing?.name ?? '').replaceAll('"', '&quot;');
     const bonusVal = existing?.bonus ?? 0;
+    const l = (k) => game.i18n.localize(k);
     const content = `
       <div class="dc20-custom-roll-form">
         <div class="form-group">
-          <label>Name</label>
-          <input type="text" name="name" value="${nameVal}" placeholder="e.g. Initiative (Adv)" autofocus>
+          <label>${l('DC20AltSheet.dialog.customRoll.name')}</label>
+          <input type="text" name="name" value="${nameVal}" placeholder="${l('DC20AltSheet.dialog.customRoll.namePlaceholder')}" autofocus>
         </div>
         <div class="form-group">
-          <label>Bonus</label>
+          <label>${l('DC20AltSheet.dialog.customRoll.bonus')}</label>
           <input type="number" name="bonus" value="${bonusVal}" step="1">
         </div>
       </div>`;
     const result = await foundry.applications.api.DialogV2.wait({
-      window:  { title: existing ? 'Edit Custom Roll' : 'New Custom Roll' },
+      window:  { title: existing ? l('DC20AltSheet.dialog.customRoll.titleEdit') : l('DC20AltSheet.dialog.customRoll.titleNew') },
       content,
       rejectClose: false,
       buttons: [
         {
           action: 'save',
-          label:  'Save',
+          label:  l('DC20AltSheet.dialog.save'),
           default: true,
           callback: (event, button) => {
             const form = button.form;
@@ -1567,7 +1573,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
             };
           },
         },
-        { action: 'cancel', label: 'Cancel' },
+        { action: 'cancel', label: l('DC20AltSheet.dialog.cancel') },
       ],
     });
     if (!result || result === 'cancel' || !result.name) return null;
@@ -1621,7 +1627,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     let classItem = storedId ? this.actor.items.get(storedId) : null;
     if (!classItem) classItem = this.actor.items.find(i => i.type === 'class');
     if (!classItem) {
-      ui.notifications?.warn('No class found to level up. Add a class item first.');
+      ui.notifications?.warn(game.i18n.localize('DC20AltSheet.notify.noClassLevelUp'));
       return;
     }
 
@@ -1642,7 +1648,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         return;
       } catch (err) {
         console.error('DC20 Alt Sheet | changeLevel failed', err);
-        ui.notifications?.error(`Level-up failed: ${err?.message ?? err}`);
+        ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelUpFailed', { error: err?.message ?? err }));
         return;
       }
     }
@@ -1651,18 +1657,16 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     // class level directly so the button still does something visible.
     const current = Number(classItem.system?.level) || 0;
     if (current >= 20) {
-      ui.notifications?.info('Already at maximum level (20).');
+      ui.notifications?.info(game.i18n.localize('DC20AltSheet.notify.maxLevel'));
       return;
     }
     try {
       await classItem.update({ 'system.level': current + 1 });
       await resetXp();
-      ui.notifications?.warn(
-        'Raised the class level, but the DC20 advancement dialog could not be opened automatically.',
-      );
+      ui.notifications?.warn(game.i18n.localize('DC20AltSheet.notify.levelUpFallback'));
     } catch (err) {
       console.error('DC20 Alt Sheet | level-up fallback failed', err);
-      ui.notifications?.error(`Level-up failed: ${err?.message ?? err}`);
+      ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelUpFailed', { error: err?.message ?? err }));
     }
   }
 
@@ -1672,13 +1676,13 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     let classItem = storedId ? this.actor.items.get(storedId) : null;
     if (!classItem) classItem = this.actor.items.find(i => i.type === 'class');
     if (!classItem) {
-      ui.notifications?.warn('No class found to level down.');
+      ui.notifications?.warn(game.i18n.localize('DC20AltSheet.notify.noClassLevelDown'));
       return;
     }
 
     const current = Number(classItem.system?.level) || 0;
     if (current <= 0) {
-      ui.notifications?.info('Already at minimum level.');
+      ui.notifications?.info(game.i18n.localize('DC20AltSheet.notify.minLevel'));
       return;
     }
 
@@ -1698,7 +1702,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       await classItem.update({ 'system.level': current - 1 });
     } catch (err) {
       console.error('DC20 Alt Sheet | level-down fallback failed', err);
-      ui.notifications?.error(`Level-down failed: ${err?.message ?? err}`);
+      ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelDownFailed', { error: err?.message ?? err }));
     }
   }
 
@@ -1763,29 +1767,30 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   /** Open a dialog to create a new camp action. */
   static async _onCreateCampAction(event, target) {
+    const l = (k) => game.i18n.localize(k);
     const content = `
       <div class="dc20-custom-roll-form">
         <div class="form-group">
-          <label>Name</label>
-          <input type="text" name="name" placeholder="e.g. Stand Watch" autofocus>
+          <label>${l('DC20AltSheet.dialog.campAction.name')}</label>
+          <input type="text" name="name" placeholder="${l('DC20AltSheet.dialog.campAction.namePlaceholder')}" autofocus>
         </div>
         <div class="form-group">
-          <label>Description</label>
-          <textarea name="description" rows="3" placeholder="What happens during this activity…" style="width:100%;box-sizing:border-box;resize:vertical;"></textarea>
+          <label>${l('DC20AltSheet.dialog.campAction.description')}</label>
+          <textarea name="description" rows="3" placeholder="${l('DC20AltSheet.dialog.campAction.descPlaceholder')}" style="width:100%;box-sizing:border-box;resize:vertical;"></textarea>
         </div>
         <div class="form-group">
-          <label>Roll formula <span style="opacity:.6;font-size:.9em;">(optional)</span></label>
-          <input type="text" name="roll" placeholder="e.g. 1d20 + @prime">
+          <label>${l('DC20AltSheet.dialog.campAction.roll')} <span style="opacity:.6;font-size:.9em;">${l('DC20AltSheet.dialog.campAction.rollOptional')}</span></label>
+          <input type="text" name="roll" placeholder="${l('DC20AltSheet.dialog.campAction.rollPlaceholder')}">
         </div>
       </div>`;
     const result = await foundry.applications.api.DialogV2.wait({
-      window:  { title: 'New Camp Action' },
+      window:  { title: l('DC20AltSheet.dialog.campAction.title') },
       content,
       rejectClose: false,
       buttons: [
         {
           action: 'save',
-          label:  'Create',
+          label:  l('DC20AltSheet.dialog.create'),
           default: true,
           callback: (event, button) => {
             const form = button.form;
@@ -1796,7 +1801,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
             };
           },
         },
-        { action: 'cancel', label: 'Cancel' },
+        { action: 'cancel', label: l('DC20AltSheet.dialog.cancel') },
       ],
     });
     if (!result || result === 'cancel' || !result.name) return;
@@ -1815,7 +1820,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     const RestDialog = globalThis.DC20?.dialog?.RestDialog
       ?? (await this._systemImport('dialogs/rest.mjs'))?.RestDialog;
     if (!RestDialog) {
-      ui.notifications?.error('Could not access the DC20 rest flow.');
+      ui.notifications?.error(game.i18n.localize('DC20AltSheet.notify.restError'));
       return;
     }
     RestDialog.open(this.actor, { preselected: type });
@@ -1924,8 +1929,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   static async _onResetStats() {
     const ok = await foundry.applications.api.DialogV2.confirm({
-      window:  { title: 'Reset Lifetime Statistics' },
-      content: 'Clear all lifetime statistics for this character? Session stats are unaffected.',
+      window:  { title: game.i18n.localize('DC20AltSheet.dialog.resetStats.title') },
+      content: game.i18n.localize('DC20AltSheet.dialog.resetStats.content'),
     });
     if (!ok) return;
     await resetLifetimeStats(this.actor);
