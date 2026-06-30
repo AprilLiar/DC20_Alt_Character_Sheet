@@ -298,55 +298,62 @@
 
 .dc20-alt-sheet .sc-attrs {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap-xs);
+  grid-template-columns: 1fr;
+  gap: 3px;
   margin-bottom: var(--gap-xs);
 }
 .dc20-alt-sheet .sc-attr {
   display: flex;
-  flex-direction: column;
-  gap: var(--gap-xs);
-  padding: var(--gap-xs);
+  flex-direction: row;
+  align-items: center;
+  gap: var(--gap-sm);
+  padding: calc(4px * var(--dc20-scale)) var(--gap-sm);
   background: var(--p-light);
   border: 1px solid var(--p-border-light);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);
 }
 .dc20-alt-sheet .sc-attr-name {
   font-family: var(--font-heading);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: var(--p-ink);
-  text-align: center;
-  letter-spacing: 0.05em;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.03em;
 }
-/* The attribute's actual value, shown large in the middle of the card */
 .dc20-alt-sheet .sc-attr-score {
   font-family: var(--font-heading);
-  font-size: var(--fs-2xl);
+  font-size: var(--fs-lg);
   font-weight: 800;
   line-height: 1;
-  text-align: center;
   color: var(--p-accent);
+  flex-shrink: 0;
+  min-width: calc(28px * var(--dc20-scale));
+  text-align: right;
 }
 .dc20-alt-sheet .sc-attr-buttons {
   display: flex;
-  gap: var(--gap-xs);
+  gap: calc(3px * var(--dc20-scale));
+  flex-shrink: 0;
 }
 .dc20-alt-sheet .sc-attr-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 3px;
-  flex: 1;
   background: var(--p-bg-card);
   border: 1px solid var(--p-border-faint);
   border-radius: var(--r-sm);
-  padding: 4px 2px;
+  padding: calc(3px * var(--dc20-scale)) var(--gap-xs);
   font-size: var(--fs-sm);
   font-family: var(--font-body);
   color: var(--p-ink);
   cursor: pointer;
   font-weight: 600;
+  white-space: nowrap;
 }
 .dc20-alt-sheet .sc-attr-btn i { font-size: var(--fs-xs); }
 .dc20-alt-sheet .sc-attr-btn:hover { background: var(--p-bg-aged); border-color: var(--c-ap); }
