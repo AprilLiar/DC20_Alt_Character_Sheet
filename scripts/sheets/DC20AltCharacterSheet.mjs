@@ -1497,31 +1497,53 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /** Launch the DC20 level-up flow on the character's class item. */
   static async _onLevelUp(event, target) {
     if (target?.disabled) return;
-    // Prefer the stored class id, but fall back to the actual class item if the
-    // stored id is stale/missing (otherwise changeLevel silently no-ops).
-    let classId = this.actor.system.details?.class?.id;
-    if (!classId || !this.actor.items.get(classId)) {
-      classId = this.actor.items.find(i => i.type === 'class')?.id;
-    }
-    if (!classId) {
+    // Resolve the class item: prefer the stored id, fall back to the actual
+    // class item if that id is stale/missing.
+    const storedId = this.actor.system.details?.class?.id;
+    let classItem = storedId ? this.actor.items.get(storedId) : null;
+    if (!classItem) classItem = this.actor.items.find(i => i.type === 'class');
+    if (!classItem) {
       ui.notifications?.warn('No class found to level up. Add a class item first.');
       return;
     }
+
+    const resetXp = async () => {
+      if (this.actor.flags?.[MODULE_ID]?.trackXP) {
+        await this.actor.setFlag(MODULE_ID, 'xpValue', 0);
+      }
+    };
+
+    // Preferred path: the system's full advancement flow (the same one the
+    // core sheet uses). changeLevel isn't on the public API, so it's imported.
     const mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
-    if (!mod?.changeLevel) {
-      ui.notifications?.error('DC20 Alt Sheet: could not load the level-up flow from the DC20 system.');
+    if (mod?.changeLevel) {
+      try {
+        await mod.changeLevel('true', classItem.id, this.actor);
+        await resetXp();
+        return;
+      } catch (err) {
+        console.error('DC20 Alt Sheet | changeLevel failed', err);
+        ui.notifications?.error(`Level-up failed: ${err?.message ?? err}`);
+        return;
+      }
+    }
+
+    // Fallback: the system module couldn't be loaded — at least raise the
+    // class level directly so the button still does something visible.
+    const current = Number(classItem.system?.level) || 0;
+    if (current >= 20) {
+      ui.notifications?.info('Already at maximum level (20).');
       return;
     }
     try {
-      await mod.changeLevel('true', classId, this.actor);
+      await classItem.update({ 'system.level': current + 1 });
+      await resetXp();
+      ui.notifications?.warn(
+        'Raised the class level, but the DC20 advancement dialog could not be opened automatically.',
+      );
     } catch (err) {
-      console.error('DC20 Alt Sheet | level-up failed', err);
+      console.error('DC20 Alt Sheet | level-up fallback failed', err);
       ui.notifications?.error(`Level-up failed: ${err?.message ?? err}`);
-      return;
-    }
-    // Reset the XP bar after levelling, when tracking is enabled.
-    if (this.actor.flags?.[MODULE_ID]?.trackXP) {
-      await this.actor.setFlag(MODULE_ID, 'xpValue', 0);
     }
   }
 
