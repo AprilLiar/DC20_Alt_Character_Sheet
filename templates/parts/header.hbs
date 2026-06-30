@@ -16,6 +16,13 @@
     {{/if}}
   </div>
 </div>
+{{#if tempPath}}
+<div class="hstrip-temp-hp" title="Temporary Hit Points">
+  <span class="hstrip-temp-label">THP</span>
+  <input type="number" class="hstrip-input hstrip-temp-input" name="{{tempPath}}" value="{{temp}}"
+    min="0" {{#unless @root.isEditable}}disabled{{/unless}}>
+</div>
+{{/if}}
 {{/inline}}
 
 <div class="sheet-header-strip">

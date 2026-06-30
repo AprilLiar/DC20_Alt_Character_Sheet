@@ -1591,3 +1591,103 @@
   color: var(--p-ink-muted);
   font-style: italic;
 }
+
+/* ── Rollable knowledge row name ── */
+.dc20-alt-sheet .kr-name.rollable {
+  cursor: pointer;
+  border-radius: var(--r-sm);
+  padding: 1px 4px;
+  margin: -1px -4px;
+  transition: color var(--t-fast), background var(--t-fast);
+}
+.dc20-alt-sheet .kr-name.rollable:hover {
+  color: var(--p-accent);
+  background: var(--p-hover);
+}
+
+/* ── Camp Actions widget ── */
+.dc20-alt-sheet .camp-actions-widget.drag-over {
+  border-color: var(--p-accent);
+  background: var(--p-hover);
+}
+.dc20-alt-sheet .camp-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.dc20-alt-sheet .camp-action-row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xs);
+  padding: calc(3px * var(--dc20-scale)) var(--gap-xs);
+  background: var(--p-bg-card);
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-sm);
+  transition: background var(--t-fast);
+}
+.dc20-alt-sheet .camp-action-row:hover { background: var(--p-hover); }
+.dc20-alt-sheet .camp-action-img {
+  width: calc(20px * var(--dc20-scale));
+  height: calc(20px * var(--dc20-scale));
+  border-radius: calc(3px * var(--dc20-scale));
+  object-fit: cover;
+  border: 1px solid var(--p-border-faint);
+  flex-shrink: 0;
+}
+.dc20-alt-sheet .camp-action-name {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-sm);
+  color: var(--p-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dc20-alt-sheet .camp-action-use,
+.dc20-alt-sheet .camp-action-del {
+  flex-shrink: 0;
+  width: calc(22px * var(--dc20-scale));
+  height: calc(22px * var(--dc20-scale));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-sm);
+  background: transparent;
+  border: none;
+  color: var(--p-ink-muted);
+  cursor: pointer;
+  border-radius: var(--r-sm);
+  transition: color var(--t-fast), background var(--t-fast);
+}
+.dc20-alt-sheet .camp-action-use:hover { color: var(--p-accent); background: var(--p-hover); }
+.dc20-alt-sheet .camp-action-del:hover  { color: var(--c-hp-light); background: var(--p-bg-aged); }
+.dc20-alt-sheet .camp-actions-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  flex-wrap: wrap;
+}
+.dc20-alt-sheet .camp-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px var(--gap-sm);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--p-accent);
+  background: transparent;
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.dc20-alt-sheet .camp-create-btn:hover {
+  background: var(--p-hover);
+  border-color: var(--p-accent);
+}
+.dc20-alt-sheet .camp-drop-hint {
+  font-size: var(--fs-xs);
+  color: var(--p-ink-muted);
+  font-style: italic;
+}
