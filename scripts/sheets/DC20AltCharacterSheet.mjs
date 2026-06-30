@@ -44,6 +44,10 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       convertPoints: DC20AltCharacterSheet._onConvertPoints,
       xpApply:       DC20AltCharacterSheet._onXpApply,
       removeCharItem: DC20AltCharacterSheet._onRemoveCharItem,
+      rollKnowledge:    DC20AltCharacterSheet._onRollKnowledge,
+      useCampAction:    DC20AltCharacterSheet._onUseCampAction,
+      deleteCampAction: DC20AltCharacterSheet._onDeleteCampAction,
+      createCampAction: DC20AltCharacterSheet._onCreateCampAction,
     },
     form: { submitOnChange: true, closeOnSubmit: false },
   };
@@ -331,6 +335,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindConditionEffects();
     this._bindActivities();
     this._bindCharSlots();
+    this._bindCampActions();
     this._bindBiographyAutoSave();
     this._bindItemPopup();
     this._bindPortraitFit();
@@ -1044,6 +1049,58 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     });
   }
 
+  /**
+   * Enable drag-to-assign Feature items onto the Camp Actions widget.
+   * Dropping a feature creates a new camp action entry referencing that item.
+   */
+  _bindCampActions() {
+    if (!this.isEditable) return;
+    this.element.querySelectorAll('.camp-actions-widget').forEach(widget => {
+      widget.addEventListener('dragover', e => {
+        if (this._dragPageId) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        widget.classList.add('drag-over');
+      });
+      widget.addEventListener('dragleave', e => {
+        if (!widget.contains(e.relatedTarget)) widget.classList.remove('drag-over');
+      });
+      widget.addEventListener('drop', async e => {
+        widget.classList.remove('drag-over');
+        if (this._dragPageId) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        let data;
+        try {
+          const raw = e.dataTransfer.getData('application/json') || e.dataTransfer.getData('text/plain');
+          data = JSON.parse(raw);
+        } catch { return; }
+
+        if (data.type !== 'Item') return;
+
+        let source;
+        try { source = await fromUuid(data.uuid ?? ''); } catch { return; }
+        if (!source || source.type !== 'feature') return;
+
+        const actions = [...(this.actor.flags?.[MODULE_ID]?.campActions ?? [])];
+        const already = actions.some(a => a.itemId === source.id);
+        if (already) { ui.notifications?.info(`${source.name} is already a camp action.`); return; }
+
+        actions.push({
+          id:          foundry.utils.randomID(),
+          name:        source.name,
+          description: source.system?.description?.value ?? source.system?.description ?? '',
+          roll:        null,
+          itemId:      source.parent?.id === this.actor.id ? source.id : null,
+          img:         source.img ?? null,
+        });
+        await this.actor.setFlag(MODULE_ID, 'campActions', actions);
+        this.render();
+      });
+    });
+  }
+
   /** Dynamically import a module from the running DC20 system. */
   async _systemImport(relPath) {
     const p = `systems/dc20rpg/module/${relPath}`;
@@ -1670,6 +1727,84 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     const item = this.actor.items.get(itemId);
     if (!item) return;
     item.delete();
+  }
+
+  /** Roll a skill / trade / language from the Activities knowledge list. */
+  static async _onRollKnowledge(event, target) {
+    const key = target.dataset.skillKey;
+    if (!key) return;
+    return this.actor.roll(key, 'check');
+  }
+
+  /** Post a camp-activity announcement to chat. */
+  static async _onUseCampAction(event, target) {
+    const id = target.dataset.campActionId;
+    const actions = this.actor.flags?.[MODULE_ID]?.campActions ?? [];
+    const action = actions.find(a => a.id === id);
+    if (!action) return;
+
+    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
+    const content = `<p><strong>${this.actor.name}</strong> is doing <em>"${action.name}"</em> during their Camp Activities.</p>` +
+      (action.description ? `<p style="font-size:0.9em;opacity:0.8;">${action.description}</p>` : '');
+    await ChatMessage.create({ speaker, content });
+
+    if (action.roll) {
+      try { await new Roll(action.roll).toMessage({ speaker, flavor: action.name }); } catch { /* ignore bad formula */ }
+    }
+  }
+
+  /** Remove a camp action from the actor flags. */
+  static async _onDeleteCampAction(event, target) {
+    const id = target.dataset.campActionId;
+    const actions = (this.actor.flags?.[MODULE_ID]?.campActions ?? []).filter(a => a.id !== id);
+    await this.actor.setFlag(MODULE_ID, 'campActions', actions);
+    this.render();
+  }
+
+  /** Open a dialog to create a new camp action. */
+  static async _onCreateCampAction(event, target) {
+    const content = `
+      <div class="dc20-custom-roll-form">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" name="name" placeholder="e.g. Stand Watch" autofocus>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea name="description" rows="3" placeholder="What happens during this activity…" style="width:100%;box-sizing:border-box;resize:vertical;"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Roll formula <span style="opacity:.6;font-size:.9em;">(optional)</span></label>
+          <input type="text" name="roll" placeholder="e.g. 1d20 + @prime">
+        </div>
+      </div>`;
+    const result = await foundry.applications.api.DialogV2.wait({
+      window:  { title: 'New Camp Action' },
+      content,
+      rejectClose: false,
+      buttons: [
+        {
+          action: 'save',
+          label:  'Create',
+          default: true,
+          callback: (event, button) => {
+            const form = button.form;
+            return {
+              name:        form.elements.name.value.trim(),
+              description: form.elements.description.value.trim(),
+              roll:        form.elements.roll.value.trim() || null,
+            };
+          },
+        },
+        { action: 'cancel', label: 'Cancel' },
+      ],
+    });
+    if (!result || result === 'cancel' || !result.name) return;
+
+    const actions = [...(this.actor.flags?.[MODULE_ID]?.campActions ?? [])];
+    actions.push({ id: foundry.utils.randomID(), ...result, itemId: null, img: null });
+    await this.actor.setFlag(MODULE_ID, 'campActions', actions);
+    this.render();
   }
 
   /** Open the DC20 rest dialog preselected to a rest type. */

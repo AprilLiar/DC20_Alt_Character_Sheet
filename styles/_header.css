@@ -174,6 +174,29 @@
   pointer-events: none;
 }
 
+/* ── Temporary Hit Points (shown beneath the HP bar) ── */
+.dc20-alt-sheet .hstrip-temp-hp {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 2px;
+}
+.dc20-alt-sheet .hstrip-temp-label {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: rgba(120, 200, 255, 0.85);
+  letter-spacing: 0.04em;
+}
+.dc20-alt-sheet .hstrip-temp-input {
+  width: calc(38px * var(--dc20-scale)) !important;
+  color: rgba(120, 200, 255, 0.95) !important;
+  font-weight: 700;
+}
+.dc20-alt-sheet .res-row .hstrip-temp-hp { opacity: 0.85; }
+.dc20-alt-sheet .res-row .hstrip-temp-label { color: var(--p-ink-muted); }
+.dc20-alt-sheet .res-row .hstrip-temp-input { color: var(--p-ink) !important; }
+
 /* ── Collapsed resource dropdown ── */
 .dc20-alt-sheet .hstrip-dd {
   position: relative;

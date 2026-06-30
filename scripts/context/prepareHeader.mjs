@@ -37,7 +37,7 @@ export function prepareHeader(actor) {
     const r = res[key] ?? {};
     const max = r.max ?? 0;
     if (!always && !max) return;
-    resources.push({
+    const entry = {
       key, label, cls,
       kind:      'builtin',
       value:     r.value ?? 0,
@@ -48,7 +48,16 @@ export function prepareHeader(actor) {
       valuePath: `system.resources.${key}.value`,
       maxPath:   `system.resources.${key}.max`,
       removable: false,
-    });
+    };
+    // Attach temp HP only for the health resource
+    if (key === 'health') {
+      const temp = r.temp ?? r.tempHp ?? r.tempHP ?? 0;
+      if (typeof temp === 'number') {
+        entry.temp     = temp;
+        entry.tempPath = `system.resources.${key}.temp`;
+      }
+    }
+    resources.push(entry);
   };
 
   pushBuiltin('health',     'HP',   'hp-bar',   true);

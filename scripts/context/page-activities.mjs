@@ -81,6 +81,18 @@ export function prepareActivities(actor) {
   // Only gate the button on the XP rule; a missing class is reported on click.
   const levelDisabled = !canLevelUp;
 
+  // Camp Actions — stored in flags, may reference an owned feature item.
+  const campActions = (flags.campActions ?? []).map(a => {
+    const item = a.itemId ? actor.items.get(a.itemId) : null;
+    return {
+      id:          a.id,
+      name:        a.name ?? item?.name ?? 'Camp Action',
+      description: a.description ?? '',
+      roll:        a.roll ?? null,
+      img:         item?.img ?? a.img ?? null,
+    };
+  });
+
   return {
     level:         details.level ?? 1,
     combatMastery: details.combatMastery ?? 0,
@@ -98,5 +110,6 @@ export function prepareActivities(actor) {
     trades,
     languages,
     points,
+    campActions,
   };
 }

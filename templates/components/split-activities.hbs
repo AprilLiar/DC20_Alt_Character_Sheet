@@ -85,10 +85,42 @@
     </div>
   </div>
 
+  {{!-- Camp Actions --}}
+  <div class="activity-widget camp-actions-widget">
+    <h3 class="activity-widget-title">Camp Actions</h3>
+    {{#if campActions.length}}
+    <div class="camp-actions-list">
+      {{#each campActions}}
+      <div class="camp-action-row" data-camp-action-id="{{id}}">
+        {{#if img}}<img class="camp-action-img" src="{{img}}" alt="{{name}}">{{/if}}
+        <span class="camp-action-name" title="{{description}}">{{name}}</span>
+        <button type="button" class="camp-action-use" data-action="useCampAction" data-camp-action-id="{{id}}" title="Announce this camp activity">
+          <i class="fas fa-campground"></i>
+        </button>
+        {{#if @root.isEditable}}
+        <button type="button" class="camp-action-del" data-action="deleteCampAction" data-camp-action-id="{{id}}" title="Remove">×</button>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+    {{/if}}
+    <div class="camp-actions-footer">
+      {{#if isEditable}}
+      <button type="button" class="camp-create-btn" data-action="createCampAction">
+        <i class="fas fa-plus"></i> Create
+      </button>
+      <span class="camp-drop-hint">or drop a Feature here</span>
+      {{else}}
+      {{#unless campActions.length}}<span class="camp-drop-hint">No camp actions defined</span>{{/unless}}
+      {{/if}}
+    </div>
+  </div>
+
   {{!-- Skill / Trade / Language manager — stacked in a single column --}}
   {{#*inline "kRow"}}
   <div class="knowledge-row">
-    <span class="kr-name" title="{{masteryLabel}} ({{signedNum modifier}})">{{label}}</span>
+    <span class="kr-name rollable" data-action="rollKnowledge" data-skill-key="{{key}}" data-skill-type="{{stype}}"
+      title="Roll {{label}}{{#if modifier}} ({{signedNum modifier}}){{/if}}">{{label}}</span>
     <span class="kr-mastery">{{masteryLabel}} <span class="kr-mod">{{signedNum modifier}}</span></span>
     {{#if @root.isEditable}}
     <span class="kr-controls">
