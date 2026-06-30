@@ -2,10 +2,10 @@ import { MODULE_ID } from '../constants.mjs';
 
 /** The four DC20 rest types, in order of magnitude. */
 const REST_TYPES = [
-  { type: 'quick', label: 'Quick Rest', icon: 'fa-mug-hot' },
-  { type: 'short', label: 'Short Rest', icon: 'fa-campground' },
-  { type: 'long',  label: 'Long Rest',  icon: 'fa-bed' },
-  { type: 'full',  label: 'Full Rest',  icon: 'fa-house-chimney' },
+  { type: 'quick', label: 'Quick Rest', short: 'QR', icon: 'fa-mug-hot' },
+  { type: 'short', label: 'Short Rest', short: 'SR', icon: 'fa-campground' },
+  { type: 'long',  label: 'Long Rest',  short: 'LR', icon: 'fa-bed' },
+  { type: 'full',  label: 'Full Rest',  short: 'FR', icon: 'fa-house-chimney' },
 ];
 
 /** Read the computed point pool for one knowledge type. */

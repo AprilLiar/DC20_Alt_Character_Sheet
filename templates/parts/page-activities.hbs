@@ -10,7 +10,7 @@
           <span class="lvl-stat-val">{{level}}</span>
         </div>
         <div class="lvl-stat">
-          <span class="lvl-stat-label">Combat Mastery</span>
+          <span class="lvl-stat-label">CM</span>
           <span class="lvl-stat-val">{{signedNum combatMastery}}</span>
         </div>
       </div>
@@ -51,7 +51,7 @@
         {{#each restTypes}}
         <button type="button" class="rest-btn" data-action="rest" data-rest-type="{{type}}" title="{{label}}">
           <i class="fas {{icon}}"></i>
-          <span>{{label}}</span>
+          <span>{{short}}</span>
         </button>
         {{/each}}
       </div>

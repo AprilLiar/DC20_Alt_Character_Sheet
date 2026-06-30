@@ -1092,6 +1092,30 @@
 .dc20-alt-sheet .item-popup-desc li         { margin-bottom: 2px; }
 .dc20-alt-sheet .item-popup-desc hr         { border: none; border-top: 1px solid var(--p-border-faint); margin: var(--gap-xs) 0; }
 .dc20-alt-sheet .item-popup-desc a          { color: var(--p-accent); text-decoration: underline; }
+/* @UUID references become clickable buttons */
+.dc20-alt-sheet .item-popup-desc a.content-link,
+.dc20-alt-sheet .item-popup-desc a.inline-roll {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 5px;
+  margin: 0 1px;
+  font-size: 0.95em;
+  font-weight: 600;
+  color: var(--p-accent);
+  background: var(--p-bg-card);
+  border: 1px solid var(--p-border-faint);
+  border-radius: var(--r-sm);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dc20-alt-sheet .item-popup-desc a.content-link:hover,
+.dc20-alt-sheet .item-popup-desc a.inline-roll:hover {
+  background: var(--p-hover);
+  border-color: var(--p-accent);
+}
+.dc20-alt-sheet .item-popup-desc a.content-link i { font-size: 0.85em; }
 
 /* ════════════════════════════════════════
    ACTIVITIES TAB — widgets
@@ -1230,15 +1254,17 @@
 
 .dc20-alt-sheet .rest-btns {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(calc(56px * var(--dc20-scale)), 1fr));
   gap: var(--gap-sm);
 }
 .dc20-alt-sheet .rest-btn {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 4px;
-  padding: var(--gap-sm);
+  justify-content: center;
+  gap: calc(5px * var(--dc20-scale));
+  min-width: 0;
+  padding: calc(5px * var(--dc20-scale)) var(--gap-sm);
   font-family: var(--font-heading);
   font-size: var(--fs-sm);
   font-weight: 700;
@@ -1247,9 +1273,10 @@
   border: 1.5px solid var(--p-border-faint);
   border-radius: var(--r-sm);
   cursor: pointer;
+  white-space: nowrap;
   transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
 }
-.dc20-alt-sheet .rest-btn i { font-size: var(--fs-lg); color: var(--p-accent); }
+.dc20-alt-sheet .rest-btn i { font-size: var(--fs-md); color: var(--p-accent); flex-shrink: 0; }
 .dc20-alt-sheet .rest-btn:hover {
   background: var(--p-hover);
   border-color: var(--p-accent);
