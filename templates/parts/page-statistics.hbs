@@ -4,27 +4,27 @@
     {{!-- Roll Statistics --}}
     <div class="stats-table">
       <div class="stats-section-head">
-        <span class="stats-sec-title">Roll Statistics</span>
-        <span class="stats-sec-col">All Time</span>
-        <span class="stats-sec-col">Session</span>
+        <span class="stats-sec-title">{{localize "DC20AltSheet.stats.rollStats"}}</span>
+        <span class="stats-sec-col">{{localize "DC20AltSheet.stats.allTime"}}</span>
+        <span class="stats-sec-col">{{localize "DC20AltSheet.stats.session"}}</span>
       </div>
       <div class="stats-tr">
-        <span class="stats-tc-label">Average d20</span>
+        <span class="stats-tc-label">{{localize "DC20AltSheet.stats.avgD20"}}</span>
         <span class="stats-tc-life">{{d20Avg}}</span>
         <span class="stats-tc-sess">{{sessD20Avg}}</span>
       </div>
       <div class="stats-tr">
-        <span class="stats-tc-label">Total Rolls</span>
+        <span class="stats-tc-label">{{localize "DC20AltSheet.stats.totalRolls"}}</span>
         <span class="stats-tc-life">{{d20Count}}</span>
         <span class="stats-tc-sess">{{sessD20Count}}</span>
       </div>
       <div class="stats-tr stats-row-good">
-        <span class="stats-tc-label">Natural 20s</span>
+        <span class="stats-tc-label">{{localize "DC20AltSheet.stats.natural20s"}}</span>
         <span class="stats-tc-life">{{nat20}}</span>
         <span class="stats-tc-sess">{{sessNat20}}</span>
       </div>
       <div class="stats-tr stats-row-bad">
-        <span class="stats-tc-label">Natural 1s</span>
+        <span class="stats-tc-label">{{localize "DC20AltSheet.stats.natural1s"}}</span>
         <span class="stats-tc-life">{{nat1}}</span>
         <span class="stats-tc-sess">{{sessNat1}}</span>
       </div>
@@ -33,39 +33,39 @@
     {{!-- Damage --}}
     <div class="stats-table">
       <div class="stats-section-head">
-        <span class="stats-sec-title">Damage</span>
-        <span class="stats-sec-col">All Time</span>
-        <span class="stats-sec-col">Session</span>
+        <span class="stats-sec-title">{{localize "DC20AltSheet.stats.damage"}}</span>
+        <span class="stats-sec-col">{{localize "DC20AltSheet.stats.allTime"}}</span>
+        <span class="stats-sec-col">{{localize "DC20AltSheet.stats.session"}}</span>
       </div>
-      <div class="stats-subsec">Dealt</div>
+      <div class="stats-subsec">{{localize "DC20AltSheet.stats.dealt"}}</div>
       <div class="stats-tr">
-        <span class="stats-tc-label stats-tc-indent">Highest</span>
+        <span class="stats-tc-label stats-tc-indent">{{localize "DC20AltSheet.stats.highest"}}</span>
         <span class="stats-tc-life">{{dealtHighest}}</span>
         <span class="stats-tc-sess">{{sessDealtHighest}}</span>
       </div>
       <div class="stats-tr">
-        <span class="stats-tc-label stats-tc-indent">Lowest</span>
+        <span class="stats-tc-label stats-tc-indent">{{localize "DC20AltSheet.stats.lowest"}}</span>
         <span class="stats-tc-life">{{dealtLowest}}</span>
         <span class="stats-tc-sess">{{sessDealtLowest}}</span>
       </div>
       <div class="stats-tr stats-tr-total">
-        <span class="stats-tc-label stats-tc-indent">Total</span>
+        <span class="stats-tc-label stats-tc-indent">{{localize "DC20AltSheet.stats.total"}}</span>
         <span class="stats-tc-life">{{dealtTotal}}</span>
         <span class="stats-tc-sess">{{sessDealtTotal}}</span>
       </div>
-      <div class="stats-subsec">Taken</div>
+      <div class="stats-subsec">{{localize "DC20AltSheet.stats.taken"}}</div>
       <div class="stats-tr">
-        <span class="stats-tc-label stats-tc-indent">Highest</span>
+        <span class="stats-tc-label stats-tc-indent">{{localize "DC20AltSheet.stats.highest"}}</span>
         <span class="stats-tc-life">{{takenHighest}}</span>
         <span class="stats-tc-sess">{{sessTakenHighest}}</span>
       </div>
       <div class="stats-tr">
-        <span class="stats-tc-label stats-tc-indent">Lowest</span>
+        <span class="stats-tc-label stats-tc-indent">{{localize "DC20AltSheet.stats.lowest"}}</span>
         <span class="stats-tc-life">{{takenLowest}}</span>
         <span class="stats-tc-sess">{{sessTakenLowest}}</span>
       </div>
       <div class="stats-tr stats-tr-total">
-        <span class="stats-tc-label stats-tc-indent">Total</span>
+        <span class="stats-tc-label stats-tc-indent">{{localize "DC20AltSheet.stats.total"}}</span>
         <span class="stats-tc-life">{{takenTotal}}</span>
         <span class="stats-tc-sess">{{sessTakenTotal}}</span>
       </div>
@@ -75,9 +75,9 @@
     {{#if topUsed}}
     <div class="stats-table">
       <div class="stats-section-head">
-        <span class="stats-sec-title">Top Used</span>
-        <span class="stats-sec-col">All Time</span>
-        <span class="stats-sec-col">Session</span>
+        <span class="stats-sec-title">{{localize "DC20AltSheet.stats.topUsed"}}</span>
+        <span class="stats-sec-col">{{localize "DC20AltSheet.stats.allTime"}}</span>
+        <span class="stats-sec-col">{{localize "DC20AltSheet.stats.session"}}</span>
       </div>
       {{#each topUsed}}
       <div class="stats-tr">
@@ -97,8 +97,8 @@
     {{#if isEditable}}
     <div class="stats-reset-wrap">
       <button type="button" class="stats-reset-btn" data-action="resetStats"
-        title="Clear all lifetime statistics (session stats are unaffected)">
-        ↺ Reset Lifetime Stats
+        title="{{localize "DC20AltSheet.stats.resetTitle"}}">
+        {{localize "DC20AltSheet.stats.resetBtn"}}
       </button>
     </div>
     {{/if}}

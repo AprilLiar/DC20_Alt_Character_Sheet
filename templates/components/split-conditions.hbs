@@ -2,13 +2,13 @@
 
   <div class="cond-grid-section">
     <div class="page-section-header">
-      <h3 class="section-heading">Conditions</h3>
+      <h3 class="section-heading">{{localize "DC20AltSheet.cond.heading"}}</h3>
     </div>
     {{#if conditions.length}}
     <div class="cond-grid">
       {{#each conditions}}
       <div class="cond-cell{{#if active}} active{{/if}}" data-status-id="{{id}}"
-        title="{{label}}{{#if stackable}} (stackable){{/if}}">
+        title="{{label}}{{#if stackable}} ({{localize "DC20AltSheet.cond.stackable"}}){{/if}}">
         <span class="cond-cell-icon">
           {{#if img}}<span class="cond-cell-img" style="-webkit-mask-image: url('{{img}}'); mask-image: url('{{img}}');" role="img" aria-label="{{label}}"></span>
           {{else}}<i class="fas fa-circle-exclamation"></i>{{/if}}
@@ -23,10 +23,10 @@
 
   {{#if passiveEffects.length}}
   <div class="effects-section">
-    <h4 class="subsection-heading">Passive</h4>
+    <h4 class="subsection-heading">{{localize "DC20AltSheet.cond.passive"}}</h4>
     <div class="effects-list">
       {{#each passiveEffects}}
-      <div class="effect-row fx-interactive" data-effect-id="{{id}}" title="Left-click to read · Right-click to edit">
+      <div class="effect-row fx-interactive" data-effect-id="{{id}}" title="{{localize "DC20AltSheet.cond.readEdit"}}">
         {{#if icon}}<img class="fx-icon" src="{{icon}}" alt="{{name}}">{{/if}}
         <span class="fx-name">{{name}}</span>
       </div>
@@ -37,10 +37,10 @@
 
   {{#if temporaryEffects.length}}
   <div class="effects-section">
-    <h4 class="subsection-heading">Temporary</h4>
+    <h4 class="subsection-heading">{{localize "DC20AltSheet.cond.temporary"}}</h4>
     <div class="effects-list">
       {{#each temporaryEffects}}
-      <div class="effect-row fx-interactive" data-effect-id="{{id}}" title="Left-click to read · Right-click to edit">
+      <div class="effect-row fx-interactive" data-effect-id="{{id}}" title="{{localize "DC20AltSheet.cond.readEdit"}}">
         {{#if icon}}<img class="fx-icon" src="{{icon}}" alt="{{name}}">{{/if}}
         <span class="fx-name">{{name}}</span>
         {{#if duration}}<span class="fx-dur muted">{{duration}}</span>{{/if}}

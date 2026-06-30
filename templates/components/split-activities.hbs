@@ -1,32 +1,32 @@
 <div class="split-page split-activities">
 
   <div class="activity-widget">
-    <h3 class="activity-widget-title">Level &amp; Progression</h3>
+    <h3 class="activity-widget-title">{{localize "DC20AltSheet.act.levelProgression"}}</h3>
     <div class="lvl-stats">
       <div class="lvl-stat">
-        <span class="lvl-stat-label">Level</span>
+        <span class="lvl-stat-label">{{localize "DC20AltSheet.act.level"}}</span>
         <span class="lvl-stat-val">{{level}}</span>
       </div>
       <div class="lvl-stat">
-        <span class="lvl-stat-label">CM</span>
+        <span class="lvl-stat-label">{{localize "DC20AltSheet.act.cm"}}</span>
         <span class="lvl-stat-val">{{signedNum combatMastery}}</span>
       </div>
     </div>
     <div class="lvl-actions">
       {{#if isEditable}}
       <button type="button" class="lvl-down-btn" data-action="levelDown"
-        {{#unless canLevelDown}}disabled{{/unless}} title="Level down">
+        {{#unless canLevelDown}}disabled{{/unless}} title="{{localize "DC20AltSheet.act.levelDownTitle"}}">
         <i class="fas fa-arrow-down"></i>
       </button>
       {{/if}}
       <button type="button" class="lvl-up-btn" data-action="levelUp"
-        {{#if levelDisabled}}disabled{{/if}} title="Level up">
-        <i class="fas fa-arrow-up"></i> Level up!
+        {{#if levelDisabled}}disabled{{/if}} title="{{localize "DC20AltSheet.levelUp.ready"}}">
+        <i class="fas fa-arrow-up"></i> {{localize "DC20AltSheet.act.levelUpBtn"}}
       </button>
-      <label class="xp-toggle" title="Track experience points">
+      <label class="xp-toggle" title="{{localize "DC20AltSheet.act.trackXPTitle"}}">
         <input type="checkbox" class="xp-toggle-input" {{#if trackXP}}checked{{/if}}
           {{#unless isEditable}}disabled{{/unless}}>
-        <span>Track XP</span>
+        <span>{{localize "DC20AltSheet.act.trackXP"}}</span>
       </label>
     </div>
     {{#if trackXP}}
@@ -38,21 +38,21 @@
         <span class="xp-sep">/</span>
         <input type="number" class="xp-input" data-xp-field="max" value="{{xpMax}}"
           {{#unless isEditable}}disabled{{/unless}}>
-        <span class="xp-suffix">XP</span>
+        <span class="xp-suffix">{{localize "DC20AltSheet.act.xpSuffix"}}</span>
       </div>
     </div>
     {{#if isEditable}}
     <div class="xp-apply">
-      <button type="button" class="xp-apply-btn" data-action="xpApply" data-xp-sign="-1" title="Subtract this amount">&minus;</button>
-      <input type="number" class="xp-amount" value="1" min="0" title="Amount of XP to add or subtract">
-      <button type="button" class="xp-apply-btn" data-action="xpApply" data-xp-sign="1" title="Add this amount">+</button>
+      <button type="button" class="xp-apply-btn" data-action="xpApply" data-xp-sign="-1" title="{{localize "DC20AltSheet.act.xpSubtract"}}">&minus;</button>
+      <input type="number" class="xp-amount" value="1" min="0" title="{{localize "DC20AltSheet.act.xpAmountTitle"}}">
+      <button type="button" class="xp-apply-btn" data-action="xpApply" data-xp-sign="1" title="{{localize "DC20AltSheet.act.xpAdd"}}">+</button>
     </div>
     {{/if}}
     {{/if}}
   </div>
 
   <div class="activity-widget">
-    <h3 class="activity-widget-title">Character</h3>
+    <h3 class="activity-widget-title">{{localize "DC20AltSheet.act.character"}}</h3>
     <div class="char-slots">
       {{#each charSlots}}
       <div class="char-slot{{#if item}} filled{{/if}}" data-slot-type="{{type}}">
@@ -62,11 +62,11 @@
           <img class="char-slot-img" src="{{item.img}}" alt="{{item.name}}">
           <span class="char-slot-name">{{item.name}}</span>
           {{#if @root.isEditable}}
-          <button type="button" class="char-slot-remove" data-action="removeCharItem" data-item-id="{{item.id}}" title="Remove">×</button>
+          <button type="button" class="char-slot-remove" data-action="removeCharItem" data-item-id="{{item.id}}" title="{{localize "DC20AltSheet.remove"}}">×</button>
           {{/if}}
         </div>
         {{else}}
-        <span class="char-slot-empty">Drop {{label}}…</span>
+        <span class="char-slot-empty">{{localize "DC20AltSheet.act.character"}} {{label}}…</span>
         {{/if}}
       </div>
       {{/each}}
@@ -74,7 +74,7 @@
   </div>
 
   <div class="activity-widget">
-    <h3 class="activity-widget-title">Rest</h3>
+    <h3 class="activity-widget-title">{{localize "DC20AltSheet.act.rest"}}</h3>
     <div class="rest-btns">
       {{#each restTypes}}
       <button type="button" class="rest-btn" data-action="rest" data-rest-type="{{type}}" title="{{label}}">
@@ -87,18 +87,18 @@
 
   {{!-- Camp Actions --}}
   <div class="activity-widget camp-actions-widget">
-    <h3 class="activity-widget-title">Camp Actions</h3>
+    <h3 class="activity-widget-title">{{localize "DC20AltSheet.act.campActions"}}</h3>
     {{#if campActions.length}}
     <div class="camp-actions-list">
       {{#each campActions}}
       <div class="camp-action-row" data-camp-action-id="{{id}}">
         {{#if img}}<img class="camp-action-img" src="{{img}}" alt="{{name}}">{{/if}}
         <span class="camp-action-name" title="{{description}}">{{name}}</span>
-        <button type="button" class="camp-action-use" data-action="useCampAction" data-camp-action-id="{{id}}" title="Announce this camp activity">
+        <button type="button" class="camp-action-use" data-action="useCampAction" data-camp-action-id="{{id}}" title="{{localize "DC20AltSheet.act.announceActivity"}}">
           <i class="fas fa-campground"></i>
         </button>
         {{#if @root.isEditable}}
-        <button type="button" class="camp-action-del" data-action="deleteCampAction" data-camp-action-id="{{id}}" title="Remove">×</button>
+        <button type="button" class="camp-action-del" data-action="deleteCampAction" data-camp-action-id="{{id}}" title="{{localize "DC20AltSheet.remove"}}">×</button>
         {{/if}}
       </div>
       {{/each}}
@@ -107,11 +107,11 @@
     <div class="camp-actions-footer">
       {{#if isEditable}}
       <button type="button" class="camp-create-btn" data-action="createCampAction">
-        <i class="fas fa-plus"></i> Create
+        <i class="fas fa-plus"></i> {{localize "DC20AltSheet.act.campCreate"}}
       </button>
-      <span class="camp-drop-hint">or drop a Feature here</span>
+      <span class="camp-drop-hint">{{localize "DC20AltSheet.act.campDropHint"}}</span>
       {{else}}
-      {{#unless campActions.length}}<span class="camp-drop-hint">No camp actions defined</span>{{/unless}}
+      {{#unless campActions.length}}<span class="camp-drop-hint">{{localize "DC20AltSheet.act.noCampActions"}}</span>{{/unless}}
       {{/if}}
     </div>
   </div>
@@ -120,17 +120,17 @@
   {{#*inline "kRow"}}
   <div class="knowledge-row">
     <span class="kr-name rollable" data-action="rollKnowledge" data-skill-key="{{key}}" data-skill-type="{{stype}}"
-      title="Roll {{label}}{{#if modifier}} ({{signedNum modifier}}){{/if}}">{{label}}</span>
+      title="{{localize "DC20AltSheet.use"}} {{label}}{{#if modifier}} ({{signedNum modifier}}){{/if}}">{{label}}</span>
     <span class="kr-mastery">{{masteryLabel}} <span class="kr-mod">{{signedNum modifier}}</span></span>
     {{#if @root.isEditable}}
     <span class="kr-controls">
-      <button type="button" class="kr-btn" data-action="masteryDown" data-skill-key="{{key}}" data-skill-type="{{stype}}" title="Lower mastery">&minus;</button>
+      <button type="button" class="kr-btn" data-action="masteryDown" data-skill-key="{{key}}" data-skill-type="{{stype}}" title="{{localize "DC20AltSheet.act.lowerMastery"}}">&minus;</button>
       <span class="kr-level">{{mastery}}/{{masteryLimit}}</span>
-      <button type="button" class="kr-btn" data-action="masteryUp" data-skill-key="{{key}}" data-skill-type="{{stype}}" title="Raise mastery (+2)">+</button>
+      <button type="button" class="kr-btn" data-action="masteryUp" data-skill-key="{{key}}" data-skill-type="{{stype}}" title="{{localize "DC20AltSheet.act.raiseMastery"}}">+</button>
       {{#unless noExpertise}}
       <button type="button" class="kr-exp{{#if expertise}} active{{/if}}" data-action="toggleExpertise"
         data-skill-key="{{key}}" data-skill-type="{{stype}}" {{#if expertiseGranted}}disabled{{/if}}
-        title="{{#if expertiseGranted}}Mastery limit raised by a feature{{else}}Toggle Expertise — raises mastery cap by 1 (costs 1 point){{/if}}">
+        title="{{#if expertiseGranted}}{{localize "DC20AltSheet.act.expertiseGranted"}}{{else}}{{localize "DC20AltSheet.act.expertiseToggle"}}{{/if}}">
         <i class="fas fa-star"></i>
       </button>
       {{/unless}}
@@ -141,13 +141,13 @@
 
   <div class="activity-widget">
     <div class="knowledge-head">
-      <span class="knowledge-title">Skills</span>
+      <span class="knowledge-title">{{localize "DC20AltSheet.act.skills"}}</span>
       <span class="knowledge-points{{#if points.skill.over}} over{{/if}}">{{points.skill.left}}<span class="kp-sep">/</span>{{points.skill.max}}</span>
     </div>
     {{#if isEditable}}
     <div class="knowledge-convert">
       <button type="button" class="kc-btn" data-action="convertPoints" data-from="skill" data-to="trade" data-op="convert" data-rate="2"
-        title="Convert 1 Skill Point into 2 Trade Points">1 Skill ▸ 2 Trade</button>
+        title="{{localize "DC20AltSheet.act.convertSkillToTradeTitle"}}">{{localize "DC20AltSheet.act.convertSkillToTrade"}}</button>
     </div>
     {{/if}}
     <div class="knowledge-list">
@@ -157,15 +157,15 @@
 
   <div class="activity-widget">
     <div class="knowledge-head">
-      <span class="knowledge-title">Trades</span>
+      <span class="knowledge-title">{{localize "DC20AltSheet.act.trades"}}</span>
       <span class="knowledge-points{{#if points.trade.over}} over{{/if}}">{{points.trade.left}}<span class="kp-sep">/</span>{{points.trade.max}}</span>
     </div>
     {{#if isEditable}}
     <div class="knowledge-convert">
       <button type="button" class="kc-btn" data-action="convertPoints" data-from="trade" data-to="language" data-op="convert" data-rate="2"
-        title="Convert 1 Trade Point into 2 Language Points">1 Trade ▸ 2 Lang</button>
+        title="{{localize "DC20AltSheet.act.convertTradeToLangTitle"}}">{{localize "DC20AltSheet.act.convertTradeToLang"}}</button>
       <button type="button" class="kc-btn revert" data-action="convertPoints" data-from="trade" data-to="skill" data-op="revert" data-rate="2"
-        title="Revert a Skill→Trade conversion">↶ Skill</button>
+        title="{{localize "DC20AltSheet.act.revertSkillTitle"}}">{{localize "DC20AltSheet.act.revertSkill"}}</button>
     </div>
     {{/if}}
     <div class="knowledge-list">
@@ -175,13 +175,13 @@
 
   <div class="activity-widget">
     <div class="knowledge-head">
-      <span class="knowledge-title">Languages</span>
+      <span class="knowledge-title">{{localize "DC20AltSheet.act.languages"}}</span>
       <span class="knowledge-points{{#if points.language.over}} over{{/if}}">{{points.language.left}}<span class="kp-sep">/</span>{{points.language.max}}</span>
     </div>
     {{#if isEditable}}
     <div class="knowledge-convert">
       <button type="button" class="kc-btn revert" data-action="convertPoints" data-from="language" data-to="trade" data-op="revert" data-rate="2"
-        title="Revert a Trade→Language conversion">↶ Trade</button>
+        title="{{localize "DC20AltSheet.act.revertTradeTitle"}}">{{localize "DC20AltSheet.act.revertTrade"}}</button>
     </div>
     {{/if}}
     <div class="knowledge-list">

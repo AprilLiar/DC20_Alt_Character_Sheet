@@ -3,11 +3,14 @@
     "sheetLabel": "DC20 Alternative Sheet",
 
     "tabs": {
-      "core":      "Core",
-      "combat":    "Combat",
-      "features":  "Features",
-      "inventory": "Inventory",
-      "biography": "Info"
+      "core":       "Core Stats",
+      "combat":     "Combat",
+      "features":   "Features",
+      "inventory":  "Inventory",
+      "biography":  "Info",
+      "statistics": "Statistics",
+      "conditions": "Conditions",
+      "activities": "Activities"
     },
 
     "ctx": {
@@ -26,26 +29,26 @@
     },
 
     "section": {
-      "attributes":      "Attributes",
-      "skills":          "Skills",
-      "languages":       "Languages",
-      "movement":        "Movement",
-      "senses":          "Senses",
-      "resources":       "Resources",
-      "defences":        "Defences",
-      "conditions":      "Conditions",
-      "activeEffects":   "Active Effects",
-      "features":        "Passive Features",
-      "weapons":         "Weapons",
-      "equipment":       "Equipment",
-      "consumables":     "Consumables",
-      "loot":            "Loot",
-      "origins":         "Origins",
-      "combatTraining":  "Combat Training",
-      "pointPools":      "Point Pools",
-      "biography":       "Biography",
-      "favourites":      "Favourites",
-      "lastUsed":        "Last Used"
+      "attributes":     "Attributes",
+      "skills":         "Skills",
+      "languages":      "Languages",
+      "movement":       "Movement",
+      "senses":         "Senses",
+      "resources":      "Resources",
+      "defences":       "Defences",
+      "conditions":     "Conditions",
+      "activeEffects":  "Active Effects",
+      "features":       "Passive Features",
+      "weapons":        "Weapons",
+      "equipment":      "Equipment",
+      "consumables":    "Consumables",
+      "loot":           "Loot",
+      "origins":        "Origins",
+      "combatTraining": "Combat Training",
+      "pointPools":     "Point Pools",
+      "biography":      "Biography",
+      "favourites":     "Favourites",
+      "lastUsed":       "Last Used"
     },
 
     "resource": {
@@ -58,9 +61,9 @@
     },
 
     "rollMod": {
-      "saveDC":  "Save DC",
-      "attack":  "Attack Mod",
-      "check":   "Check Mod"
+      "saveDC": "Save DC",
+      "attack": "Attack Mod",
+      "check":  "Check Mod"
     },
 
     "create": {
@@ -76,9 +79,14 @@
     "edit":    "Edit",
     "delete":  "Delete",
     "equip":   "Equip / Unequip",
+    "remove":  "Remove",
+    "save":    "Save",
+    "cancel":  "Cancel",
+    "create":  "Create",
 
     "empty": {
       "skills":      "No skills defined.",
+      "trades":      "No trades defined.",
       "features":    "No features.",
       "weapons":     "No weapons.",
       "equipment":   "No equipment.",
@@ -86,12 +94,286 @@
       "conditions":  "No active conditions.",
       "effects":     "No active effects.",
       "favourites":  "Right-click items to pin them here.",
-      "lastUsed":    "Recently used items appear here."
+      "lastUsed":    "Recently used items appear here.",
+      "combat":      "No combat actions.",
+      "passiveFeatures": "No passive features.",
+      "campaignNotes":   "No campaign notes yet.",
+      "noConditions":    "No conditions defined in the system."
     },
 
     "deleteConfirm": {
       "title":   "Delete Item",
       "content": "Delete <strong>{name}</strong>? This cannot be undone."
+    },
+
+    "header": {
+      "tempHp":               "Temporary Hit Points",
+      "switchResources":      "Switch / manage resources",
+      "resources":            "Resources",
+      "newTracker":           "New tracker…",
+      "barColour":            "Bar colour",
+      "createTracker":        "Create tracker",
+      "addQuickSlot":         "Add quick slot",
+      "showInHeader":         "Show in header",
+      "showInHeaderRemovable":"Show in header · right-click row to remove"
+    },
+
+    "nav": {
+      "splitscreen":    "Splitscreen",
+      "vertical":       "⇔ Vertical",
+      "horizontal":     "⇕ Horizontal",
+      "sideBySize":     "Side by side",
+      "topAndBottom":   "Top and bottom",
+      "dropHere":       "drop a tab here…",
+      "optionalBottom": "optional bottom panel…",
+      "createSplit":    "Create Split",
+      "openPage":       "Open page",
+      "closeTab":       "Close tab",
+      "dragToResize":   "Drag to resize"
+    },
+
+    "core": {
+      "lvl":              "LVL",
+      "cm":               "CM",
+      "size":             "SIZE",
+      "check":            "Check",
+      "save":             "Save",
+      "skills":           "Skills",
+      "trades":           "Trades",
+      "languages":        "Languages",
+      "rolls":            "Rolls",
+      "createCustomRoll": "Create a custom roll",
+      "favourites":       "Favourites",
+      "lastUsed":         "Last Used"
+    },
+
+    "size": {
+      "tiny":       "Tiny",
+      "small":      "Small",
+      "medium":     "Medium",
+      "large":      "Large",
+      "huge":       "Huge",
+      "gargantuan": "Gargantuan",
+      "colossal":   "Colossal",
+      "titanic":    "Titanic"
+    },
+
+    "combat": {
+      "filterAll":       "All",
+      "filterWeapon":    "Weapons",
+      "filterEquipment": "Equipment",
+      "filterSpell":     "Spells",
+      "filterManeuver":  "Maneuvers",
+      "filterFeature":   "Features",
+      "createWeapon":    "Create Weapon",
+      "createEquipment": "Create Equipment",
+      "createSpell":     "Create Spell",
+      "createManeuver":  "Create Maneuver",
+      "createFeature":   "Create Feature",
+      "equip":                 "Equip",
+      "unequip":               "Unequip",
+      "attune":                "Attune",
+      "unattune":              "Unattune",
+      "filterAllAbbr":         "All",
+      "filterWeaponAbbr":      "Wpn",
+      "filterEquipmentAbbr":   "Eqp",
+      "filterSpellAbbr":       "Spl",
+      "filterManeuverAbbr":    "Mnvr",
+      "filterFeatureAbbr":     "Feat"
+    },
+
+    "features": {
+      "heading": "Passive Features",
+      "add":     "Add Feature"
+    },
+
+    "bio": {
+      "biography":    "Biography",
+      "appearance":   "Appearance",
+      "campaignNotes":"Campaign Notes",
+      "empty":        "Empty",
+      "hair":         "Hair",
+      "hairCustom":   "Hair (custom)",
+      "eyes":         "Eyes",
+      "eyesCustom":   "Eyes (custom)",
+      "skin":         "Skin",
+      "skinCustom":   "Skin (custom)",
+      "height":       "Height",
+      "weight":       "Weight",
+      "clothing":     "Clothing",
+      "features":     "Distinguishing Features"
+    },
+
+    "hairColor": {
+      "blonde":    "Blonde",
+      "brown":     "Brown",
+      "darkBrown": "Dark Brown",
+      "black":     "Black",
+      "auburn":    "Auburn",
+      "red":       "Red",
+      "chestnut":  "Chestnut",
+      "gray":      "Gray",
+      "white":     "White",
+      "silver":    "Silver",
+      "blue":      "Blue",
+      "green":     "Green",
+      "purple":    "Purple",
+      "bald":      "Bald / None",
+      "other":     "Other"
+    },
+
+    "eyeColor": {
+      "brown":     "Brown",
+      "darkBrown": "Dark Brown",
+      "blue":      "Blue",
+      "lightBlue": "Light Blue",
+      "green":     "Green",
+      "hazel":     "Hazel",
+      "gray":      "Gray",
+      "amber":     "Amber",
+      "black":     "Black",
+      "violet":    "Violet",
+      "gold":      "Gold",
+      "silver":    "Silver",
+      "red":       "Red",
+      "other":     "Other"
+    },
+
+    "skinColor": {
+      "fair":      "Fair",
+      "light":     "Light",
+      "medium":    "Medium",
+      "tan":       "Tan",
+      "olive":     "Olive",
+      "brown":     "Brown",
+      "darkBrown": "Dark Brown",
+      "ebony":     "Ebony",
+      "pale":      "Pale",
+      "freckled":  "Freckled",
+      "other":     "Other"
+    },
+
+    "stats": {
+      "rollStats":  "Roll Statistics",
+      "allTime":    "All Time",
+      "session":    "Session",
+      "avgD20":     "Average d20",
+      "totalRolls": "Total Rolls",
+      "natural20s": "Natural 20s",
+      "natural1s":  "Natural 1s",
+      "damage":     "Damage",
+      "dealt":      "Dealt",
+      "taken":      "Taken",
+      "highest":    "Highest",
+      "lowest":     "Lowest",
+      "total":      "Total",
+      "topUsed":    "Top Used",
+      "resetBtn":   "↺ Reset Lifetime Stats",
+      "resetTitle": "Clear all lifetime statistics (session stats are unaffected)"
+    },
+
+    "cond": {
+      "heading":      "Conditions",
+      "hint":         "Left-click to apply · Right-click to remove",
+      "activeEffects":"Active Effects",
+      "passive":      "Passive",
+      "temporary":    "Temporary",
+      "readEdit":     "Left-click to read · Right-click to edit",
+      "stackable":    "stackable"
+    },
+
+    "act": {
+      "levelProgression":      "Level & Progression",
+      "level":                 "Level",
+      "cm":                    "CM",
+      "levelDownTitle":        "Level down",
+      "levelUpBtn":            "Level up!",
+      "trackXP":               "Track XP",
+      "trackXPTitle":          "Track experience points",
+      "xpSuffix":              "XP",
+      "xpSubtract":            "Subtract this amount",
+      "xpAdd":                 "Add this amount",
+      "xpAmountTitle":         "Amount of XP to add or subtract",
+      "character":             "Character",
+      "rest":                  "Rest",
+      "campActions":           "Camp Actions",
+      "announceActivity":      "Announce this camp activity",
+      "campCreate":            "Create",
+      "campDropHint":          "or drop a Feature here",
+      "noCampActions":         "No camp actions defined",
+      "skillsTradesLangs":     "Skills, Trades & Languages",
+      "skills":                "Skills",
+      "trades":                "Trades",
+      "languages":             "Languages",
+      "lowerMastery":          "Lower mastery",
+      "raiseMastery":          "Raise mastery (+2)",
+      "expertiseToggle":       "Toggle Expertise — raises mastery cap by 1 (costs 1 point)",
+      "expertiseGranted":      "Mastery limit raised by a feature",
+      "convertSkillToTrade":   "1 Skill ▸ 2 Trade",
+      "convertTradeToLang":    "1 Trade ▸ 2 Lang",
+      "convertSkillToTradeTitle": "Convert 1 Skill Point into 2 Trade Points",
+      "convertTradeToLangTitle":  "Convert 1 Trade Point into 2 Language Points",
+      "revertSkill":           "↶ Skill",
+      "revertTrade":           "↶ Trade",
+      "revertSkillTitle":      "Revert a Skill→Trade conversion",
+      "revertTradeTitle":      "Revert a Trade→Language conversion",
+      "ancestry":              "Ancestry",
+      "background":            "Background",
+      "class":                 "Class",
+      "subclass":              "Subclass"
+    },
+
+    "levelUp": {
+      "noClass": "Assign a class first",
+      "fillXP":  "Fill the XP bar first",
+      "ready":   "Level up"
+    },
+
+    "dialog": {
+      "customRoll": {
+        "titleNew":        "New Custom Roll",
+        "titleEdit":       "Edit Custom Roll",
+        "name":            "Name",
+        "bonus":           "Bonus",
+        "namePlaceholder": "e.g. Initiative (Adv)"
+      },
+      "campAction": {
+        "title":           "New Camp Action",
+        "name":            "Name",
+        "description":     "Description",
+        "roll":            "Roll formula",
+        "rollOptional":    "(optional)",
+        "namePlaceholder": "e.g. Stand Watch",
+        "descPlaceholder": "What happens during this activity…",
+        "rollPlaceholder": "e.g. 1d20 + @prime"
+      },
+      "resetStats": {
+        "title":   "Reset Lifetime Statistics",
+        "content": "Clear all lifetime statistics for this character? Session stats are unaffected."
+      },
+      "save":   "Save",
+      "cancel": "Cancel",
+      "create": "Create"
+    },
+
+    "notify": {
+      "noClassLevelUp":    "No class found to level up. Add a class item first.",
+      "maxLevel":          "Already at maximum level (20).",
+      "levelUpFallback":   "Raised the class level, but the DC20 advancement dialog could not be opened automatically.",
+      "noClassLevelDown":  "No class found to level down.",
+      "minLevel":          "Already at minimum level.",
+      "restError":         "Could not access the DC20 rest flow.",
+      "campAlready":       "{name} is already a camp action.",
+      "slotTypeError":     "This slot only accepts items of type \"{type}\".",
+      "levelUpFailed":     "Level-up failed: {error}",
+      "levelDownFailed":   "Level-down failed: {error}"
+    },
+
+    "rest": {
+      "quick": { "label": "Quick Rest", "short": "QR" },
+      "short": { "label": "Short Rest", "short": "SR" },
+      "long":  { "label": "Long Rest",  "short": "LR" },
+      "full":  { "label": "Full Rest",  "short": "FR" }
     }
   }
 }

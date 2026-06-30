@@ -3,10 +3,10 @@
 
     {{!-- Left: Biography editor --}}
     <div class="bio-col">
-      <h3 class="section-heading">Biography</h3>
+      <h3 class="section-heading">{{localize "DC20AltSheet.bio.biography"}}</h3>
       {{#if isEditable}}
         <textarea class="bio-editor"
-          placeholder="Empty">{{biography}}</textarea>
+          placeholder="{{localize "DC20AltSheet.bio.empty"}}">{{biography}}</textarea>
       {{else}}
         <div class="bio-view">{{biography}}</div>
       {{/if}}
@@ -16,134 +16,134 @@
     <div class="traits-col">
 
       {{!-- Appearance --}}
-      <h3 class="section-heading">Appearance</h3>
+      <h3 class="section-heading">{{localize "DC20AltSheet.bio.appearance"}}</h3>
       <div class="appearance-form">
 
         <div class="appr-row">
-          <label class="appr-label">Hair</label>
+          <label class="appr-label">{{localize "DC20AltSheet.bio.hair"}}</label>
           <select class="appr-select" name="flags.{{moduleId}}.appearance.hair"
             {{#unless isEditable}}disabled{{/unless}}>
             <option value="">—</option>
-            <option value="blonde"     {{#if (eq appearance.hair "blonde")}}selected{{/if}}>Blonde</option>
-            <option value="brown"      {{#if (eq appearance.hair "brown")}}selected{{/if}}>Brown</option>
-            <option value="dark-brown" {{#if (eq appearance.hair "dark-brown")}}selected{{/if}}>Dark Brown</option>
-            <option value="black"      {{#if (eq appearance.hair "black")}}selected{{/if}}>Black</option>
-            <option value="auburn"     {{#if (eq appearance.hair "auburn")}}selected{{/if}}>Auburn</option>
-            <option value="red"        {{#if (eq appearance.hair "red")}}selected{{/if}}>Red</option>
-            <option value="chestnut"   {{#if (eq appearance.hair "chestnut")}}selected{{/if}}>Chestnut</option>
-            <option value="gray"       {{#if (eq appearance.hair "gray")}}selected{{/if}}>Gray</option>
-            <option value="white"      {{#if (eq appearance.hair "white")}}selected{{/if}}>White</option>
-            <option value="silver"     {{#if (eq appearance.hair "silver")}}selected{{/if}}>Silver</option>
-            <option value="blue"       {{#if (eq appearance.hair "blue")}}selected{{/if}}>Blue</option>
-            <option value="green"      {{#if (eq appearance.hair "green")}}selected{{/if}}>Green</option>
-            <option value="purple"     {{#if (eq appearance.hair "purple")}}selected{{/if}}>Purple</option>
-            <option value="bald"       {{#if (eq appearance.hair "bald")}}selected{{/if}}>Bald / None</option>
-            <option value="other"      {{#if (eq appearance.hair "other")}}selected{{/if}}>Other</option>
+            <option value="blonde"     {{#if (eq appearance.hair "blonde")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.blonde"}}</option>
+            <option value="brown"      {{#if (eq appearance.hair "brown")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.brown"}}</option>
+            <option value="dark-brown" {{#if (eq appearance.hair "dark-brown")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.darkBrown"}}</option>
+            <option value="black"      {{#if (eq appearance.hair "black")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.black"}}</option>
+            <option value="auburn"     {{#if (eq appearance.hair "auburn")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.auburn"}}</option>
+            <option value="red"        {{#if (eq appearance.hair "red")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.red"}}</option>
+            <option value="chestnut"   {{#if (eq appearance.hair "chestnut")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.chestnut"}}</option>
+            <option value="gray"       {{#if (eq appearance.hair "gray")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.gray"}}</option>
+            <option value="white"      {{#if (eq appearance.hair "white")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.white"}}</option>
+            <option value="silver"     {{#if (eq appearance.hair "silver")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.silver"}}</option>
+            <option value="blue"       {{#if (eq appearance.hair "blue")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.blue"}}</option>
+            <option value="green"      {{#if (eq appearance.hair "green")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.green"}}</option>
+            <option value="purple"     {{#if (eq appearance.hair "purple")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.purple"}}</option>
+            <option value="bald"       {{#if (eq appearance.hair "bald")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.bald"}}</option>
+            <option value="other"      {{#if (eq appearance.hair "other")}}selected{{/if}}>{{localize "DC20AltSheet.hairColor.other"}}</option>
           </select>
         </div>
         {{#if (eq appearance.hair "other")}}
         <div class="appr-row">
-          <label class="appr-label">Hair (custom)</label>
+          <label class="appr-label">{{localize "DC20AltSheet.bio.hairCustom"}}</label>
           <input class="appr-input" type="text"
             name="flags.{{moduleId}}.appearance.hairOther"
             value="{{appearance.hairOther}}"
-            placeholder="Empty"
+            placeholder="{{localize "DC20AltSheet.bio.empty"}}"
             {{#unless isEditable}}disabled{{/unless}}>
         </div>
         {{/if}}
 
         <div class="appr-row">
-          <label class="appr-label">Eyes</label>
+          <label class="appr-label">{{localize "DC20AltSheet.bio.eyes"}}</label>
           <select class="appr-select" name="flags.{{moduleId}}.appearance.eyes"
             {{#unless isEditable}}disabled{{/unless}}>
             <option value="">—</option>
-            <option value="brown"      {{#if (eq appearance.eyes "brown")}}selected{{/if}}>Brown</option>
-            <option value="dark-brown" {{#if (eq appearance.eyes "dark-brown")}}selected{{/if}}>Dark Brown</option>
-            <option value="blue"       {{#if (eq appearance.eyes "blue")}}selected{{/if}}>Blue</option>
-            <option value="light-blue" {{#if (eq appearance.eyes "light-blue")}}selected{{/if}}>Light Blue</option>
-            <option value="green"      {{#if (eq appearance.eyes "green")}}selected{{/if}}>Green</option>
-            <option value="hazel"      {{#if (eq appearance.eyes "hazel")}}selected{{/if}}>Hazel</option>
-            <option value="gray"       {{#if (eq appearance.eyes "gray")}}selected{{/if}}>Gray</option>
-            <option value="amber"      {{#if (eq appearance.eyes "amber")}}selected{{/if}}>Amber</option>
-            <option value="black"      {{#if (eq appearance.eyes "black")}}selected{{/if}}>Black</option>
-            <option value="violet"     {{#if (eq appearance.eyes "violet")}}selected{{/if}}>Violet</option>
-            <option value="gold"       {{#if (eq appearance.eyes "gold")}}selected{{/if}}>Gold</option>
-            <option value="silver"     {{#if (eq appearance.eyes "silver")}}selected{{/if}}>Silver</option>
-            <option value="red"        {{#if (eq appearance.eyes "red")}}selected{{/if}}>Red</option>
-            <option value="other"      {{#if (eq appearance.eyes "other")}}selected{{/if}}>Other</option>
+            <option value="brown"      {{#if (eq appearance.eyes "brown")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.brown"}}</option>
+            <option value="dark-brown" {{#if (eq appearance.eyes "dark-brown")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.darkBrown"}}</option>
+            <option value="blue"       {{#if (eq appearance.eyes "blue")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.blue"}}</option>
+            <option value="light-blue" {{#if (eq appearance.eyes "light-blue")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.lightBlue"}}</option>
+            <option value="green"      {{#if (eq appearance.eyes "green")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.green"}}</option>
+            <option value="hazel"      {{#if (eq appearance.eyes "hazel")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.hazel"}}</option>
+            <option value="gray"       {{#if (eq appearance.eyes "gray")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.gray"}}</option>
+            <option value="amber"      {{#if (eq appearance.eyes "amber")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.amber"}}</option>
+            <option value="black"      {{#if (eq appearance.eyes "black")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.black"}}</option>
+            <option value="violet"     {{#if (eq appearance.eyes "violet")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.violet"}}</option>
+            <option value="gold"       {{#if (eq appearance.eyes "gold")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.gold"}}</option>
+            <option value="silver"     {{#if (eq appearance.eyes "silver")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.silver"}}</option>
+            <option value="red"        {{#if (eq appearance.eyes "red")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.red"}}</option>
+            <option value="other"      {{#if (eq appearance.eyes "other")}}selected{{/if}}>{{localize "DC20AltSheet.eyeColor.other"}}</option>
           </select>
         </div>
         {{#if (eq appearance.eyes "other")}}
         <div class="appr-row">
-          <label class="appr-label">Eyes (custom)</label>
+          <label class="appr-label">{{localize "DC20AltSheet.bio.eyesCustom"}}</label>
           <input class="appr-input" type="text"
             name="flags.{{moduleId}}.appearance.eyesOther"
             value="{{appearance.eyesOther}}"
-            placeholder="Empty"
+            placeholder="{{localize "DC20AltSheet.bio.empty"}}"
             {{#unless isEditable}}disabled{{/unless}}>
         </div>
         {{/if}}
 
         <div class="appr-row">
-          <label class="appr-label">Skin</label>
+          <label class="appr-label">{{localize "DC20AltSheet.bio.skin"}}</label>
           <select class="appr-select" name="flags.{{moduleId}}.appearance.skin"
             {{#unless isEditable}}disabled{{/unless}}>
             <option value="">—</option>
-            <option value="fair"       {{#if (eq appearance.skin "fair")}}selected{{/if}}>Fair</option>
-            <option value="light"      {{#if (eq appearance.skin "light")}}selected{{/if}}>Light</option>
-            <option value="medium"     {{#if (eq appearance.skin "medium")}}selected{{/if}}>Medium</option>
-            <option value="tan"        {{#if (eq appearance.skin "tan")}}selected{{/if}}>Tan</option>
-            <option value="olive"      {{#if (eq appearance.skin "olive")}}selected{{/if}}>Olive</option>
-            <option value="brown"      {{#if (eq appearance.skin "brown")}}selected{{/if}}>Brown</option>
-            <option value="dark-brown" {{#if (eq appearance.skin "dark-brown")}}selected{{/if}}>Dark Brown</option>
-            <option value="ebony"      {{#if (eq appearance.skin "ebony")}}selected{{/if}}>Ebony</option>
-            <option value="pale"       {{#if (eq appearance.skin "pale")}}selected{{/if}}>Pale</option>
-            <option value="freckled"   {{#if (eq appearance.skin "freckled")}}selected{{/if}}>Freckled</option>
-            <option value="other"      {{#if (eq appearance.skin "other")}}selected{{/if}}>Other</option>
+            <option value="fair"       {{#if (eq appearance.skin "fair")}}selected{{/if}}>{{localize "DC20AltSheet.skinColor.fair"}}</option>
+            <option value="light"      {{#if (eq appearance.skin "light")}}selected{{/if}}>{{localize "DC20AltSheet.skinColor.light"}}</option>
+            <option value="medium"     {{#if (eq appearance.skin "medium")}}selected{{/if}}>{{localize "DC20AltSheet.skinColor.medium"}}</option>
+            <option value="tan"        {{#if (eq appearance.skin "tan")}}selected{{/if}}>{{localize "DC20AltSheet.skinColor.tan"}}</option>
+            <option value="olive"      {{#if (eq appearance.skin "olive")}}selected{{/if}}>{{localize "DC20AltSheet.skinColor.olive"}}</option>
+            <option value="brown"      {{#if (eq appearance.skin "brown")}}selected{{/if}}>{{localize "DC20AltSheet.skinColor.brown"}}</option>
+            <option value="dark-brown" {{#if (eq appearance.skin "dark-brown")}}selected{{/if}}>{{localize "DC20AltSheet.skinColor.darkBrown"}}</option>
+            <option value="ebony"      {{#if (eq appearance.skin "ebony")}}selected{{/if}}>{{localize "DC20AltSheet.skinColor.ebony"}}</option>
+            <option value="pale"       {{#if (eq appearance.skin "pale")}}selected{{/if}}>{{localize "DC20AltSheet.skinColor.pale"}}</option>
+            <option value="freckled"   {{#if (eq appearance.skin "freckled")}}selected{{/if}}>{{localize "DC20AltSheet.skinColor.freckled"}}</option>
+            <option value="other"      {{#if (eq appearance.skin "other")}}selected{{/if}}>{{localize "DC20AltSheet.skinColor.other"}}</option>
           </select>
         </div>
         {{#if (eq appearance.skin "other")}}
         <div class="appr-row">
-          <label class="appr-label">Skin (custom)</label>
+          <label class="appr-label">{{localize "DC20AltSheet.bio.skinCustom"}}</label>
           <input class="appr-input" type="text"
             name="flags.{{moduleId}}.appearance.skinOther"
             value="{{appearance.skinOther}}"
-            placeholder="Empty"
+            placeholder="{{localize "DC20AltSheet.bio.empty"}}"
             {{#unless isEditable}}disabled{{/unless}}>
         </div>
         {{/if}}
 
         <div class="appr-row">
-          <label class="appr-label">Height</label>
+          <label class="appr-label">{{localize "DC20AltSheet.bio.height"}}</label>
           <input class="appr-input" type="text"
             name="flags.{{moduleId}}.appearance.height"
             value="{{appearance.height}}"
-            placeholder="Empty"
+            placeholder="{{localize "DC20AltSheet.bio.empty"}}"
             {{#unless isEditable}}disabled{{/unless}}>
         </div>
 
         <div class="appr-row">
-          <label class="appr-label">Weight</label>
+          <label class="appr-label">{{localize "DC20AltSheet.bio.weight"}}</label>
           <input class="appr-input" type="text"
             name="flags.{{moduleId}}.appearance.weight"
             value="{{appearance.weight}}"
-            placeholder="Empty"
+            placeholder="{{localize "DC20AltSheet.bio.empty"}}"
             {{#unless isEditable}}disabled{{/unless}}>
         </div>
 
         <div class="appr-block">
-          <label class="appr-label">Clothing</label>
+          <label class="appr-label">{{localize "DC20AltSheet.bio.clothing"}}</label>
           <textarea class="appr-textarea" rows="3"
             name="flags.{{moduleId}}.appearance.clothing"
-            placeholder="Empty"
+            placeholder="{{localize "DC20AltSheet.bio.empty"}}"
             {{#unless isEditable}}disabled{{/unless}}>{{appearance.clothing}}</textarea>
         </div>
 
         <div class="appr-block">
-          <label class="appr-label">Distinguishing Features</label>
+          <label class="appr-label">{{localize "DC20AltSheet.bio.features"}}</label>
           <textarea class="appr-textarea" rows="3"
             name="flags.{{moduleId}}.appearance.features"
-            placeholder="Empty"
+            placeholder="{{localize "DC20AltSheet.bio.empty"}}"
             {{#unless isEditable}}disabled{{/unless}}>{{appearance.features}}</textarea>
         </div>
 
@@ -154,13 +154,13 @@
 
   {{!-- Campaign Notes (full-width below the two columns) --}}
   <div class="campaign-notes-section">
-    <h3 class="section-heading mt">Campaign Notes</h3>
+    <h3 class="section-heading mt">{{localize "DC20AltSheet.bio.campaignNotes"}}</h3>
     {{#if isEditable}}
       <textarea class="campaign-notes-editor"
         name="flags.{{moduleId}}.campaignNotes"
-        placeholder="Empty">{{campaignNotes}}</textarea>
+        placeholder="{{localize "DC20AltSheet.bio.empty"}}">{{campaignNotes}}</textarea>
     {{else}}
-      <div class="campaign-notes-view">{{#if campaignNotes}}{{campaignNotes}}{{else}}<span class="empty-note">No campaign notes yet.</span>{{/if}}</div>
+      <div class="campaign-notes-view">{{#if campaignNotes}}{{campaignNotes}}{{else}}<span class="empty-note">{{localize "DC20AltSheet.empty.campaignNotes"}}</span>{{/if}}</div>
     {{/if}}
   </div>
 

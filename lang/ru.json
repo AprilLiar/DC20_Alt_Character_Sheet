@@ -1,0 +1,379 @@
+{
+  "DC20AltSheet": {
+    "sheetLabel": "Альтернативный лист DC20",
+
+    "tabs": {
+      "core":       "Основные",
+      "combat":     "Бой",
+      "features":   "Способности",
+      "inventory":  "Инвентарь",
+      "biography":  "Инфо",
+      "statistics": "Статистика",
+      "conditions": "Состояния",
+      "activities": "Действия"
+    },
+
+    "ctx": {
+      "addFavourite":    "Добавить в избранное",
+      "removeFavourite": "Убрать из избранного",
+      "editItem":        "Изменить предмет",
+      "deleteItem":      "Удалить предмет"
+    },
+
+    "attr": {
+      "might":        "Сила",
+      "agility":      "Ловкость",
+      "charisma":     "Харизма",
+      "intelligence": "Интеллект",
+      "saveMastery":  "Мастерство спасброска"
+    },
+
+    "section": {
+      "attributes":     "Характеристики",
+      "skills":         "Навыки",
+      "languages":      "Языки",
+      "movement":       "Скорость",
+      "senses":         "Чувства",
+      "resources":      "Ресурсы",
+      "defences":       "Защита",
+      "conditions":     "Состояния",
+      "activeEffects":  "Активные эффекты",
+      "features":       "Пассивные особенности",
+      "weapons":        "Оружие",
+      "equipment":      "Снаряжение",
+      "consumables":    "Расходники",
+      "loot":           "Добыча",
+      "origins":        "Происхождение",
+      "combatTraining": "Боевая подготовка",
+      "pointPools":     "Резервы очков",
+      "biography":      "Биография",
+      "favourites":     "Избранное",
+      "lastUsed":       "Недавно использованное"
+    },
+
+    "resource": {
+      "hp":         "Очки здоровья",
+      "ap":         "Очки действия",
+      "stamina":    "Выносливость",
+      "mana":       "Мана",
+      "grit":       "Решимость",
+      "restPoints": "Очки отдыха"
+    },
+
+    "rollMod": {
+      "saveDC": "СЛ спасброска",
+      "attack": "Бонус атаки",
+      "check":  "Бонус проверки"
+    },
+
+    "create": {
+      "feature":    "Добавить особенность",
+      "weapon":     "Добавить оружие",
+      "equipment":  "Добавить снаряжение",
+      "consumable": "Добавить расходник",
+      "loot":       "Добавить добычу"
+    },
+
+    "newItem": "Новый {type}",
+    "use":     "Использовать",
+    "edit":    "Изменить",
+    "delete":  "Удалить",
+    "equip":   "Надеть / Снять",
+    "remove":  "Убрать",
+    "save":    "Сохранить",
+    "cancel":  "Отмена",
+    "create":  "Создать",
+
+    "empty": {
+      "skills":          "Навыки не определены.",
+      "trades":          "Ремёсла не определены.",
+      "features":        "Нет особенностей.",
+      "weapons":         "Нет оружия.",
+      "equipment":       "Нет снаряжения.",
+      "consumables":     "Нет расходников.",
+      "conditions":      "Нет активных состояний.",
+      "effects":         "Нет активных эффектов.",
+      "favourites":      "ПКМ по предмету, чтобы закрепить его здесь.",
+      "lastUsed":        "Здесь появятся недавно использованные предметы.",
+      "combat":          "Нет боевых действий.",
+      "passiveFeatures": "Нет пассивных особенностей.",
+      "campaignNotes":   "Заметок кампании пока нет.",
+      "noConditions":    "Состояния в системе не определены."
+    },
+
+    "deleteConfirm": {
+      "title":   "Удалить предмет",
+      "content": "Удалить <strong>{name}</strong>? Это действие необратимо."
+    },
+
+    "header": {
+      "tempHp":                "Временные очки здоровья",
+      "switchResources":       "Переключить / управлять ресурсами",
+      "resources":             "Ресурсы",
+      "newTracker":            "Новый трекер…",
+      "barColour":             "Цвет полосы",
+      "createTracker":         "Создать трекер",
+      "addQuickSlot":          "Добавить слот быстрого доступа",
+      "showInHeader":          "Показать в заголовке",
+      "showInHeaderRemovable": "Показать в заголовке · ПКМ для удаления"
+    },
+
+    "nav": {
+      "splitscreen":    "Разделённый экран",
+      "vertical":       "⇔ Вертикально",
+      "horizontal":     "⇕ Горизонтально",
+      "sideBySize":     "Бок о бок",
+      "topAndBottom":   "Сверху и снизу",
+      "dropHere":       "перетащите вкладку сюда…",
+      "optionalBottom": "необязательная нижняя панель…",
+      "createSplit":    "Создать разделение",
+      "openPage":       "Открыть страницу",
+      "closeTab":       "Закрыть вкладку",
+      "dragToResize":   "Перетащите для изменения размера"
+    },
+
+    "core": {
+      "lvl":              "УРВ",
+      "cm":               "КМ",
+      "size":             "РАЗМЕР",
+      "check":            "Проверка",
+      "save":             "Спасбросок",
+      "skills":           "Навыки",
+      "trades":           "Ремёсла",
+      "languages":        "Языки",
+      "rolls":            "Броски",
+      "createCustomRoll": "Создать особый бросок",
+      "favourites":       "Избранное",
+      "lastUsed":         "Недавно использованное"
+    },
+
+    "size": {
+      "tiny":       "Крошечный",
+      "small":      "Маленький",
+      "medium":     "Средний",
+      "large":      "Большой",
+      "huge":       "Огромный",
+      "gargantuan": "Исполинский",
+      "colossal":   "Колоссальный",
+      "titanic":    "Титанический"
+    },
+
+    "combat": {
+      "filterAll":       "Все",
+      "filterWeapon":    "Оружие",
+      "filterEquipment": "Снаряжение",
+      "filterSpell":     "Заклинания",
+      "filterManeuver":  "Манёвры",
+      "filterFeature":   "Способности",
+      "createWeapon":    "Создать оружие",
+      "createEquipment": "Создать снаряжение",
+      "createSpell":     "Создать заклинание",
+      "createManeuver":  "Создать манёвр",
+      "createFeature":   "Создать способность",
+      "equip":               "Надеть",
+      "unequip":             "Снять",
+      "attune":              "Настроиться",
+      "unattune":            "Отменить настройку",
+      "filterAllAbbr":       "Все",
+      "filterWeaponAbbr":    "Орж",
+      "filterEquipmentAbbr": "Снар",
+      "filterSpellAbbr":     "Закл",
+      "filterManeuverAbbr":  "Манв",
+      "filterFeatureAbbr":   "Спос"
+    },
+
+    "features": {
+      "heading": "Пассивные особенности",
+      "add":     "Добавить особенность"
+    },
+
+    "bio": {
+      "biography":    "Биография",
+      "appearance":   "Внешность",
+      "campaignNotes":"Заметки кампании",
+      "empty":        "Пусто",
+      "hair":         "Волосы",
+      "hairCustom":   "Волосы (другое)",
+      "eyes":         "Глаза",
+      "eyesCustom":   "Глаза (другое)",
+      "skin":         "Кожа",
+      "skinCustom":   "Кожа (другое)",
+      "height":       "Рост",
+      "weight":       "Вес",
+      "clothing":     "Одежда",
+      "features":     "Особые приметы"
+    },
+
+    "hairColor": {
+      "blonde":    "Светлые",
+      "brown":     "Коричневые",
+      "darkBrown": "Тёмно-коричневые",
+      "black":     "Чёрные",
+      "auburn":    "Каштановые",
+      "red":       "Рыжие",
+      "chestnut":  "Ореховые",
+      "gray":      "Серые",
+      "white":     "Белые",
+      "silver":    "Серебристые",
+      "blue":      "Синие",
+      "green":     "Зелёные",
+      "purple":    "Фиолетовые",
+      "bald":      "Лысый / нет",
+      "other":     "Другое"
+    },
+
+    "eyeColor": {
+      "brown":     "Карие",
+      "darkBrown": "Тёмно-карие",
+      "blue":      "Голубые",
+      "lightBlue": "Светло-голубые",
+      "green":     "Зелёные",
+      "hazel":     "Ореховые",
+      "gray":      "Серые",
+      "amber":     "Янтарные",
+      "black":     "Чёрные",
+      "violet":    "Фиолетовые",
+      "gold":      "Золотые",
+      "silver":    "Серебристые",
+      "red":       "Красные",
+      "other":     "Другое"
+    },
+
+    "skinColor": {
+      "fair":      "Молочная",
+      "light":     "Светлая",
+      "medium":    "Средняя",
+      "tan":       "Загорелая",
+      "olive":     "Оливковая",
+      "brown":     "Коричневая",
+      "darkBrown": "Тёмно-коричневая",
+      "ebony":     "Эбеновая",
+      "pale":      "Бледная",
+      "freckled":  "С веснушками",
+      "other":     "Другое"
+    },
+
+    "stats": {
+      "rollStats":  "Статистика бросков",
+      "allTime":    "За всё время",
+      "session":    "За сессию",
+      "avgD20":     "Средний d20",
+      "totalRolls": "Всего бросков",
+      "natural20s": "Натуральные 20",
+      "natural1s":  "Натуральные 1",
+      "damage":     "Урон",
+      "dealt":      "Нанесён",
+      "taken":      "Получен",
+      "highest":    "Максимум",
+      "lowest":     "Минимум",
+      "total":      "Итого",
+      "topUsed":    "Часто используемое",
+      "resetBtn":   "↺ Сбросить общую статистику",
+      "resetTitle": "Очистить всю общую статистику (статистика сессии не затронута)"
+    },
+
+    "cond": {
+      "heading":       "Состояния",
+      "hint":          "ЛКМ — применить · ПКМ — снять",
+      "activeEffects": "Активные эффекты",
+      "passive":       "Пассивные",
+      "temporary":     "Временные",
+      "readEdit":      "ЛКМ — читать · ПКМ — изменить",
+      "stackable":     "накапливается"
+    },
+
+    "act": {
+      "levelProgression":         "Уровень и прогресс",
+      "level":                    "Уровень",
+      "cm":                       "КМ",
+      "levelDownTitle":           "Снизить уровень",
+      "levelUpBtn":               "Повысить уровень!",
+      "trackXP":                  "Отслеживать XP",
+      "trackXPTitle":             "Отслеживать очки опыта",
+      "xpSuffix":                 "XP",
+      "xpSubtract":               "Вычесть это количество",
+      "xpAdd":                    "Добавить это количество",
+      "xpAmountTitle":            "Количество XP для добавления или вычитания",
+      "character":                "Персонаж",
+      "rest":                     "Отдых",
+      "campActions":              "Лагерные действия",
+      "announceActivity":         "Объявить в чат",
+      "campCreate":               "Создать",
+      "campDropHint":             "или перетащите Способность сюда",
+      "noCampActions":            "Лагерные действия не определены",
+      "skillsTradesLangs":        "Навыки, ремёсла и языки",
+      "skills":                   "Навыки",
+      "trades":                   "Ремёсла",
+      "languages":                "Языки",
+      "lowerMastery":             "Снизить мастерство",
+      "raiseMastery":             "Повысить мастерство (+2)",
+      "expertiseToggle":          "Переключить экспертизу — повышает предел мастерства на 1 (стоит 1 очко)",
+      "expertiseGranted":         "Предел мастерства повышен особенностью",
+      "convertSkillToTrade":      "1 Навык ▸ 2 Ремесла",
+      "convertTradeToLang":       "1 Ремесло ▸ 2 Яз",
+      "convertSkillToTradeTitle": "Преобразовать 1 очко навыка в 2 очка ремесла",
+      "convertTradeToLangTitle":  "Преобразовать 1 очко ремесла в 2 очка языка",
+      "revertSkill":              "↶ Навык",
+      "revertTrade":              "↶ Ремесло",
+      "revertSkillTitle":         "Отменить преобразование Навык→Ремесло",
+      "revertTradeTitle":         "Отменить преобразование Ремесло→Язык",
+      "ancestry":                 "Происхождение",
+      "background":               "Предыстория",
+      "class":                    "Класс",
+      "subclass":                 "Подкласс"
+    },
+
+    "levelUp": {
+      "noClass": "Сначала назначьте класс",
+      "fillXP":  "Сначала заполните полосу XP",
+      "ready":   "Повысить уровень"
+    },
+
+    "dialog": {
+      "customRoll": {
+        "titleNew":        "Новый особый бросок",
+        "titleEdit":       "Изменить особый бросок",
+        "name":            "Название",
+        "bonus":           "Бонус",
+        "namePlaceholder": "напр. Инициатива (Преим)"
+      },
+      "campAction": {
+        "title":           "Новое лагерное действие",
+        "name":            "Название",
+        "description":     "Описание",
+        "roll":            "Формула броска",
+        "rollOptional":    "(необязательно)",
+        "namePlaceholder": "напр. Нести стражу",
+        "descPlaceholder": "Что происходит во время этого действия…",
+        "rollPlaceholder": "напр. 1d20 + @prime"
+      },
+      "resetStats": {
+        "title":   "Сбросить общую статистику",
+        "content": "Очистить всю общую статистику персонажа? Статистика сессии не затронута."
+      },
+      "save":   "Сохранить",
+      "cancel": "Отмена",
+      "create": "Создать"
+    },
+
+    "notify": {
+      "noClassLevelUp":   "Класс не найден. Сначала добавьте предмет класса.",
+      "maxLevel":         "Уже максимальный уровень (20).",
+      "levelUpFallback":  "Уровень класса повышен, но диалог улучшения DC20 не удалось открыть автоматически.",
+      "noClassLevelDown": "Класс не найден для понижения уровня.",
+      "minLevel":         "Уже минимальный уровень.",
+      "restError":        "Не удалось открыть диалог отдыха DC20.",
+      "campAlready":      "{name} уже является лагерным действием.",
+      "slotTypeError":    "Этот слот принимает только предметы типа \"{type}\".",
+      "levelUpFailed":    "Ошибка повышения уровня: {error}",
+      "levelDownFailed":  "Ошибка понижения уровня: {error}"
+    },
+
+    "rest": {
+      "quick": { "label": "Быстрый отдых", "short": "БО" },
+      "short": { "label": "Короткий отдых", "short": "КО" },
+      "long":  { "label": "Длинный отдых",  "short": "ДО" },
+      "full":  { "label": "Полный отдых",   "short": "ПО" }
+    }
+  }
+}

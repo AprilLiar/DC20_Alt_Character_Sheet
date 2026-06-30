@@ -7,28 +7,28 @@
         <div class="core-meta-chips">
           {{#if details.level}}
           <div class="core-chip">
-            <span class="chip-label">LVL</span>
+            <span class="chip-label">{{localize "DC20AltSheet.core.lvl"}}</span>
             <span class="chip-val">{{details.level}}</span>
           </div>
           {{/if}}
           {{#if details.combatMastery}}
           <div class="core-chip">
-            <span class="chip-label">CM</span>
+            <span class="chip-label">{{localize "DC20AltSheet.core.cm"}}</span>
             <span class="chip-val">+{{details.combatMastery}}</span>
           </div>
           {{/if}}
           <div class="core-chip">
-            <span class="chip-label">SIZE</span>
+            <span class="chip-label">{{localize "DC20AltSheet.core.size"}}</span>
             {{#if isEditable}}
               <select class="chip-size-select" name="system.size.size">
-                <option value="tiny"       {{#if (eq size "tiny")}}selected{{/if}}>Tiny</option>
-                <option value="small"      {{#if (eq size "small")}}selected{{/if}}>Small</option>
-                <option value="medium"     {{#if (eq size "medium")}}selected{{/if}}>Medium</option>
-                <option value="large"      {{#if (eq size "large")}}selected{{/if}}>Large</option>
-                <option value="huge"       {{#if (eq size "huge")}}selected{{/if}}>Huge</option>
-                <option value="gargantuan" {{#if (eq size "gargantuan")}}selected{{/if}}>Gargantuan</option>
-                <option value="colossal"   {{#if (eq size "colossal")}}selected{{/if}}>Colossal</option>
-                <option value="titanic"    {{#if (eq size "titanic")}}selected{{/if}}>Titanic</option>
+                <option value="tiny"       {{#if (eq size "tiny")}}selected{{/if}}>{{localize "DC20AltSheet.size.tiny"}}</option>
+                <option value="small"      {{#if (eq size "small")}}selected{{/if}}>{{localize "DC20AltSheet.size.small"}}</option>
+                <option value="medium"     {{#if (eq size "medium")}}selected{{/if}}>{{localize "DC20AltSheet.size.medium"}}</option>
+                <option value="large"      {{#if (eq size "large")}}selected{{/if}}>{{localize "DC20AltSheet.size.large"}}</option>
+                <option value="huge"       {{#if (eq size "huge")}}selected{{/if}}>{{localize "DC20AltSheet.size.huge"}}</option>
+                <option value="gargantuan" {{#if (eq size "gargantuan")}}selected{{/if}}>{{localize "DC20AltSheet.size.gargantuan"}}</option>
+                <option value="colossal"   {{#if (eq size "colossal")}}selected{{/if}}>{{localize "DC20AltSheet.size.colossal"}}</option>
+                <option value="titanic"    {{#if (eq size "titanic")}}selected{{/if}}>{{localize "DC20AltSheet.size.titanic"}}</option>
               </select>
             {{else}}
               <span class="chip-val">{{#if size}}{{size}}{{else}}—{{/if}}</span>
@@ -54,10 +54,10 @@
             <span class="sc-attr-name">{{abbr}}</span>
             <span class="sc-attr-score">{{signedNum value}}</span>
             <div class="sc-attr-buttons">
-              <button type="button" class="sc-attr-btn rollable" data-action="rollAttribute" data-attr="{{key}}" title="Check">
+              <button type="button" class="sc-attr-btn rollable" data-action="rollAttribute" data-attr="{{key}}" title="{{localize "DC20AltSheet.core.check"}}">
                 <i class="fas fa-dice-d20"></i>{{signedNum check}}
               </button>
-              <button type="button" class="sc-attr-btn rollable" data-action="rollSave" data-attr="{{key}}" title="Save">
+              <button type="button" class="sc-attr-btn rollable" data-action="rollSave" data-attr="{{key}}" title="{{localize "DC20AltSheet.core.save"}}">
                 <i class="fas fa-shield-alt"></i>{{signedNum save}}
               </button>
             </div>
@@ -71,9 +71,9 @@
     <div class="core-panel core-west">
       <div class="core-subtabs core-panel-header" role="tablist">
         <button type="button" class="core-subtab-btn{{#unless (eq coreSkillTab 'trades')}} active{{/unless}}"
-          data-core-subtab="skills">Skills</button>
+          data-core-subtab="skills">{{localize "DC20AltSheet.core.skills"}}</button>
         <button type="button" class="core-subtab-btn{{#if (eq coreSkillTab 'trades')}} active{{/if}}"
-          data-core-subtab="trades">Trades</button>
+          data-core-subtab="trades">{{localize "DC20AltSheet.core.trades"}}</button>
       </div>
       <div class="core-panel-scroll">
 
@@ -90,11 +90,11 @@
               {{/each}}
             </div>
           {{else}}
-            <p class="empty-note">No skills defined.</p>
+            <p class="empty-note">{{localize "DC20AltSheet.empty.skills"}}</p>
           {{/if}}
 
           {{#if languages.length}}
-            <h3 class="section-heading mt">Languages</h3>
+            <h3 class="section-heading mt">{{localize "DC20AltSheet.core.languages"}}</h3>
             <div class="skills-list">
               {{#each languages}}
               <div class="skill-row lang-row">
@@ -119,7 +119,7 @@
               {{/each}}
             </div>
           {{else}}
-            <p class="empty-note">No trades defined.</p>
+            <p class="empty-note">{{localize "DC20AltSheet.empty.trades"}}</p>
           {{/if}}
         </div>
 
@@ -151,13 +151,13 @@
 
     {{!-- EAST: Roll tiles (basic checks + custom rolls) --}}
     <div class="core-panel core-east">
-      <h3 class="section-heading core-panel-header">Rolls</h3>
+      <h3 class="section-heading core-panel-header">{{localize "DC20AltSheet.core.rolls"}}</h3>
       <div class="core-panel-scroll">
         <div class="roll-tiles">
           {{#each basicRolls}}
           <button type="button" class="roll-tile roll-tile-basic" draggable="true"
             data-action="rollBasic" data-roll-key="{{key}}" data-roll-label="{{label}}"
-            title="Roll {{label}}">
+            title="{{localize "DC20AltSheet.use"}} {{label}}">
             <span class="roll-tile-name">{{label}}</span>
           </button>
           {{/each}}
@@ -165,7 +165,7 @@
           {{#each customRolls}}
           <button type="button" class="roll-tile roll-tile-custom" draggable="true"
             data-action="rollCustom" data-roll-id="{{id}}" data-roll-name="{{name}}" data-roll-bonus="{{bonus}}"
-            title="Roll {{name}}">
+            title="{{localize "DC20AltSheet.use"}} {{name}}">
             <span class="roll-tile-name">{{name}}</span>
             <span class="roll-tile-bonus">{{signedNum bonus}}</span>
           </button>
@@ -173,7 +173,7 @@
         </div>
 
         {{#if isEditable}}
-        <button type="button" class="roll-tile-add" data-action="addCustomRoll" title="Create a custom roll">
+        <button type="button" class="roll-tile-add" data-action="addCustomRoll" title="{{localize "DC20AltSheet.core.createCustomRoll"}}">
           <i class="fas fa-plus"></i>
         </button>
         {{/if}}
@@ -184,39 +184,39 @@
     <div class="core-south">
 
       <div class="core-panel">
-        <h3 class="section-heading core-panel-header">Favourites</h3>
+        <h3 class="section-heading core-panel-header">{{localize "DC20AltSheet.core.favourites"}}</h3>
         <div class="core-panel-scroll">
           {{#if favourites.length}}
             <ul class="qol-list" data-reorder-list data-reorder-mode="flag" data-reorder-key="favourites">
               {{#each favourites}}
               <li class="qol-row" data-item-id="{{id}}">
                 <img class="qol-img" src="{{img}}" alt="{{name}}"
-                  data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+                  data-action="useItem" data-item-id="{{id}}" title="{{localize "DC20AltSheet.use"}} {{name}}">
                 <span class="qol-name">{{name}}</span>
               </li>
               {{/each}}
             </ul>
           {{else}}
-            <p class="empty-note">Right-click items to pin them here.</p>
+            <p class="empty-note">{{localize "DC20AltSheet.empty.favourites"}}</p>
           {{/if}}
         </div>
       </div>
 
       <div class="core-panel">
-        <h3 class="section-heading core-panel-header">Last Used</h3>
+        <h3 class="section-heading core-panel-header">{{localize "DC20AltSheet.core.lastUsed"}}</h3>
         <div class="core-panel-scroll">
           {{#if lastUsed.length}}
             <ul class="qol-list" data-reorder-list data-reorder-mode="flag" data-reorder-key="lastUsed">
               {{#each lastUsed}}
               <li class="qol-row" data-item-id="{{id}}">
                 <img class="qol-img" src="{{img}}" alt="{{name}}"
-                  data-action="useItem" data-item-id="{{id}}" title="Use {{name}}">
+                  data-action="useItem" data-item-id="{{id}}" title="{{localize "DC20AltSheet.use"}} {{name}}">
                 <span class="qol-name">{{name}}</span>
               </li>
               {{/each}}
             </ul>
           {{else}}
-            <p class="empty-note">Recently used items appear here.</p>
+            <p class="empty-note">{{localize "DC20AltSheet.empty.lastUsed"}}</p>
           {{/if}}
         </div>
       </div>

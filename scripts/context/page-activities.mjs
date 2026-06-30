@@ -1,13 +1,5 @@
 import { MODULE_ID } from '../constants.mjs';
 
-/** The four DC20 rest types, in order of magnitude. */
-const REST_TYPES = [
-  { type: 'quick', label: 'Quick Rest', short: 'QR', icon: 'fa-mug-hot' },
-  { type: 'short', label: 'Short Rest', short: 'SR', icon: 'fa-campground' },
-  { type: 'long',  label: 'Long Rest',  short: 'LR', icon: 'fa-bed' },
-  { type: 'full',  label: 'Full Rest',  short: 'FR', icon: 'fa-house-chimney' },
-];
-
 /** Read the computed point pool for one knowledge type. */
 function pickPoints(p) {
   return {
@@ -22,6 +14,15 @@ export function prepareActivities(actor) {
   const system  = actor.system ?? {};
   const details = system.details ?? {};
   const flags   = actor.flags?.[MODULE_ID] ?? {};
+
+  const t = (key) => game.i18n.localize(key);
+
+  const REST_TYPES = [
+    { type: 'quick', label: t('DC20AltSheet.rest.quick.label'), short: t('DC20AltSheet.rest.quick.short'), icon: 'fa-mug-hot' },
+    { type: 'short', label: t('DC20AltSheet.rest.short.label'), short: t('DC20AltSheet.rest.short.short'), icon: 'fa-campground' },
+    { type: 'long',  label: t('DC20AltSheet.rest.long.label'),  short: t('DC20AltSheet.rest.long.short'),  icon: 'fa-bed' },
+    { type: 'full',  label: t('DC20AltSheet.rest.full.label'),  short: t('DC20AltSheet.rest.full.short'),  icon: 'fa-house-chimney' },
+  ];
 
   /* ── Skill / Trade / Language manager ── */
   const expAutomated = new Set(system.expertise?.automated ?? []);
@@ -69,10 +70,10 @@ export function prepareActivities(actor) {
     if (c) classSlot = { id: c.id, name: c.name, img: c.img };
   }
   const charSlots = [
-    { type: 'ancestry',   label: 'Ancestry',   item: slotItem(details.ancestry?.id) },
-    { type: 'background', label: 'Background',  item: slotItem(details.background?.id) },
-    { type: 'class',      label: 'Class',       item: classSlot },
-    { type: 'subclass',   label: 'Subclass',    item: slotItem(details.subclass?.id) },
+    { type: 'ancestry',   label: t('DC20AltSheet.act.ancestry'),   item: slotItem(details.ancestry?.id) },
+    { type: 'background', label: t('DC20AltSheet.act.background'),  item: slotItem(details.background?.id) },
+    { type: 'class',      label: t('DC20AltSheet.act.class'),       item: classSlot },
+    { type: 'subclass',   label: t('DC20AltSheet.act.subclass'),    item: slotItem(details.subclass?.id) },
   ];
 
   const hasClass    = !!details.class?.id || !!actor.items?.find(i => i.type === 'class');

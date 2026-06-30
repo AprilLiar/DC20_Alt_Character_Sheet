@@ -22,10 +22,10 @@
         {{/if}}
         <span class="btab-label">{{label}}</span>
       </span>
-      <button type="button" class="btab-close" data-close-page="{{id}}" title="Close tab">×</button>
+      <button type="button" class="btab-close" data-close-page="{{id}}" title="{{localize "DC20AltSheet.nav.closeTab"}}">×</button>
     </div>
     {{/each}}
-    <button type="button" class="btab-add" title="Open page">+</button>
+    <button type="button" class="btab-add" title="{{localize "DC20AltSheet.nav.openPage"}}">+</button>
   </div>
 
   {{!-- Page picker overlay (shown when + is clicked) --}}
@@ -34,7 +34,7 @@
       {{#each pageDefs}}
       <button type="button" class="picker-item" data-open-page="{{id}}">
         <span class="btab-icon btab-icon-{{id}}"></span>
-        <span class="picker-label">{{label}}</span>
+        <span class="picker-label">{{localize label}}</span>
       </button>
       {{/each}}
     </div>
@@ -42,26 +42,26 @@
     {{!-- Split-tab builder --}}
     <div class="split-builder">
       <div class="split-builder-header">
-        <div class="split-builder-label">Splitscreen</div>
+        <div class="split-builder-label">{{localize "DC20AltSheet.nav.splitscreen"}}</div>
         <div class="split-orient-toggle">
-          <button type="button" class="split-orient-btn active" data-orient="vertical" title="Side by side">⇔ Vertical</button>
-          <button type="button" class="split-orient-btn" data-orient="horizontal" title="Top and bottom">⇕ Horizontal</button>
+          <button type="button" class="split-orient-btn active" data-orient="vertical" title="{{localize "DC20AltSheet.nav.sideBySize"}}">{{localize "DC20AltSheet.nav.vertical"}}</button>
+          <button type="button" class="split-orient-btn" data-orient="horizontal" title="{{localize "DC20AltSheet.nav.topAndBottom"}}">{{localize "DC20AltSheet.nav.horizontal"}}</button>
         </div>
       </div>
       <div class="split-zones-top-row">
         <div class="split-zone" data-split-side="left">
-          <span class="split-zone-hint">drop a tab here…</span>
+          <span class="split-zone-hint">{{localize "DC20AltSheet.nav.dropHere"}}</span>
         </div>
         <div class="split-zone" data-split-side="right">
-          <span class="split-zone-hint">drop a tab here…</span>
+          <span class="split-zone-hint">{{localize "DC20AltSheet.nav.dropHere"}}</span>
         </div>
       </div>
       <div class="split-bottom-wrap hidden">
         <div class="split-zone split-zone-full" data-split-side="bottom">
-          <span class="split-zone-hint">optional bottom panel…</span>
+          <span class="split-zone-hint">{{localize "DC20AltSheet.nav.optionalBottom"}}</span>
         </div>
       </div>
-      <button type="button" class="split-create-btn" disabled>Create Split</button>
+      <button type="button" class="split-create-btn" disabled>{{localize "DC20AltSheet.nav.createSplit"}}</button>
     </div>
   </div>
 
