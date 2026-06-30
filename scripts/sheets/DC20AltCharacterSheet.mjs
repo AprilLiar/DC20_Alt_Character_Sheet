@@ -1574,9 +1574,10 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       }
     };
 
-    // Preferred path: the system's full advancement flow (the same one the
-    // core sheet uses). changeLevel isn't on the public API, so it's imported.
-    const mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
+    // Try to find changeLevel: the system bundles everything into dc20rpg.mjs,
+    // so try the main bundle first; individual source files only exist in dev.
+    let mod = await this._systemImport('dc20rpg.mjs');
+    if (!mod?.changeLevel) mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
     if (mod?.changeLevel) {
       try {
         await mod.changeLevel('true', classItem.id, this.actor);
@@ -1624,7 +1625,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       return;
     }
 
-    const mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
+    let mod = await this._systemImport('dc20rpg.mjs');
+    if (!mod?.changeLevel) mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
     if (mod?.changeLevel) {
       try {
         await mod.changeLevel('false', classItem.id, this.actor);
