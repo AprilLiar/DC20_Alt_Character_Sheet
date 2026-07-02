@@ -1966,11 +1966,12 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /** Enable / disable an Active Effect from the Conditions tab. */
   static async _onToggleEffect(event, target) {
     event.stopPropagation();
+    event.preventDefault();
     const effectId = target.closest('[data-effect-id]')?.dataset.effectId;
     const effect = this._findEffect(effectId);
     if (!effect) return;
+    // Update the effect; FoundryV2's update hook will re-render the sheet automatically
     await effect.update({ disabled: !effect.disabled });
-    this.render();
   }
 
 }

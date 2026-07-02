@@ -20,6 +20,20 @@ const HEADING_FONTS = {
 };
 
 export function registerSettings() {
+  game.settings.register(MODULE_ID, 'uiLanguage', {
+    name: 'DC20 Alt Sheet: UI Language',
+    hint: 'Select the language for the character sheet interface.',
+    scope: 'client',
+    config: true,
+    type: String,
+    choices: {
+      'en': 'English',
+      'ru': 'Русский (Russian)',
+    },
+    default: 'en',
+    onChange: applyLanguageSetting,
+  });
+
   game.settings.register(MODULE_ID, 'uiScale', {
     name: 'DC20 Alt Sheet: UI Scale',
     hint: 'Scales layout elements (spacing, buttons, images, tab sizes). 0.75 = compact, 1.0 = default.',
@@ -63,6 +77,18 @@ export function registerSettings() {
     default: "Georgia, 'Times New Roman', serif",
     onChange: applySheetSettings,
   });
+}
+
+export function applyLanguageSetting() {
+  const lang = game.settings.get(MODULE_ID, 'uiLanguage');
+  game.i18n.lang = lang;
+
+  // Re-render all open DC20 Alt Character Sheets to apply the language change
+  for (const sheet of Object.values(ui.windows)) {
+    if (sheet?.constructor?.name === 'DC20AltCharacterSheet') {
+      sheet.render();
+    }
+  }
 }
 
 export function applySheetSettings() {
