@@ -47,10 +47,10 @@ export function prepareConditions(actor) {
     .sort((a, b) => a.label.localeCompare(b.label));
 
   // Passive / temporary Active Effects (excluding condition markers).
+  // Disabled effects stay in the list so they can be re-enabled by hand.
   const passiveEffects   = [];
   const temporaryEffects = [];
   for (const effect of allEffects) {
-    if (effect.disabled) continue;
     const isCondition = [...(effect.statuses ?? [])].some(s => conditionIds.has(s));
     if (isCondition) continue;
 
@@ -61,6 +61,7 @@ export function prepareConditions(actor) {
       name:     effect.name,
       icon:     effect.img ?? effect.icon,
       duration: d?.label ?? '',
+      disabled: !!effect.disabled,
     };
     if (isTemporary) temporaryEffects.push(entry);
     else passiveEffects.push(entry);

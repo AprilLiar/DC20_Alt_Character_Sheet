@@ -734,6 +734,23 @@
 .dc20-alt-sheet .fx-dur  { font-size: var(--fs-xs); white-space: nowrap; }
 .dc20-alt-sheet .effect-row.fx-interactive { cursor: pointer; border-radius: var(--r-sm); }
 .dc20-alt-sheet .effect-row.fx-interactive:hover { background: var(--p-hover); }
+.dc20-alt-sheet .effect-row.fx-disabled .fx-icon,
+.dc20-alt-sheet .effect-row.fx-disabled .fx-name,
+.dc20-alt-sheet .effect-row.fx-disabled .fx-dur { opacity: 0.45; }
+.dc20-alt-sheet .effect-row.fx-disabled .fx-name { text-decoration: line-through; }
+.dc20-alt-sheet .fx-toggle {
+  flex-shrink: 0;
+  width: auto;
+  padding: 0 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--fs-md);
+  line-height: 1;
+  color: var(--p-accent, var(--p-ink));
+}
+.dc20-alt-sheet .fx-disabled .fx-toggle { color: var(--p-ink-muted, var(--p-ink)); opacity: 0.7; }
+.dc20-alt-sheet .fx-toggle:hover { filter: brightness(1.2); }
 
 /* ════════════════════════════════════════
    ITEM ROWS (Features, Inventory)

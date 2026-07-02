@@ -26,9 +26,15 @@
     <h4 class="subsection-heading">{{localize "DC20AltSheet.cond.passive"}}</h4>
     <div class="effects-list">
       {{#each passiveEffects}}
-      <div class="effect-row fx-interactive" data-effect-id="{{id}}" title="{{localize "DC20AltSheet.cond.readEdit"}}">
+      <div class="effect-row fx-interactive{{#if disabled}} fx-disabled{{/if}}" data-effect-id="{{id}}" title="{{localize "DC20AltSheet.cond.readEdit"}}">
         {{#if icon}}<img class="fx-icon" src="{{icon}}" alt="{{name}}">{{/if}}
         <span class="fx-name">{{name}}</span>
+        {{#if @root.isEditable}}
+        <button type="button" class="fx-toggle" data-action="toggleEffect" data-effect-id="{{id}}"
+          title="{{#if disabled}}{{localize "DC20AltSheet.cond.enableEffect"}}{{else}}{{localize "DC20AltSheet.cond.disableEffect"}}{{/if}}">
+          <i class="fas {{#if disabled}}fa-toggle-off{{else}}fa-toggle-on{{/if}}"></i>
+        </button>
+        {{/if}}
       </div>
       {{/each}}
     </div>
@@ -40,10 +46,16 @@
     <h4 class="subsection-heading">{{localize "DC20AltSheet.cond.temporary"}}</h4>
     <div class="effects-list">
       {{#each temporaryEffects}}
-      <div class="effect-row fx-interactive" data-effect-id="{{id}}" title="{{localize "DC20AltSheet.cond.readEdit"}}">
+      <div class="effect-row fx-interactive{{#if disabled}} fx-disabled{{/if}}" data-effect-id="{{id}}" title="{{localize "DC20AltSheet.cond.readEdit"}}">
         {{#if icon}}<img class="fx-icon" src="{{icon}}" alt="{{name}}">{{/if}}
         <span class="fx-name">{{name}}</span>
         {{#if duration}}<span class="fx-dur muted">{{duration}}</span>{{/if}}
+        {{#if @root.isEditable}}
+        <button type="button" class="fx-toggle" data-action="toggleEffect" data-effect-id="{{id}}"
+          title="{{#if disabled}}{{localize "DC20AltSheet.cond.enableEffect"}}{{else}}{{localize "DC20AltSheet.cond.disableEffect"}}{{/if}}">
+          <i class="fas {{#if disabled}}fa-toggle-off{{else}}fa-toggle-on{{/if}}"></i>
+        </button>
+        {{/if}}
       </div>
       {{/each}}
     </div>
