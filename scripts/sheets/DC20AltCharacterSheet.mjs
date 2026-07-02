@@ -37,6 +37,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       addCustomRoll: DC20AltCharacterSheet._onAddCustomRoll,
       levelUp:       DC20AltCharacterSheet._onLevelUp,
       levelDown:     DC20AltCharacterSheet._onLevelDown,
+      toggleEffect:  DC20AltCharacterSheet._onToggleEffect,
       rest:          DC20AltCharacterSheet._onRest,
       masteryUp:     DC20AltCharacterSheet._onMasteryUp,
       masteryDown:   DC20AltCharacterSheet._onMasteryDown,
@@ -490,7 +491,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   _bindConditionEffects() {
     this.element.querySelectorAll('.effect-row[data-effect-id]').forEach(row => {
       const effectId = row.dataset.effectId;
-      row.addEventListener('click', () => {
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('button')) return; // the enable/disable toggle handles itself
         const eff = this._findEffect(effectId);
         if (!eff) return;
         this._openPopup(eff.name, eff.description ?? '', row);
@@ -1109,25 +1111,33 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /** Dynamically import a module from the running DC20 system. */
   async _systemImport(relPath) {
     const p = `systems/dc20rpg/module/${relPath}`;
-    // Build candidate URLs — always absolute, so import() never resolves them
-    // relative to this module (getRoute may return a slash-less path).
+    // Candidate URLs, most-likely-cached first. Resolving `p` against
+    // document.baseURI mirrors how the browser resolved the system's own
+    // <script src="systems/…"> tag, so that candidate hits the already-loaded
+    // module even on hosted setups with a route prefix.
     const candidates = [];
     try {
       const r = foundry.utils?.getRoute?.(p);
-      if (r) candidates.push(r.includes('://') || r.startsWith('/') ? r : `/${r}`);
+      if (r) candidates.push(new URL(r.includes('://') || r.startsWith('/') ? r : `/${r}`, document.baseURI).href);
     } catch { /* getRoute unavailable */ }
-    candidates.push(`/${p}`);
+    try { candidates.push(new URL(p, document.baseURI).href); } catch { /* ignore */ }
     try { candidates.push(new URL(`/${p}`, window.location.origin).href); } catch { /* ignore */ }
 
-    let lastErr;
-    for (const url of candidates) {
+    const attempts = [];
+    for (const url of [...new Set(candidates)]) {
       try {
         const mod = await import(url);
         if (mod) return mod;
-      } catch (err) { lastErr = err; }
+      } catch (err) { attempts.push(`${url} → ${err?.message ?? err}`); }
     }
-    console.error('DC20 Alt Sheet | failed to load system module', relPath, lastErr);
+    console.error(`DC20 Alt Sheet | failed to load system module "${relPath}". Attempts:\n${attempts.join('\n')}`);
     return null;
+  }
+
+  /** Resolve the system's changeLevel function (drives the advancement dialog). */
+  async _getChangeLevel() {
+    const mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
+    return typeof mod?.changeLevel === 'function' ? mod.changeLevel : null;
   }
 
   /* -------------------------------------------- */
@@ -1631,37 +1641,44 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       return;
     }
 
+    const before = Number(classItem.system?.level) || 0;
+    if (before >= 20) {
+      ui.notifications?.info(game.i18n.localize('DC20AltSheet.notify.maxLevel'));
+      return;
+    }
+
     const resetXp = async () => {
       if (this.actor.flags?.[MODULE_ID]?.trackXP) {
         await this.actor.setFlag(MODULE_ID, 'xpValue', 0);
       }
     };
 
-    // Try to find changeLevel: the system bundles everything into dc20rpg.mjs,
-    // so try the main bundle first; individual source files only exist in dev.
-    let mod = await this._systemImport('dc20rpg.mjs');
-    if (!mod?.changeLevel) mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
-    if (mod?.changeLevel) {
+    // Preferred path — the exact call the official sheet makes on its
+    // level-up button: changeLevel("true", classId, actor). It opens the
+    // system's advancement dialog and then raises the class level.
+    const changeLevel = await this._getChangeLevel();
+    if (changeLevel) {
       try {
-        await mod.changeLevel('true', classItem.id, this.actor);
-        await resetXp();
-        return;
+        await changeLevel('true', classItem.id, this.actor);
       } catch (err) {
         console.error('DC20 Alt Sheet | changeLevel failed', err);
-        ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelUpFailed', { error: err?.message ?? err }));
-        return;
+        // The advancement dialog opens before the level write inside
+        // changeLevel, so a late throw doesn't necessarily mean failure —
+        // only report an error if the level really didn't change.
+        const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
+        if (after === before) {
+          ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelUpFailed', { error: err?.message ?? err }));
+          return;
+        }
       }
+      await resetXp();
+      return;
     }
 
     // Fallback: the system module couldn't be loaded — at least raise the
     // class level directly so the button still does something visible.
-    const current = Number(classItem.system?.level) || 0;
-    if (current >= 20) {
-      ui.notifications?.info(game.i18n.localize('DC20AltSheet.notify.maxLevel'));
-      return;
-    }
     try {
-      await classItem.update({ 'system.level': current + 1 });
+      await classItem.update({ 'system.level': before + 1 });
       await resetXp();
       ui.notifications?.warn(game.i18n.localize('DC20AltSheet.notify.levelUpFallback'));
     } catch (err) {
@@ -1680,26 +1697,35 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       return;
     }
 
-    const current = Number(classItem.system?.level) || 0;
-    if (current <= 0) {
+    const before = Number(classItem.system?.level) || 0;
+    if (before <= 0) {
       ui.notifications?.info(game.i18n.localize('DC20AltSheet.notify.minLevel'));
       return;
     }
 
-    let mod = await this._systemImport('dc20rpg.mjs');
-    if (!mod?.changeLevel) mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
-    if (mod?.changeLevel) {
+    // The official sheet confirms before levelling down — advancements for
+    // the current level get removed in the process.
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window:  { title: game.i18n.localize('DC20AltSheet.dialog.levelDown.title') },
+      content: game.i18n.localize('DC20AltSheet.dialog.levelDown.content'),
+    });
+    if (!confirmed) return;
+
+    const changeLevel = await this._getChangeLevel();
+    if (changeLevel) {
       try {
-        await mod.changeLevel('false', classItem.id, this.actor);
+        await changeLevel('false', classItem.id, this.actor);
         return;
       } catch (err) {
         console.error('DC20 Alt Sheet | changeLevel(false) failed', err);
+        const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
+        if (after !== before) return; // level did change — treat as success
       }
     }
 
     // Fallback: directly decrement the class level
     try {
-      await classItem.update({ 'system.level': current - 1 });
+      await classItem.update({ 'system.level': before - 1 });
     } catch (err) {
       console.error('DC20 Alt Sheet | level-down fallback failed', err);
       ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelDownFailed', { error: err?.message ?? err }));
@@ -1934,6 +1960,16 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     });
     if (!ok) return;
     await resetLifetimeStats(this.actor);
+    this.render();
+  }
+
+  /** Enable / disable an Active Effect from the Conditions tab. */
+  static async _onToggleEffect(event, target) {
+    event.stopPropagation();
+    const effectId = target.closest('[data-effect-id]')?.dataset.effectId;
+    const effect = this._findEffect(effectId);
+    if (!effect) return;
+    await effect.update({ disabled: !effect.disabled });
     this.render();
   }
 

@@ -279,7 +279,9 @@
       "passive":      "Passive",
       "temporary":    "Temporary",
       "readEdit":     "Left-click to read · Right-click to edit",
-      "stackable":    "stackable"
+      "stackable":    "stackable",
+      "enableEffect": "Enable this effect",
+      "disableEffect":"Disable this effect"
     },
 
     "act": {
@@ -350,6 +352,10 @@
       "resetStats": {
         "title":   "Reset Lifetime Statistics",
         "content": "Clear all lifetime statistics for this character? Session stats are unaffected."
+      },
+      "levelDown": {
+        "title":   "Level Down",
+        "content": "Do you want to level down? Advancements gained at the current level will be removed."
       },
       "save":   "Save",
       "cancel": "Cancel",
