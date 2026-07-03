@@ -1124,20 +1124,28 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     try { candidates.push(new URL(`/${p}`, window.location.origin).href); } catch { /* ignore */ }
 
     const attempts = [];
+    console.debug(`DC20 Alt Sheet | _systemImport trying to load: ${relPath}`, { candidates });
     for (const url of [...new Set(candidates)]) {
       try {
+        console.debug(`DC20 Alt Sheet | _systemImport attempting: ${url}`);
         const mod = await import(url);
-        if (mod) return mod;
+        if (mod) {
+          console.debug(`DC20 Alt Sheet | _systemImport succeeded: ${url}`);
+          return mod;
+        }
       } catch (err) { attempts.push(`${url} → ${err?.message ?? err}`); }
     }
     console.error(`DC20 Alt Sheet | failed to load system module "${relPath}". Attempts:\n${attempts.join('\n')}`);
     return null;
   }
 
-  /** Resolve the system's changeLevel function (drives the advancement dialog). */
-  async _getChangeLevel() {
+  /** Resolve the system's changeLevel and applyAdvancements functions. */
+  async _getLevelUpFunctions() {
     const mod = await this._systemImport('helpers/actors/itemsOnActor.mjs');
-    return typeof mod?.changeLevel === 'function' ? mod.changeLevel : null;
+    return {
+      changeLevel: typeof mod?.changeLevel === 'function' ? mod.changeLevel : null,
+      applyAdvancements: typeof mod?.applyAdvancements === 'function' ? mod.applyAdvancements : null,
+    };
   }
 
   /* -------------------------------------------- */
@@ -1631,17 +1639,22 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /** Launch the DC20 level-up flow on the character's class item. */
   static async _onLevelUp(event, target) {
     if (target?.disabled) return;
+    console.debug('DC20 Alt Sheet | Level-up button clicked');
+
     // Resolve the class item: prefer the stored id, fall back to the actual
     // class item if that id is stale/missing.
     const storedId = this.actor.system.details?.class?.id;
     let classItem = storedId ? this.actor.items.get(storedId) : null;
     if (!classItem) classItem = this.actor.items.find(i => i.type === 'class');
     if (!classItem) {
+      console.warn('DC20 Alt Sheet | No class item found');
       ui.notifications?.warn(game.i18n.localize('DC20AltSheet.notify.noClassLevelUp'));
       return;
     }
 
     const before = Number(classItem.system?.level) || 0;
+    console.debug(`DC20 Alt Sheet | Class item found: ${classItem.name} (level ${before})`);
+
     if (before >= 20) {
       ui.notifications?.info(game.i18n.localize('DC20AltSheet.notify.maxLevel'));
       return;
@@ -1653,33 +1666,66 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       }
     };
 
-    // Preferred path — the exact call the official sheet makes on its
-    // level-up button: changeLevel("true", classId, actor). It opens the
-    // system's advancement dialog and then raises the class level.
-    const changeLevel = await this._getChangeLevel();
-    if (changeLevel) {
+    // Attempt to use changeLevel or applyAdvancements from DC20 system
+    console.debug('DC20 Alt Sheet | Importing advancement functions from DC20 system...');
+    const fns = await this._getLevelUpFunctions();
+
+    if (fns.changeLevel) {
+      // Primary path: use the system's changeLevel function
+      console.debug('DC20 Alt Sheet | Using changeLevel from DC20 system');
       try {
-        await changeLevel('true', classItem.id, this.actor);
+        await fns.changeLevel('true', classItem.id, this.actor);
+        console.debug('DC20 Alt Sheet | changeLevel call completed');
+        await resetXp();
+        return;
       } catch (err) {
-        console.error('DC20 Alt Sheet | changeLevel failed', err);
-        // The advancement dialog opens before the level write inside
-        // changeLevel, so a late throw doesn't necessarily mean failure —
-        // only report an error if the level really didn't change.
+        console.error('DC20 Alt Sheet | changeLevel threw an error:', err);
+        // Judge by actual level change, not exception
         const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
-        if (after === before) {
-          ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelUpFailed', { error: err?.message ?? err }));
+        if (after !== before) {
+          console.debug(`DC20 Alt Sheet | Level changed (${before} → ${after}) despite error`);
+          await resetXp();
           return;
         }
       }
-      await resetXp();
-      return;
     }
 
-    // Fallback: the system module couldn't be loaded — at least raise the
-    // class level directly so the button still does something visible.
+    // Secondary path: try applyAdvancements directly if changeLevel is not available
+    if (fns.applyAdvancements) {
+      console.debug('DC20 Alt Sheet | Using applyAdvancements directly from DC20 system');
+      try {
+        const clazz = classItem;
+        const subclass = this.actor.items.find(i => i.type === 'subclass');
+        const ancestry = this.actor.items.find(i => i.type === 'ancestry');
+        const oldActorData = foundry.utils.deepClone(this.actor.system);
+
+        // Call applyAdvancements with the new level
+        const newLevel = Math.min(before + 1, 20);
+        await fns.applyAdvancements(this.actor, newLevel, clazz, subclass, ancestry, null, oldActorData);
+
+        // Update the class level after the dialog
+        await classItem.update({ 'system.level': newLevel });
+        await resetXp();
+        console.debug('DC20 Alt Sheet | applyAdvancements succeeded');
+        return;
+      } catch (err) {
+        console.error('DC20 Alt Sheet | applyAdvancements failed:', err);
+        // Check if level changed anyway
+        const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
+        if (after !== before) {
+          console.debug(`DC20 Alt Sheet | Level changed despite error`);
+          await resetXp();
+          return;
+        }
+      }
+    }
+
+    // Fallback: directly increment the level without opening advancement dialog
+    console.warn('DC20 Alt Sheet | No advancement functions available, using fallback');
     try {
       await classItem.update({ 'system.level': before + 1 });
       await resetXp();
+      console.debug('DC20 Alt Sheet | Fallback level increment succeeded');
       ui.notifications?.warn(game.i18n.localize('DC20AltSheet.notify.levelUpFallback'));
     } catch (err) {
       console.error('DC20 Alt Sheet | level-up fallback failed', err);
@@ -1711,21 +1757,30 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     });
     if (!confirmed) return;
 
-    const changeLevel = await this._getChangeLevel();
-    if (changeLevel) {
+    console.debug('DC20 Alt Sheet | Level-down confirmed');
+    const fns = await this._getLevelUpFunctions();
+
+    if (fns.changeLevel) {
+      console.debug('DC20 Alt Sheet | Using changeLevel for level-down');
       try {
-        await changeLevel('false', classItem.id, this.actor);
+        await fns.changeLevel('false', classItem.id, this.actor);
+        console.debug('DC20 Alt Sheet | changeLevel(false) succeeded');
         return;
       } catch (err) {
-        console.error('DC20 Alt Sheet | changeLevel(false) failed', err);
+        console.error('DC20 Alt Sheet | changeLevel(false) failed:', err);
         const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
-        if (after !== before) return; // level did change — treat as success
+        if (after !== before) {
+          console.debug('DC20 Alt Sheet | Level changed despite error');
+          return;
+        }
       }
     }
 
     // Fallback: directly decrement the class level
+    console.warn('DC20 Alt Sheet | Using fallback level decrement');
     try {
       await classItem.update({ 'system.level': before - 1 });
+      console.debug('DC20 Alt Sheet | Fallback level-down succeeded');
     } catch (err) {
       console.error('DC20 Alt Sheet | level-down fallback failed', err);
       ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelDownFailed', { error: err?.message ?? err }));
@@ -1966,11 +2021,12 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /** Enable / disable an Active Effect from the Conditions tab. */
   static async _onToggleEffect(event, target) {
     event.stopPropagation();
+    event.preventDefault();
     const effectId = target.closest('[data-effect-id]')?.dataset.effectId;
     const effect = this._findEffect(effectId);
     if (!effect) return;
+    // Update the effect; FoundryV2's update hook will re-render the sheet automatically
     await effect.update({ disabled: !effect.disabled });
-    this.render();
   }
 
 }
