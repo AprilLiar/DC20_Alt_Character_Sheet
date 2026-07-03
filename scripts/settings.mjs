@@ -79,15 +79,39 @@ export function registerSettings() {
   });
 }
 
-export function applyLanguageSetting() {
-  const lang = game.settings.get(MODULE_ID, 'uiLanguage');
-  game.i18n.lang = lang;
+/**
+ * Apply the module's UI language independently of Foundry's core language.
+ *
+ * Foundry loads translations once at startup from the core language setting,
+ * so simply setting `game.i18n.lang` does nothing — the `{{localize}}` helper
+ * reads the already-loaded `game.i18n.translations`. Instead we fetch our own
+ * language file for the chosen language and merge its keys over the live
+ * translations table, then re-render open sheets. Because en.json and ru.json
+ * share the same key set, this fully overrides in either direction.
+ */
+export async function applyLanguageSetting() {
+  let lang = 'en';
+  try { lang = game.settings.get(MODULE_ID, 'uiLanguage') || 'en'; } catch { /* pre-ready */ }
 
-  // Re-render all open DC20 Alt Character Sheets to apply the language change
-  for (const sheet of Object.values(ui.windows)) {
-    if (sheet?.constructor?.name === 'DC20AltCharacterSheet') {
-      sheet.render();
+  try {
+    const path = `modules/${MODULE_ID}/lang/${lang}.json`;
+    const url  = foundry.utils?.getRoute?.(path) ?? `/${path}`;
+    const resp = await fetch(url);
+    if (resp.ok) {
+      const data = await resp.json();
+      // Deep-merge our chosen-language keys over the live translations table.
+      foundry.utils.mergeObject(game.i18n.translations, data, { inplace: true });
+      game.i18n.lang = lang;
+    } else {
+      console.warn(`DC20 Alt Sheet | language file not found: ${url} (${resp.status})`);
     }
+  } catch (err) {
+    console.error('DC20 Alt Sheet | failed to apply language setting', err);
+  }
+
+  // Re-render all open DC20 Alt Character Sheets to apply the language change.
+  for (const app of Object.values(ui.windows ?? {})) {
+    if (app?.constructor?.name === 'DC20AltCharacterSheet') app.render();
   }
 }
 
