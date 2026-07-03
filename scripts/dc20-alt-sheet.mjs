@@ -2,7 +2,7 @@ import { DC20AltCharacterSheet } from './sheets/DC20AltCharacterSheet.mjs';
 import { registerHandlebarsHelpers } from './helpers/handlebars.mjs';
 import { registerItemUseHook } from './hooks/trackItemUse.mjs';
 import { registerRollStatsHook } from './hooks/trackRollStats.mjs';
-import { registerSettings, applySheetSettings } from './settings.mjs';
+import { registerSettings, applySheetSettings, applyLanguageSetting } from './settings.mjs';
 
 import { MODULE_ID } from './constants.mjs';
 export { MODULE_ID };
@@ -31,6 +31,12 @@ Hooks.once('init', () => {
     'dc20-split-conditions':  `${components}/split-conditions.hbs`,
     'dc20-split-activities':  `${components}/split-activities.hbs`,
   });
+});
+
+// Apply the chosen UI language once Foundry has loaded its translations, so
+// the sheet's language is independent of the core Foundry language setting.
+Hooks.once('i18nInit', () => {
+  applyLanguageSetting();
 });
 
 Hooks.once('ready', () => {
