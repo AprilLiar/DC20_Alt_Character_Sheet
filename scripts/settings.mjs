@@ -100,7 +100,15 @@ export async function applyLanguageSetting() {
     if (resp.ok) {
       const data = await resp.json();
       // Deep-merge our chosen-language keys over the live translations table.
-      foundry.utils.mergeObject(game.i18n.translations, data, { inplace: true });
+      // game.i18n.translations is a plain nested object in every Foundry
+      // version this module has targeted; guard the shape defensively in
+      // case a future core version changes it (e.g. to a Map), rather than
+      // throwing and leaving the language switch half-applied.
+      if (game.i18n.translations && typeof game.i18n.translations === 'object') {
+        foundry.utils.mergeObject(game.i18n.translations, data, { inplace: true });
+      } else {
+        console.warn('DC20 Alt Sheet | game.i18n.translations has an unexpected shape; language override skipped');
+      }
       game.i18n.lang = lang;
     } else {
       console.warn(`DC20 Alt Sheet | language file not found: ${url} (${resp.status})`);
