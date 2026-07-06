@@ -1149,22 +1149,36 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
    * advancement subsystem and are used by our replicated fallback so we can
    * still open the "You Become Stronger" dialog if `changeLevel` is ever
    * renamed or moved.
+   *
+   * `clearOverridenScalingValue` moved in the system's Foundry-v14 update:
+   * it used to live in a standalone helpers/items/scalingItems.mjs, but is
+   * now defined and exported directly from itemsOnActor.mjs. We check the
+   * new location first and fall back to the old module for older installs
+   * (this module still declares compatibility down to dc20rpg 0.9).
    */
   async _getAdvancementApi() {
     const items = await this._systemImport('helpers/actors/itemsOnActor.mjs');
-    let adv = null, scaling = null;
+    let adv = null;
     if (typeof items?.applyAdvancements !== 'function') {
       // applyAdvancements is not exported from itemsOnActor — it's imported
       // there from the advancement subsystem. Pull it from its real home.
       adv = await this._systemImport('subsystems/character-progress/advancement/advancements.mjs');
-      scaling = await this._systemImport('helpers/items/scalingItems.mjs');
+    }
+    let clearOverridenScalingValue = typeof items?.clearOverridenScalingValue === 'function'
+      ? items.clearOverridenScalingValue
+      : null;
+    if (!clearOverridenScalingValue) {
+      // Pre-v14 system versions exported this from a separate module.
+      const scaling = await this._systemImport('helpers/items/scalingItems.mjs');
+      clearOverridenScalingValue = typeof scaling?.clearOverridenScalingValue === 'function'
+        ? scaling.clearOverridenScalingValue
+        : null;
     }
     return {
       changeLevel:        typeof items?.changeLevel === 'function' ? items.changeLevel : null,
       applyAdvancements:  typeof adv?.applyAdvancements === 'function' ? adv.applyAdvancements : null,
       removeAdvancements: typeof adv?.removeAdvancements === 'function' ? adv.removeAdvancements : null,
-      clearOverridenScalingValue:
-        typeof scaling?.clearOverridenScalingValue === 'function' ? scaling.clearOverridenScalingValue : null,
+      clearOverridenScalingValue,
     };
   }
 
@@ -1520,7 +1534,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   /* -------------------------------------------- */
 
   _registerContextMenu() {
-    const CM = foundry.applications.ux.ContextMenu.implementation;
+    const CM = foundry.applications?.ux?.ContextMenu?.implementation ?? globalThis.ContextMenu;
     new CM(this.element, '[data-item-id]', [
       {
         name: game.i18n.localize('DC20AltSheet.ctx.addFavourite'),
