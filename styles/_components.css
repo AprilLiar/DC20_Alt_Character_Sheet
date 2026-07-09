@@ -132,6 +132,14 @@
 .dc20-alt-sheet .skill-name {
   font-size: var(--fs-md);
   color: var(--p-ink);
+  /* Grid's 1fr track defaults to a min-width of its content's intrinsic
+     size, so a long name would otherwise push .skill-bonus past the row's
+     right edge instead of truncating. min-width: 0 lets this column shrink
+     so the bonus column stays locked to the right border. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .dc20-alt-sheet .skill-name.rollable:hover { color: var(--p-accent); }
 

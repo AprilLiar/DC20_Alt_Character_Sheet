@@ -3,8 +3,16 @@
 <div class="hstrip-bar-wrap">
   <div class="hstrip-bar-fill" style="width: {{pct}}%; background: {{color}};"></div>
   <div class="hstrip-bar-text">
-    <input type="number" class="hstrip-input" name="{{valuePath}}" value="{{value}}"
-      {{#unless @root.isEditable}}disabled{{/unless}}>
+    {{!-- Health's current-HP input is handled by _bindHealthResource (JS),
+         which keeps current/temp/value in sync together — it deliberately
+         has no name= so Foundry's generic form auto-submit skips it. --}}
+    {{#if isHealth}}
+      <input type="number" class="hstrip-input" data-health-field="current" value="{{value}}"
+        {{#unless @root.isEditable}}disabled{{/unless}}>
+    {{else}}
+      <input type="number" class="hstrip-input" name="{{valuePath}}" value="{{value}}"
+        {{#unless @root.isEditable}}disabled{{/unless}}>
+    {{/if}}
     {{#if hasMax}}
       <span class="hstrip-sep">/</span>
       {{#if maxPath}}
@@ -19,7 +27,7 @@
 {{#if tempPath}}
 <div class="hstrip-temp-hp" title="{{localize "DC20AltSheet.header.tempHp"}}">
   <span class="hstrip-temp-label">THP</span>
-  <input type="number" class="hstrip-input hstrip-temp-input" name="{{tempPath}}" value="{{temp}}"
+  <input type="number" class="hstrip-input hstrip-temp-input" data-health-field="temp" value="{{temp}}"
     min="0" {{#unless @root.isEditable}}disabled{{/unless}}>
 </div>
 {{/if}}

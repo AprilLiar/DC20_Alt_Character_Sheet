@@ -441,7 +441,17 @@
 /* 5 tiny dots (5×4px + 4×1px = 24px) for the split-core panels */
 .dc20-alt-sheet .sc-skill-profs { display: flex; gap: 1px; }
 .dc20-alt-sheet .sc-skill-profs .prof-dot { width: 4px; height: 4px; }
-.dc20-alt-sheet .sc-skill-name { flex: 1; color: var(--p-ink); overflow: hidden; }
+.dc20-alt-sheet .sc-skill-name {
+  flex: 1;
+  color: var(--p-ink);
+  /* Flex items default to min-width: auto (content-based), so without
+     min-width: 0 a long name would push .sc-skill-bonus off the right edge
+     instead of truncating. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .dc20-alt-sheet .sc-skill-attr {
   font-size: 8px;
   color: var(--p-ink-muted);

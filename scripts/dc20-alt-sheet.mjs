@@ -2,7 +2,7 @@ import { DC20AltCharacterSheet } from './sheets/DC20AltCharacterSheet.mjs';
 import { registerHandlebarsHelpers } from './helpers/handlebars.mjs';
 import { registerItemUseHook } from './hooks/trackItemUse.mjs';
 import { registerRollStatsHook } from './hooks/trackRollStats.mjs';
-import { registerSettings, applySheetSettings, applyLanguageSetting } from './settings.mjs';
+import { registerSettings, applySheetSettings, applyLanguageSetting, applyCustomPalette } from './settings.mjs';
 
 import { MODULE_ID } from './constants.mjs';
 export { MODULE_ID };
@@ -43,4 +43,5 @@ Hooks.once('ready', () => {
   registerItemUseHook();
   registerRollStatsHook();
   applySheetSettings();
+  applyCustomPalette();
 });
