@@ -328,6 +328,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindCoreSkillTabs();
     this._bindApPips();
     this._bindResourceDropdown();
+    this._bindHealthResource();
     this._bindSplitBuilder();
     this._bindSplitDivider();
     this._registerContextMenu();
@@ -974,6 +975,40 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         await this.actor.setFlag(MODULE_ID, 'resourceColors', colors);
         await this.actor.update({ [`system.resources.custom.-=${key}`]: null });
       });
+    });
+  }
+
+  /**
+   * Health's current-HP and temp-HP inputs (rendered once collapsed in the
+   * header and once again per row in the resource dropdown) have no name=
+   * attribute, so Foundry's generic submitOnChange form processing ignores
+   * them. Instead we commit both together in one update, recomputing
+   * system.resources.health.value (= current + temp) so it stays correct
+   * for the DC20 system's own damage/heal code, which reads that field
+   * directly rather than deriving it from current/temp.
+   */
+  _bindHealthResource() {
+    if (!this.isEditable) return;
+    const scopes = new Set();
+    this.element.querySelectorAll('[data-health-field]').forEach(inp => {
+      const scope = inp.closest('.hstrip-resource, .res-row');
+      if (scope) scopes.add(scope);
+    });
+    scopes.forEach(scope => {
+      const curInp  = scope.querySelector('[data-health-field="current"]');
+      const tempInp = scope.querySelector('[data-health-field="temp"]');
+      if (!curInp) return;
+      const commit = () => {
+        const current = Math.trunc(Number(curInp.value)) || 0;
+        const temp    = tempInp ? Math.max(0, Math.trunc(Number(tempInp.value)) || 0) : 0;
+        this.actor.update({
+          'system.resources.health.current': current,
+          'system.resources.health.temp':    temp,
+          'system.resources.health.value':   current + temp,
+        });
+      };
+      curInp.addEventListener('change', commit);
+      tempInp?.addEventListener('change', commit);
     });
   }
 

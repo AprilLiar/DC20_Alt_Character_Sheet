@@ -284,6 +284,15 @@
       "disableEffect":"Disable this effect"
     },
 
+    "palette": {
+      "title":          "DC20 Alt Sheet: Color Palette",
+      "intro":          "Hover or focus a swatch to highlight the matching elements on any open character sheet.",
+      "resetOne":       "Reset to default",
+      "resetAll":       "↺ Reset All Colors",
+      "resetAllTitle":  "Reset All Colors",
+      "resetAllContent":"Reset every color to the default palette? This cannot be undone."
+    },
+
     "act": {
       "levelProgression":      "Level & Progression",
       "level":                 "Level",

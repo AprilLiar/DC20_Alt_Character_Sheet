@@ -1,0 +1,25 @@
+<div class="palette-app">
+  <p class="palette-intro">{{localize "DC20AltSheet.palette.intro"}}</p>
+
+  {{#each groups}}
+  <div class="palette-group">
+    <h3 class="palette-group-title">{{label}}</h3>
+    {{#each vars}}
+    <div class="palette-row" data-palette-key="{{key}}">
+      <span class="palette-row-label">{{label}}</span>
+      <input type="color" name="{{key}}" value="{{value}}">
+      <button type="button" class="palette-reset-btn{{#unless isCustom}} hidden{{/unless}}"
+        data-action="resetOne" title="{{localize "DC20AltSheet.palette.resetOne"}}">
+        <i class="fas fa-rotate-left"></i>
+      </button>
+    </div>
+    {{/each}}
+  </div>
+  {{/each}}
+
+  <div class="palette-footer">
+    <button type="button" class="palette-reset-all-btn" data-action="resetAll">
+      {{localize "DC20AltSheet.palette.resetAll"}}
+    </button>
+  </div>
+</div>

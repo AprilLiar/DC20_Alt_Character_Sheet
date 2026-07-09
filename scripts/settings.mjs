@@ -1,4 +1,8 @@
 import { MODULE_ID } from './constants.mjs';
+import { applyCustomPalette } from './helpers/applyPalette.mjs';
+import { ColorPaletteApp } from './apps/ColorPaletteApp.mjs';
+
+export { applyCustomPalette };
 
 const BODY_FONTS = {
   "Signika, Arial, sans-serif":                          'Signika (default)',
@@ -47,12 +51,12 @@ export function registerSettings() {
 
   game.settings.register(MODULE_ID, 'fontScale', {
     name: 'DC20 Alt Sheet: Font Size',
-    hint: 'Scales all text on the character sheet independently of layout. 1.0 = small, 1.5 = default.',
+    hint: 'Scales all text on the character sheet independently of layout. 1.0 = small, 1.25 = default.',
     scope: 'client',
     config: true,
     type: Number,
     range: { min: 1.0, max: 4.0, step: 0.25 },
-    default: 1.5,
+    default: 1.25,
     onChange: applySheetSettings,
   });
 
@@ -76,6 +80,24 @@ export function registerSettings() {
     choices: HEADING_FONTS,
     default: "Georgia, 'Times New Roman', serif",
     onChange: applySheetSettings,
+  });
+
+  // Holds the user's custom color overrides; edited via the ColorPaletteApp
+  // menu below, not shown as a raw config field.
+  game.settings.register(MODULE_ID, 'customPalette', {
+    scope: 'client',
+    config: false,
+    type: Object,
+    default: {},
+  });
+
+  game.settings.registerMenu(MODULE_ID, 'colorPaletteMenu', {
+    name:  'DC20 Alt Sheet: Color Palette',
+    label: 'Configure Colors',
+    hint:  'Customize the color of every themed element on the character sheet.',
+    icon:  'fas fa-palette',
+    type:  ColorPaletteApp,
+    restricted: false,
   });
 }
 

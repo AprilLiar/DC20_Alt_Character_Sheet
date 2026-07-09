@@ -49,13 +49,23 @@ export function prepareHeader(actor) {
       maxPath:   `system.resources.${key}.max`,
       removable: false,
     };
-    // Attach temp HP only for the health resource
+    // Health shows real current HP (not current+temp) alongside temp HP.
+    // DC20 stores `.value` as current+temp combined (used internally by its
+    // own damage/heal application code) and `.current` as the real HP —
+    // see subsystems/target/target.mjs#applyHeal in the dc20rpg source,
+    // which writes `value: newCurrent + temp, current: newCurrent`. Editing
+    // is handled by a dedicated JS binding (_bindHealthResource) that keeps
+    // current/temp/value in sync together, so valuePath/tempPath here are
+    // display-only bookkeeping, not form-submit paths.
     if (key === 'health') {
-      const temp = r.temp ?? r.tempHp ?? r.tempHP ?? 0;
-      if (typeof temp === 'number') {
-        entry.temp     = temp;
-        entry.tempPath = `system.resources.${key}.temp`;
-      }
+      const rawTemp = r.temp ?? r.tempHp ?? r.tempHP ?? 0;
+      const temp    = typeof rawTemp === 'number' ? rawTemp : 0;
+      const current = typeof r.current === 'number' ? r.current : Math.max(0, (r.value ?? 0) - temp);
+      entry.value     = current;
+      entry.pct       = clampPct(current, max); // fill bar should match the displayed current HP, not current+temp
+      entry.isHealth  = true;
+      entry.temp      = temp;
+      entry.tempPath  = `system.resources.${key}.temp`;
     }
     resources.push(entry);
   };
