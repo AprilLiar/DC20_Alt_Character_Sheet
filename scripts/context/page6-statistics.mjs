@@ -16,7 +16,17 @@ function fmtVal(v) {
   return v === null || v === undefined ? '—' : v;
 }
 
-/** Resolve a roll key like "item:abc", "skill:athletics", "save:mig" to display data. */
+/**
+ * Resolve a roll key to display data. Current scheme:
+ * - "item:<itemId>" — resolved against the actor's items
+ * - "check:<label>" — label is already DC20's own localized roll label
+ *   (e.g. "Athletics", "Might Save"), used verbatim as both key and name
+ *
+ * "skill:<key>" / "save:<key>" are legacy keys from an earlier heuristic
+ * that never actually matched real DC20 chat-message data (no such flags
+ * exist on the message), so nothing has ever written them — kept here only
+ * so any stray old flag data still resolves instead of vanishing silently.
+ */
 function resolveRollable(actor, key, count) {
   const colon = key.indexOf(':');
   const type = colon >= 0 ? key.slice(0, colon) : 'item';
@@ -39,7 +49,7 @@ function resolveRollable(actor, key, count) {
     return { key, type: 'save', name, img: null, count };
   }
 
-  // Generic check — use the raw id as label
+  // "check:<label>" and any unrecognized prefix — id is already the display label.
   return { key, type: 'check', name: id, img: null, count };
 }
 
