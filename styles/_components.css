@@ -1618,8 +1618,11 @@
 }
 .dc20-alt-sheet .char-slot-browse {
   flex-shrink: 0;
+  box-sizing: border-box;
   width: calc(22px * var(--dc20-scale));
   height: calc(22px * var(--dc20-scale));
+  padding: 0;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1631,6 +1634,10 @@
   cursor: pointer;
   border-radius: var(--r-sm);
   transition: color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+}
+.dc20-alt-sheet .char-slot-browse i {
+  font-size: inherit;
+  line-height: 1;
 }
 .dc20-alt-sheet .char-slot-browse:hover {
   color: var(--p-accent);
