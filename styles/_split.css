@@ -108,6 +108,20 @@
   flex: 1 1 0;
 }
 
+/* ── 4-pane split view (2×2 grid) ── */
+.dc20-alt-sheet .split-view-4 {
+  display: none;
+  height: 100%;
+  min-height: 0;
+}
+.dc20-alt-sheet .split-view-4.active {
+  display: flex;
+  flex-direction: column;
+}
+.dc20-alt-sheet .split-view-4 .split-row-bottom {
+  align-items: stretch;
+}
+
 /* Horizontal draggable divider (top row ↔ bottom pane) */
 .dc20-alt-sheet .split-divider-h {
   flex: 0 0 7px;
@@ -183,15 +197,16 @@
   border-color: var(--p-accent);
   color: #fff;
 }
-.dc20-alt-sheet .split-zones-top-row {
+.dc20-alt-sheet .split-zones-top-row,
+.dc20-alt-sheet .split-zones-bottom-row {
   display: flex;
   gap: var(--gap-md);
 }
+.dc20-alt-sheet .split-zones-bottom-row {
+  margin-top: var(--gap-xs);
+}
 .dc20-alt-sheet .split-bottom-wrap {
   /* shown via JS when left+right are filled */
-}
-.dc20-alt-sheet .split-zone-full {
-  width: 100%;
 }
 .dc20-alt-sheet .split-create-btn {
   display: block;
