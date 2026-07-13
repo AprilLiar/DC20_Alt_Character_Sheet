@@ -67,6 +67,12 @@
         </div>
         {{else}}
         <span class="char-slot-empty">{{localize "DC20AltSheet.act.character"}} {{label}}…</span>
+        {{#if @root.isEditable}}
+        <button type="button" class="char-slot-browse" data-action="openCompendiumBrowser" data-slot-type="{{type}}"
+          title="{{localize "DC20AltSheet.act.browseCompendium"}}">
+          <i class="fas fa-book-open"></i>
+        </button>
+        {{/if}}
         {{/if}}
       </div>
       {{/each}}

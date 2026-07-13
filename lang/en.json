@@ -306,6 +306,7 @@
       "xpAdd":                 "Add this amount",
       "xpAmountTitle":         "Amount of XP to add or subtract",
       "character":             "Character",
+      "browseCompendium":      "Browse compendiums for this",
       "rest":                  "Rest",
       "campActions":           "Camp Actions",
       "announceActivity":      "Announce this camp activity",
@@ -380,6 +381,7 @@
       "restError":         "Could not access the DC20 rest flow.",
       "campAlready":       "{name} is already a camp action.",
       "slotTypeError":     "This slot only accepts items of type \"{type}\".",
+      "compendiumBrowserError": "Could not open the DC20 compendium browser.",
       "levelUpFailed":     "Level-up failed: {error}",
       "levelDownFailed":   "Level-down failed: {error}"
     },
