@@ -1250,14 +1250,28 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     const attempts = [];
     console.debug(`DC20 Alt Sheet | _systemImport trying to load: ${relPath}`, { candidates });
     for (const url of [...new Set(candidates)]) {
+      // Diagnostic pre-check: a plain fetch() is governed by CSP's connect-src
+      // while import() is governed by script-src (and, on some hosts, by
+      // dynamic-import-specific rules that differ from either). Probing with
+      // fetch first tells us whether the file is reachable over HTTP at all,
+      // so a failed import() next to a *successful* fetch() here narrows the
+      // problem down to a module-loading/CSP restriction rather than a
+      // missing file or network issue.
+      let fetchDiag = '';
       try {
-        console.debug(`DC20 Alt Sheet | _systemImport attempting: ${url}`);
+        const res = await fetch(url, { cache: 'no-store' });
+        fetchDiag = `fetch: ${res.status} ${res.statusText} (content-type: ${res.headers.get('content-type') ?? 'n/a'})`;
+      } catch (fetchErr) {
+        fetchDiag = `fetch threw: ${fetchErr?.message ?? fetchErr}`;
+      }
+      try {
+        console.debug(`DC20 Alt Sheet | _systemImport attempting: ${url}`, { fetchDiag });
         const mod = await import(url);
         if (mod) {
           console.debug(`DC20 Alt Sheet | _systemImport succeeded: ${url}`);
           return mod;
         }
-      } catch (err) { attempts.push(`${url} → ${err?.message ?? err}`); }
+      } catch (err) { attempts.push(`${url} → ${err?.message ?? err} [${fetchDiag}]`); }
     }
     console.error(`DC20 Alt Sheet | failed to load system module "${relPath}". Attempts:\n${attempts.join('\n')}`);
     return null;
