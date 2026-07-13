@@ -45,6 +45,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       convertPoints: DC20AltCharacterSheet._onConvertPoints,
       xpApply:       DC20AltCharacterSheet._onXpApply,
       removeCharItem: DC20AltCharacterSheet._onRemoveCharItem,
+      openCompendiumBrowser: DC20AltCharacterSheet._onOpenCompendiumBrowser,
       rollKnowledge:    DC20AltCharacterSheet._onRollKnowledge,
       useCampAction:    DC20AltCharacterSheet._onUseCampAction,
       deleteCampAction: DC20AltCharacterSheet._onDeleteCampAction,
@@ -1901,6 +1902,53 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     const item = this.actor.items.get(itemId);
     if (!item) return;
     item.delete();
+  }
+
+  /** Open DC20's own compendium browser, locked to one item type, for an empty char slot. */
+  static async _onOpenCompendiumBrowser(event, target) {
+    const slotType = target.closest('[data-slot-type]')?.dataset.slotType;
+    if (slotType) this._openCharSlotBrowser(slotType);
+  }
+
+  /**
+   * Dynamically import and open DC20's own item-browser dialog (the same one
+   * used by the official sheet's "Add" buttons), locked to `slotType`.
+   *
+   * The browser's own "Add" button works by synthesizing a drop event and
+   * calling `parentWindow._onDrop(event)` — the convention the official V1
+   * actor sheet implements. Our sheet is ApplicationV2 and has no such
+   * method, so we hand it a minimal shim that mirrors _bindCharSlots'
+   * native drop handling: replace any existing item of this type, then
+   * create the new one so DC20's own advancement hook fires normally.
+   */
+  async _openCharSlotBrowser(slotType) {
+    const mod = await this._systemImport('dialogs/compendium-browser/item-browser.mjs');
+    const createItemBrowser = mod?.createItemBrowser;
+    if (typeof createItemBrowser !== 'function') {
+      console.error('DC20 Alt Sheet | could not load the DC20 compendium browser (createItemBrowser not found)');
+      ui.notifications?.error(game.i18n.localize('DC20AltSheet.notify.compendiumBrowserError'));
+      return;
+    }
+
+    const actor = this.actor;
+    const dropShim = {
+      async _onDrop(event) {
+        let data;
+        try { data = JSON.parse(event.dataTransfer.getData('text/plain')); } catch { return; }
+        if (data?.type !== 'Item' || !data.uuid) return;
+
+        let source;
+        try { source = await fromUuid(data.uuid); } catch { return; }
+        if (!source || source.type !== slotType) return;
+        if (source.parent?.id === actor.id) return;
+
+        const existing = actor.items.filter(i => i.type === slotType);
+        for (const ex of existing) await ex.delete();
+        await Item.create(source.toObject(), { parent: actor });
+      },
+    };
+
+    createItemBrowser(slotType, true, dropShim);
   }
 
   /** Roll a skill / trade / language from the Activities knowledge list. */

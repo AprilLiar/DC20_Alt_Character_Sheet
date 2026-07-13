@@ -1616,6 +1616,27 @@
   color: var(--p-ink-muted);
   font-style: italic;
 }
+.dc20-alt-sheet .char-slot-browse {
+  flex-shrink: 0;
+  width: calc(22px * var(--dc20-scale));
+  height: calc(22px * var(--dc20-scale));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-sm);
+  line-height: 1;
+  background: transparent;
+  border: 1px solid var(--p-border-faint);
+  color: var(--p-ink-muted);
+  cursor: pointer;
+  border-radius: var(--r-sm);
+  transition: color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+}
+.dc20-alt-sheet .char-slot-browse:hover {
+  color: var(--p-accent);
+  border-color: var(--p-accent);
+  background: var(--p-hover);
+}
 
 /* ── Rollable knowledge row name ── */
 .dc20-alt-sheet .kr-name.rollable {
