@@ -1176,6 +1176,43 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   }
 
   /**
+   * DC20's own changeLevel resolves the class/ancestry/subclass/background
+   * items to advance via actor.system.details.<type>.id — NOT the item id
+   * passed into changeLevel(). If one of those stored references is stale
+   * (points at a deleted/replaced item — e.g. after re-assigning a build
+   * slot through drag-drop or the compendium browser, if something upstream
+   * failed to update the reference), applyAdvancements silently skips that
+   * category: no error, no thrown exception, but also no advancements
+   * collected for it. The class level still increments (that write is
+   * unconditional), so the whole thing *looks* like a successful level-up
+   * that simply did nothing. Repair any such mismatch before calling into
+   * the system's level-up code, so its own unmodified logic then resolves
+   * correctly.
+   */
+  async _ensureCharacterReferences() {
+    const actor = this.actor;
+    const updates = {};
+    for (const type of ['class', 'ancestry', 'subclass', 'background']) {
+      const storedId = actor.system.details?.[type]?.id;
+      const stored = storedId ? actor.items.get(storedId) : null;
+      if (stored && stored.type === type) continue; // reference is valid
+
+      const actual = actor.items.find(i => i.type === type);
+      if (!actual || actual.id === storedId) continue; // nothing to heal
+
+      console.warn(
+        `DC20 Alt Sheet | system.details.${type}.id was stale ` +
+        `(stored: ${storedId ?? '(none)'}, actual: ${actual.id} "${actual.name}") — repairing`
+      );
+      updates[`system.details.${type}.id`] = actual.id;
+    }
+    if (Object.keys(updates).length) {
+      await actor.update(updates);
+      console.debug('DC20 Alt Sheet | Repaired stale character-build references', updates);
+    }
+  }
+
+  /**
    * Resolve the DC20 functions needed to drive a level change.
    *
    * The DC20 author confirmed there is no public/exposed level-up API, so we
@@ -1745,6 +1782,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   static async _onLevelUp(event, target) {
     if (target?.disabled) return;
     console.debug('DC20 Alt Sheet | Level-up button clicked');
+    await this._ensureCharacterReferences();
 
     // Resolve the class item: prefer the stored id, fall back to the actual
     // class item if that id is stale/missing.
@@ -1786,7 +1824,15 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         // The dialog opens before the level write, so a late throw isn't
         // necessarily failure — only bail if the level truly didn't move.
         const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
-        if (after !== before) { await resetXp(); return; }
+        if (after !== before) {
+          console.warn(
+            'DC20 Alt Sheet | Level changed despite an error above — the advancement dialog may not have ' +
+            'opened correctly. This often means one of the class/ancestry/subclass/background items has a ' +
+            'broken advancement macro (see the error for a DC20-side stack trace, e.g. from dc20rpg.mjs).'
+          );
+          await resetXp();
+          return;
+        }
       }
     }
 
@@ -1821,6 +1867,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   /** Reduce the character's class level by 1 via DC20's changeLevel flow. */
   static async _onLevelDown(event, target) {
+    await this._ensureCharacterReferences();
     const storedId = this.actor.system.details?.class?.id;
     let classItem = storedId ? this.actor.items.get(storedId) : null;
     if (!classItem) classItem = this.actor.items.find(i => i.type === 'class');
@@ -1854,7 +1901,13 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       } catch (err) {
         console.error('DC20 Alt Sheet | changeLevel("false") threw:', err);
         const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
-        if (after !== before) return;
+        if (after !== before) {
+          console.warn(
+            'DC20 Alt Sheet | Level changed despite an error above — possibly a broken advancement macro ' +
+            'on the class/ancestry/subclass/background items.'
+          );
+          return;
+        }
       }
     }
 
