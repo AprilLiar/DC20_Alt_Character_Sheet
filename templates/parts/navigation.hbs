@@ -16,6 +16,12 @@
               <span class="btab-split-sep">+</span>
               <span class="btab-icon btab-icon-{{bottomId}}"></span>
             {{/if}}
+            {{#if is4Pane}}
+              <span class="btab-split-sep">+</span>
+              <span class="btab-icon btab-icon-{{bottomId}}"></span>
+              <span class="btab-split-sep">+</span>
+              <span class="btab-icon btab-icon-{{bottomRightId}}"></span>
+            {{/if}}
           </span>
         {{else}}
           <span class="btab-icon btab-icon-{{id}}"></span>
@@ -57,8 +63,13 @@
         </div>
       </div>
       <div class="split-bottom-wrap hidden">
-        <div class="split-zone split-zone-full" data-split-side="bottom">
-          <span class="split-zone-hint">{{localize "DC20AltSheet.nav.optionalBottom"}}</span>
+        <div class="split-zones-bottom-row">
+          <div class="split-zone" data-split-side="bottom">
+            <span class="split-zone-hint">{{localize "DC20AltSheet.nav.optionalBottom"}}</span>
+          </div>
+          <div class="split-zone hidden" data-split-side="bottomRight">
+            <span class="split-zone-hint">{{localize "DC20AltSheet.nav.optionalFourth"}}</span>
+          </div>
         </div>
       </div>
       <button type="button" class="split-create-btn" disabled>{{localize "DC20AltSheet.nav.createSplit"}}</button>
