@@ -3,7 +3,7 @@
    Everything below (except .cond-remove-btn, which only ever
    exists in the DOM when mobileMode is true) is scoped under
    .dc20-mobile-mode, a class toggled on the sheet root only when
-   the "DC20 Mobile" module is installed and active.
+   the "DC20 Mobile" module's touch shell is actually active.
    ============================================================ */
 
 /* ── Condition stack-remove button — tap = right-click ── */
@@ -31,26 +31,60 @@
   z-index: 2;
 }
 
-/* ── Favourites / Last Used: collapsible plaques ──
-   Collapsed: only the name-plaque header shows. Tapping it opens the
-   widget as a large overlay drawn up over the rest of the tab (Core's
-   fixed 5-zone grid, or Split Core's stacked layout); tapping again
-   collapses it. Favourites and Last Used open/close independently. */
-.dc20-alt-sheet.dc20-mobile-mode .core-grid,
+/* ── Favourites / Last Used: collapsible corner plaques ──
+   Collapsed: each is a small pill sized to its own label, pinned to its
+   own bottom corner (Favourites bottom-left, Last Used bottom-right) —
+   the row they sit in shrinks to that pill's height instead of reserving
+   the old fixed/percentage-based zone. Tapping a pill opens it into a
+   large overlay drawn up over the rest of the tab; tapping it again
+   collapses it. The two widgets open/close independently. */
+.dc20-alt-sheet.dc20-mobile-mode .core-grid {
+  grid-template-rows: auto 1fr auto;
+  position: relative;
+}
+.dc20-alt-sheet.dc20-mobile-mode .core-south {
+  min-height: 0;
+}
 .dc20-alt-sheet.dc20-mobile-mode .split-page.split-core {
   position: relative;
 }
+.dc20-alt-sheet.dc20-mobile-mode .split-page.split-core .sc-items-grid {
+  flex: 0 0 auto;
+  min-height: 0;
+}
 
-.dc20-alt-sheet.dc20-mobile-mode .qol-widget-toggle {
-  display: block;
-  width: 100%;
+.dc20-alt-sheet.dc20-mobile-mode .qol-widget {
+  width: auto;
+  max-width: 55%;
+  min-height: 0;
   background: none;
   border: none;
+  border-radius: 0;
+  padding: 0;
+  overflow: visible;
+}
+.dc20-alt-sheet.dc20-mobile-mode .qol-widget[data-qol-widget="favourites"] {
+  justify-self: start;
+}
+.dc20-alt-sheet.dc20-mobile-mode .qol-widget[data-qol-widget="lastUsed"] {
+  justify-self: end;
+}
+
+.dc20-alt-sheet.dc20-mobile-mode .qol-widget-toggle {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  white-space: nowrap;
   margin: 0;
-  padding: calc(6px * var(--dc20-scale)) 0;
-  text-align: left;
+  padding: calc(3px * var(--dc20-scale)) calc(10px * var(--dc20-scale));
+  background: var(--p-bg-card);
+  border: 1.5px solid var(--p-accent);
+  border-radius: var(--r-lg);
+  font-size: var(--fs-xs);
+  line-height: 1.15;
   cursor: pointer;
   user-select: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 .dc20-alt-sheet.dc20-mobile-mode .qol-widget-body {
   display: none;
@@ -61,12 +95,22 @@
   min-height: 0;
   overflow-y: auto;
 }
+.dc20-alt-sheet.dc20-mobile-mode .qol-widget.open .qol-widget-toggle {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: calc(6px * var(--dc20-scale)) 0;
+}
 .dc20-alt-sheet.dc20-mobile-mode .qol-widget[data-qol-widget="favourites"].open,
 .dc20-alt-sheet.dc20-mobile-mode .qol-widget[data-qol-widget="lastUsed"].open {
   position: absolute;
   top: 12%;
   bottom: 0;
   z-index: 30;
+  max-width: none;
   display: flex;
   flex-direction: column;
   background: var(--p-bg-card);
@@ -82,4 +126,35 @@
 .dc20-alt-sheet.dc20-mobile-mode .qol-widget[data-qol-widget="lastUsed"].open {
   right: 0;
   width: calc(50% - var(--gap-xs) / 2);
+}
+
+/* ── Attribute cards (Core north row + Split Core): compact 2-row layout ──
+   Desktop/tablet stacks name / score / [check | save] across three rows.
+   On a phone that's too tall for what little it shows, so row 2 combines
+   the score with both roll buttons (each shrunk) into a single row. */
+.dc20-alt-sheet.dc20-mobile-mode .sc-attr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: calc(2px * var(--dc20-scale)) calc(3px * var(--dc20-scale));
+}
+.dc20-alt-sheet.dc20-mobile-mode .sc-attr-name {
+  flex: 1 0 100%;
+}
+.dc20-alt-sheet.dc20-mobile-mode .sc-attr-score {
+  flex: 0 0 auto;
+  min-width: 1.4em;
+  font-size: var(--fs-sm);
+}
+.dc20-alt-sheet.dc20-mobile-mode .sc-attr-buttons {
+  flex: 1 1 auto;
+  width: auto;
+}
+.dc20-alt-sheet.dc20-mobile-mode .sc-attr-btn {
+  padding: 1px 2px;
+  font-size: calc(var(--fs-xs) * 0.9);
+}
+.dc20-alt-sheet.dc20-mobile-mode .sc-attr-btn i {
+  font-size: calc(var(--fs-xs) * 0.7);
 }
