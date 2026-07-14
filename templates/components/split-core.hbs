@@ -69,9 +69,9 @@
 
   {{!-- Items half: Favourites + Last Used — fills remaining vertical space --}}
   <div class="sc-items-grid">
-    <div class="sc-panel sc-panel-stretch">
-      <div class="sc-panel-heading">{{localize "DC20AltSheet.core.favourites"}}</div>
-      <div class="sc-panel-scroll" data-reorder-list data-reorder-mode="flag" data-reorder-key="favourites">
+    <div class="sc-panel sc-panel-stretch qol-widget" data-qol-widget="favourites">
+      <div class="sc-panel-heading qol-widget-toggle">{{localize "DC20AltSheet.core.favourites"}}</div>
+      <div class="sc-panel-scroll qol-widget-body" data-reorder-list data-reorder-mode="flag" data-reorder-key="favourites">
         {{#if favourites.length}}
           {{#each favourites}}
           <div class="sc-item-row" data-item-id="{{id}}">
@@ -84,9 +84,9 @@
         {{/if}}
       </div>
     </div>
-    <div class="sc-panel sc-panel-stretch">
-      <div class="sc-panel-heading">{{localize "DC20AltSheet.core.lastUsed"}}</div>
-      <div class="sc-panel-scroll" data-reorder-list data-reorder-mode="flag" data-reorder-key="lastUsed">
+    <div class="sc-panel sc-panel-stretch qol-widget" data-qol-widget="lastUsed">
+      <div class="sc-panel-heading qol-widget-toggle">{{localize "DC20AltSheet.core.lastUsed"}}</div>
+      <div class="sc-panel-scroll qol-widget-body" data-reorder-list data-reorder-mode="flag" data-reorder-key="lastUsed">
         {{#if lastUsed.length}}
           {{#each lastUsed}}
           <div class="sc-item-row" data-item-id="{{id}}">

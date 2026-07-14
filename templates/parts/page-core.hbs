@@ -183,9 +183,9 @@
     {{!-- SOUTH: Favourites (left) | Last Used (right) --}}
     <div class="core-south">
 
-      <div class="core-panel">
-        <h3 class="section-heading core-panel-header">{{localize "DC20AltSheet.core.favourites"}}</h3>
-        <div class="core-panel-scroll">
+      <div class="core-panel qol-widget" data-qol-widget="favourites">
+        <h3 class="section-heading core-panel-header qol-widget-toggle">{{localize "DC20AltSheet.core.favourites"}}</h3>
+        <div class="core-panel-scroll qol-widget-body">
           {{#if favourites.length}}
             <ul class="qol-list" data-reorder-list data-reorder-mode="flag" data-reorder-key="favourites">
               {{#each favourites}}
@@ -202,9 +202,9 @@
         </div>
       </div>
 
-      <div class="core-panel">
-        <h3 class="section-heading core-panel-header">{{localize "DC20AltSheet.core.lastUsed"}}</h3>
-        <div class="core-panel-scroll">
+      <div class="core-panel qol-widget" data-qol-widget="lastUsed">
+        <h3 class="section-heading core-panel-header qol-widget-toggle">{{localize "DC20AltSheet.core.lastUsed"}}</h3>
+        <div class="core-panel-scroll qol-widget-body">
           {{#if lastUsed.length}}
             <ul class="qol-list" data-reorder-list data-reorder-mode="flag" data-reorder-key="lastUsed">
               {{#each lastUsed}}

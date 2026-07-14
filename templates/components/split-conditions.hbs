@@ -13,6 +13,9 @@
           {{#if img}}<span class="cond-cell-img" style="-webkit-mask-image: url('{{img}}'); mask-image: url('{{img}}');" role="img" aria-label="{{label}}"></span>
           {{else}}<i class="fas fa-circle-exclamation"></i>{{/if}}
           {{#if active}}{{#if stackable}}<span class="cond-stack-badge">{{stacks}}</span>{{/if}}{{/if}}
+          {{#if active}}{{#if @root.mobileMode}}{{#if @root.isEditable}}
+          <button type="button" class="cond-remove-btn" data-status-id="{{id}}" title="{{localize "DC20AltSheet.cond.removeStack"}}">×</button>
+          {{/if}}{{/if}}{{/if}}
         </span>
         <span class="cond-cell-label">{{label}}</span>
       </div>
