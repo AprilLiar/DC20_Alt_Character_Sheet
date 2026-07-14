@@ -282,7 +282,8 @@
       "readEdit":     "Left-click to read · Right-click to edit",
       "stackable":    "stackable",
       "enableEffect": "Enable this effect",
-      "disableEffect":"Disable this effect"
+      "disableEffect":"Disable this effect",
+      "removeStack":  "Remove one stack"
     },
 
     "palette": {

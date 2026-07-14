@@ -282,7 +282,8 @@
       "readEdit":      "ЛКМ — читать · ПКМ — изменить",
       "stackable":     "накапливается",
       "enableEffect":  "Включить этот эффект",
-      "disableEffect": "Отключить этот эффект"
+      "disableEffect": "Отключить этот эффект",
+      "removeStack":   "Снять один стак"
     },
 
     "palette": {

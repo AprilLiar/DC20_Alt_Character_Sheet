@@ -10,6 +10,7 @@ import { prepareConditions } from '../context/page-conditions.mjs';
 import { prepareActivities } from '../context/page-activities.mjs';
 import { resetLifetimeStats } from '../helpers/stats.mjs';
 import { addFavourite, removeFavourite, isFavourite, recordItemUse } from '../helpers/tracking.mjs';
+import { isDC20MobileActive } from '../helpers/mobile.mjs';
 
 export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsApplicationMixin(
   foundry.applications.sheets.ActorSheetV2
@@ -183,6 +184,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     context.system     = this.actor.system;
     context.isEditable = this.isEditable;
     context.header     = prepareHeader(this.actor);
+    context.mobileMode = isDC20MobileActive();
     return context;
   }
 
@@ -262,6 +264,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       actor:        this.actor,
       system:       this.actor.system,
       coreSkillTab: this._coreSkillTab,
+      mobileMode:   isDC20MobileActive(),
     };
 
     // 4-pane and 3-pane splits always use the hardcoded grid layout —
@@ -389,6 +392,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
 
   _onRender(context, options) {
     super._onRender(context, options);
+    this.element.classList.toggle('dc20-mobile-mode', isDC20MobileActive());
     this._bindBrowserTabs();
     this._bindCombatFilter();
     this._bindCoreSkillTabs();
@@ -402,6 +406,8 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindListReorder();
     this._bindConditionToggles();
     this._bindConditionEffects();
+    this._bindMobileConditionRemove();
+    this._bindMobileQolWidgets();
     this._bindActivities();
     this._bindCharSlots();
     this._bindCampActions();
@@ -1409,6 +1415,22 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     });
   }
 
+  /**
+   * On DC20 Mobile, Favourites/Last Used collapse to a small name plaque and
+   * expand into a large overlay on tap (see mobileMode in the template
+   * context and .dc20-mobile-mode in _mobile.css) — the Core tab's fixed
+   * 5-zone grid is too cramped on a phone screen otherwise. Tapping an open
+   * plaque closes it again; the two widgets open/close independently.
+   */
+  _bindMobileQolWidgets() {
+    if (!isDC20MobileActive()) return;
+    this.element.querySelectorAll('.qol-widget-toggle').forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        toggle.closest('.qol-widget')?.classList.toggle('open');
+      });
+    });
+  }
+
   /* -------------------------------------------- */
   /*  Conditions (apply / remove)                  */
   /* -------------------------------------------- */
@@ -1429,6 +1451,25 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       });
       // Suppress the browser context menu so right-click can remove a stack.
       cell.addEventListener('contextmenu', e => e.preventDefault());
+    });
+  }
+
+  /**
+   * Touch devices have no right-click, so DC20 Mobile users have no way to
+   * remove a stack from an active condition. Render a small red × in the
+   * corner of each active condition's icon (mobile-only, see mobileMode in
+   * the template context) that removes one stack — same effect as a
+   * right-click — without triggering the cell's own mousedown handler.
+   */
+  _bindMobileConditionRemove() {
+    if (!this.isEditable || !isDC20MobileActive()) return;
+    this.element.querySelectorAll('.cond-remove-btn[data-status-id]').forEach(btn => {
+      btn.addEventListener('mousedown', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.actor.toggleStatusEffect(btn.dataset.statusId, { active: false });
+      });
+      btn.addEventListener('contextmenu', e => e.preventDefault());
     });
   }
 

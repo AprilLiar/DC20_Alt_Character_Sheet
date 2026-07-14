@@ -1,0 +1,85 @@
+/* ============================================================
+   DC20 Alt Sheet — DC20 Mobile Companion Adjustments
+   Everything below (except .cond-remove-btn, which only ever
+   exists in the DOM when mobileMode is true) is scoped under
+   .dc20-mobile-mode, a class toggled on the sheet root only when
+   the "DC20 Mobile" module is installed and active.
+   ============================================================ */
+
+/* ── Condition stack-remove button — tap = right-click ── */
+.dc20-alt-sheet .cond-remove-btn {
+  position: absolute;
+  top: calc(-2px * var(--dc20-scale));
+  right: calc(-2px * var(--dc20-scale));
+  width: 25%;
+  height: 25%;
+  min-width: 12px;
+  min-height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  background: var(--c-hp-light, #b23b3b);
+  color: #fff;
+  border: 1px solid var(--p-light);
+  border-radius: 50%;
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* ── Favourites / Last Used: collapsible plaques ──
+   Collapsed: only the name-plaque header shows. Tapping it opens the
+   widget as a large overlay drawn up over the rest of the tab (Core's
+   fixed 5-zone grid, or Split Core's stacked layout); tapping again
+   collapses it. Favourites and Last Used open/close independently. */
+.dc20-alt-sheet.dc20-mobile-mode .core-grid,
+.dc20-alt-sheet.dc20-mobile-mode .split-page.split-core {
+  position: relative;
+}
+
+.dc20-alt-sheet.dc20-mobile-mode .qol-widget-toggle {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  margin: 0;
+  padding: calc(6px * var(--dc20-scale)) 0;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+}
+.dc20-alt-sheet.dc20-mobile-mode .qol-widget-body {
+  display: none;
+}
+.dc20-alt-sheet.dc20-mobile-mode .qol-widget.open .qol-widget-body {
+  display: block;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.dc20-alt-sheet.dc20-mobile-mode .qol-widget[data-qol-widget="favourites"].open,
+.dc20-alt-sheet.dc20-mobile-mode .qol-widget[data-qol-widget="lastUsed"].open {
+  position: absolute;
+  top: 12%;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  background: var(--p-bg-card);
+  border: 1.5px solid var(--p-accent);
+  border-radius: var(--r-md);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.5);
+  padding: 0 var(--gap-sm) var(--gap-sm);
+}
+.dc20-alt-sheet.dc20-mobile-mode .qol-widget[data-qol-widget="favourites"].open {
+  left: 0;
+  width: calc(50% - var(--gap-xs) / 2);
+}
+.dc20-alt-sheet.dc20-mobile-mode .qol-widget[data-qol-widget="lastUsed"].open {
+  right: 0;
+  width: calc(50% - var(--gap-xs) / 2);
+}
