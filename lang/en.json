@@ -377,7 +377,6 @@
     "notify": {
       "noClassLevelUp":    "No class found to level up. Add a class item first.",
       "maxLevel":          "Already at maximum level (20).",
-      "levelUpFallback":   "Raised the class level, but the DC20 advancement dialog could not be opened automatically.",
       "noClassLevelDown":  "No class found to level down.",
       "minLevel":          "Already at minimum level.",
       "restError":         "Could not access the DC20 rest flow.",

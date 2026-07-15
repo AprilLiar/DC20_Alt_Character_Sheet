@@ -1238,48 +1238,53 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     });
   }
 
-  /** Dynamically import a module from the running DC20 system. */
-  async _systemImport(relPath) {
+  /**
+   * Dynamically import a module from the running DC20 system.
+   *
+   * `foundry.utils.getRoute()` is the authoritative way to resolve a path
+   * under the current install's route prefix (e.g. a hosted instance served
+   * from a sub-path), so it's tried first; a plain origin-relative URL is
+   * the fallback for the rare case getRoute isn't available. If every
+   * candidate fails, a single diagnostic fetch() against the first
+   * candidate is used to tell an unreachable file apart from a restriction
+   * specific to dynamic import() — fetch() and import() are governed by
+   * different CSP directives (connect-src vs script-src), so this only
+   * needs to run once we already know import() didn't work.
+   *
+   * Pass `{ required: true }` to throw (instead of returning null) when no
+   * candidate resolves — used by callers where silently continuing without
+   * the module would leave the actor in a half-finished state.
+   */
+  async _systemImport(relPath, { required = false } = {}) {
     const p = `systems/dc20rpg/module/${relPath}`;
-    // Candidate URLs, most-likely-cached first. Resolving `p` against
-    // document.baseURI mirrors how the browser resolved the system's own
-    // <script src="systems/…"> tag, so that candidate hits the already-loaded
-    // module even on hosted setups with a route prefix.
     const candidates = [];
     try {
       const r = foundry.utils?.getRoute?.(p);
-      if (r) candidates.push(new URL(r.includes('://') || r.startsWith('/') ? r : `/${r}`, document.baseURI).href);
+      if (r) candidates.push(new URL(r.includes('://') || r.startsWith('/') ? r : `/${r}`, window.location.origin).href);
     } catch { /* getRoute unavailable */ }
-    try { candidates.push(new URL(p, document.baseURI).href); } catch { /* ignore */ }
-    try { candidates.push(new URL(`/${p}`, window.location.origin).href); } catch { /* ignore */ }
+    candidates.push(new URL(`/${p}`, window.location.origin).href);
 
     const attempts = [];
-    console.debug(`DC20 Alt Sheet | _systemImport trying to load: ${relPath}`, { candidates });
     for (const url of [...new Set(candidates)]) {
-      // Diagnostic pre-check: a plain fetch() is governed by CSP's connect-src
-      // while import() is governed by script-src (and, on some hosts, by
-      // dynamic-import-specific rules that differ from either). Probing with
-      // fetch first tells us whether the file is reachable over HTTP at all,
-      // so a failed import() next to a *successful* fetch() here narrows the
-      // problem down to a module-loading/CSP restriction rather than a
-      // missing file or network issue.
-      let fetchDiag = '';
       try {
-        const res = await fetch(url, { cache: 'no-store' });
+        const mod = await import(url);
+        if (mod) return mod;
+      } catch (err) { attempts.push(`${url} → ${err?.message ?? err}`); }
+    }
+
+    let fetchDiag = '(no candidate URL)';
+    const [primaryUrl] = candidates;
+    if (primaryUrl) {
+      try {
+        const res = await fetch(primaryUrl, { cache: 'no-store' });
         fetchDiag = `fetch: ${res.status} ${res.statusText} (content-type: ${res.headers.get('content-type') ?? 'n/a'})`;
       } catch (fetchErr) {
         fetchDiag = `fetch threw: ${fetchErr?.message ?? fetchErr}`;
       }
-      try {
-        console.debug(`DC20 Alt Sheet | _systemImport attempting: ${url}`, { fetchDiag });
-        const mod = await import(url);
-        if (mod) {
-          console.debug(`DC20 Alt Sheet | _systemImport succeeded: ${url}`);
-          return mod;
-        }
-      } catch (err) { attempts.push(`${url} → ${err?.message ?? err} [${fetchDiag}]`); }
     }
-    console.error(`DC20 Alt Sheet | failed to load system module "${relPath}". Attempts:\n${attempts.join('\n')}`);
+    const message = `Unable to import DC20 module "${relPath}".\n${attempts.join('\n')}\nDiagnostic: ${fetchDiag}`;
+    console.error(`DC20 Alt Sheet | ${message}`);
+    if (required) throw new Error(message);
     return null;
   }
 
@@ -1338,14 +1343,28 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
    * (this module still declares compatibility down to dc20rpg 0.9).
    */
   async _getAdvancementApi() {
-    const items = await this._systemImport('helpers/actors/itemsOnActor.mjs');
-    let adv = null;
-    if (typeof items?.applyAdvancements !== 'function') {
-      // applyAdvancements is not exported from itemsOnActor — it's imported
-      // there from the advancement subsystem. Pull it from its real home.
-      adv = await this._systemImport('subsystems/character-progress/advancement/advancements.mjs');
+    // itemsOnActor.mjs is the load-bearing module — changeLevel lives here,
+    // and if this import fails there is nothing usable to fall back to, so
+    // it's required: a failure here throws instead of leaving the caller to
+    // guess why nothing happened.
+    const items = await this._systemImport('helpers/actors/itemsOnActor.mjs', { required: true });
+    if (typeof items.changeLevel !== 'function') {
+      throw new Error(
+        `DC20's itemsOnActor.mjs loaded but did not export a "changeLevel" function ` +
+        `(exports found: ${Object.keys(items).join(', ') || '(none)'}).`
+      );
     }
-    let clearOverridenScalingValue = typeof items?.clearOverridenScalingValue === 'function'
+
+    // applyAdvancements/removeAdvancements are not exported from
+    // itemsOnActor.mjs — they're imported there from the advancement
+    // subsystem. Pull them from their real home for our replicated fallback.
+    // This is only needed if changeLevel itself throws at runtime, so it's
+    // not required — changeLevel already carries its own working reference
+    // to these via its own module's imports, resolved when itemsOnActor.mjs
+    // above loaded successfully.
+    const adv = await this._systemImport('subsystems/character-progress/advancement/advancements.mjs');
+
+    let clearOverridenScalingValue = typeof items.clearOverridenScalingValue === 'function'
       ? items.clearOverridenScalingValue
       : null;
     if (!clearOverridenScalingValue) {
@@ -1355,8 +1374,10 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
         ? scaling.clearOverridenScalingValue
         : null;
     }
+
+    console.debug('DC20 Alt Sheet | Advancement API resolved', { itemsExports: Object.keys(items) });
     return {
-      changeLevel:        typeof items?.changeLevel === 'function' ? items.changeLevel : null,
+      changeLevel:        items.changeLevel,
       applyAdvancements:  typeof adv?.applyAdvancements === 'function' ? adv.applyAdvancements : null,
       removeAdvancements: typeof adv?.removeAdvancements === 'function' ? adv.removeAdvancements : null,
       clearOverridenScalingValue,
@@ -1953,34 +1974,39 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     };
 
     console.debug('DC20 Alt Sheet | Importing advancement functions from DC20 system…');
-    const api = await this._getAdvancementApi();
+    let api;
+    try {
+      api = await this._getAdvancementApi();
+    } catch (err) {
+      console.error('DC20 Alt Sheet | could not load DC20 advancement code', err);
+      ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelUpFailed', { error: err?.message ?? err }));
+      return;
+    }
 
     // Primary path — the system's own changeLevel entry point (version-stable).
-    if (api.changeLevel) {
-      console.debug('DC20 Alt Sheet | Using system changeLevel("true")');
-      try {
-        await api.changeLevel('true', classItem.id, this.actor);
+    console.debug('DC20 Alt Sheet | Using system changeLevel("true")');
+    try {
+      await api.changeLevel('true', classItem.id, this.actor);
+      await resetXp();
+      return;
+    } catch (err) {
+      console.error('DC20 Alt Sheet | changeLevel threw:', err);
+      // The dialog opens before the level write, so a late throw isn't
+      // necessarily failure — only bail if the level truly didn't move.
+      const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
+      if (after !== before) {
+        console.warn(
+          'DC20 Alt Sheet | Level changed despite an error above — the advancement dialog may not have ' +
+          'opened correctly. This often means one of the class/ancestry/subclass/background items has a ' +
+          'broken advancement macro (see the error for a DC20-side stack trace, e.g. from dc20rpg.mjs).'
+        );
         await resetXp();
         return;
-      } catch (err) {
-        console.error('DC20 Alt Sheet | changeLevel threw:', err);
-        // The dialog opens before the level write, so a late throw isn't
-        // necessarily failure — only bail if the level truly didn't move.
-        const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
-        if (after !== before) {
-          console.warn(
-            'DC20 Alt Sheet | Level changed despite an error above — the advancement dialog may not have ' +
-            'opened correctly. This often means one of the class/ancestry/subclass/background items has a ' +
-            'broken advancement macro (see the error for a DC20-side stack trace, e.g. from dc20rpg.mjs).'
-          );
-          await resetXp();
-          return;
-        }
       }
     }
 
     // Secondary path — replicate changeLevel using applyAdvancements pulled
-    // from the advancement subsystem (in case changeLevel was moved/renamed).
+    // from the advancement subsystem (in case changeLevel threw at runtime).
     console.debug('DC20 Alt Sheet | Falling back to replicated changeLevel via applyAdvancements');
     try {
       if (await this._replicateChangeLevel(true, classItem, api)) {
@@ -1993,19 +2019,13 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       if (after !== before) { await resetXp(); return; }
     }
 
-    // Last resort — the system advancement code could not be reached at all.
-    // Raise the level so the button does something, but tell the user the
-    // advancement dialog could not be opened (they may need to load the DC20
-    // system's own sheet once, or check the console for the import errors).
-    console.warn('DC20 Alt Sheet | Advancement code unreachable — raising level without dialog');
-    try {
-      await classItem.update({ 'system.level': before + 1 });
-      await resetXp();
-      ui.notifications?.warn(game.i18n.localize('DC20AltSheet.notify.levelUpFallback'));
-    } catch (err) {
-      console.error('DC20 Alt Sheet | level-up fallback failed', err);
-      ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelUpFailed', { error: err?.message ?? err }));
-    }
+    // Both paths failed to make any progress. A level-up with no chosen
+    // advancements would leave the character in a half-finished state, so
+    // report the failure instead of bumping the level number regardless.
+    console.error('DC20 Alt Sheet | Level-up could not be completed — neither changeLevel nor the replicated fallback made progress');
+    ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelUpFailed', {
+      error: 'DC20\'s advancement code ran but produced no change — see the console for details.',
+    }));
   }
 
   /** Reduce the character's class level by 1 via DC20's changeLevel flow. */
@@ -2034,27 +2054,33 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     if (!confirmed) return;
 
     console.debug('DC20 Alt Sheet | Level-down confirmed');
-    const api = await this._getAdvancementApi();
+    let api;
+    try {
+      api = await this._getAdvancementApi();
+    } catch (err) {
+      console.error('DC20 Alt Sheet | could not load DC20 advancement code', err);
+      ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelDownFailed', { error: err?.message ?? err }));
+      return;
+    }
 
     // Primary — system changeLevel("false").
-    if (api.changeLevel) {
-      try {
-        await api.changeLevel('false', classItem.id, this.actor);
+    try {
+      await api.changeLevel('false', classItem.id, this.actor);
+      return;
+    } catch (err) {
+      console.error('DC20 Alt Sheet | changeLevel("false") threw:', err);
+      const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
+      if (after !== before) {
+        console.warn(
+          'DC20 Alt Sheet | Level changed despite an error above — possibly a broken advancement macro ' +
+          'on the class/ancestry/subclass/background items.'
+        );
         return;
-      } catch (err) {
-        console.error('DC20 Alt Sheet | changeLevel("false") threw:', err);
-        const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
-        if (after !== before) {
-          console.warn(
-            'DC20 Alt Sheet | Level changed despite an error above — possibly a broken advancement macro ' +
-            'on the class/ancestry/subclass/background items.'
-          );
-          return;
-        }
       }
     }
 
-    // Secondary — replicated changeLevel via removeAdvancements.
+    // Secondary — replicated changeLevel via removeAdvancements (in case
+    // changeLevel threw at runtime).
     try {
       if (await this._replicateChangeLevel(false, classItem, api)) return;
     } catch (err) {
@@ -2063,14 +2089,13 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       if (after !== before) return;
     }
 
-    // Last resort — decrement directly.
-    console.warn('DC20 Alt Sheet | Advancement code unreachable — lowering level without cleanup');
-    try {
-      await classItem.update({ 'system.level': before - 1 });
-    } catch (err) {
-      console.error('DC20 Alt Sheet | level-down fallback failed', err);
-      ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelDownFailed', { error: err?.message ?? err }));
-    }
+    // Both paths failed to make any progress. A level-down with no cleanup
+    // would leave the character in a half-finished state, so report the
+    // failure instead of decrementing the level number regardless.
+    console.error('DC20 Alt Sheet | Level-down could not be completed — neither changeLevel nor the replicated fallback made progress');
+    ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelDownFailed', {
+      error: 'DC20\'s advancement code ran but produced no change — see the console for details.',
+    }));
   }
 
   /** Apply ± an amount of XP (read from the sibling .xp-amount input). */
