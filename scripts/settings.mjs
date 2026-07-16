@@ -82,6 +82,15 @@ export function registerSettings() {
     onChange: applySheetSettings,
   });
 
+  game.settings.register(MODULE_ID, 'levelUpNativeRelay', {
+    name: 'DC20 Alt Sheet: Level Up via DC20\'s own sheet',
+    hint: 'DC20 ships its advancement code in one bundled file with no public API, so Level Up/Down normally relay through a hidden, temporary copy of DC20\'s own character sheet to trigger it. Disable this if that ever causes visible glitches on your setup — Level Up/Down will then just report a clear error instead of attempting the relay.',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true,
+  });
+
   // Holds the user's custom color overrides; edited via the ColorPaletteApp
   // menu below, not shown as a raw config field.
   game.settings.register(MODULE_ID, 'customPalette', {
