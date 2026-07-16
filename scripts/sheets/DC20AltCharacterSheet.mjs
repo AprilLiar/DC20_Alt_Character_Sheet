@@ -1385,6 +1385,122 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   }
 
   /**
+   * Find DC20's own registered ActorSheet class without importing anything.
+   * DC20 ships as a single Rollup bundle with no exported symbols (confirmed
+   * against its actual source: `module/dc20rpg.mjs` has zero top-level
+   * `export` statements, and the individual `helpers/`/`subsystems/` files
+   * our dynamic imports target only exist in their dev source, never in the
+   * installed package — hence the "Failed to fetch dynamically imported
+   * module" / 404 errors seen in the wild). But Foundry itself keeps a
+   * public registry of every sheet class registered for a document type
+   * (DC20 registers its sheet the standard way, alongside ours), so the
+   * class object is reachable through Foundry's own API even though the
+   * file it came from isn't.
+   */
+  _getDC20NativeSheetClass() {
+    const scopeId = 'dc20rpg';
+    const type = this.actor.type;
+
+    // Classic per-type registry (CONFIG.Actor.sheetClasses[type] = { "scope.ClassName": { cls, ... } }).
+    const registry = CONFIG.Actor?.sheetClasses?.[type];
+    if (registry) {
+      for (const [key, entry] of Object.entries(registry)) {
+        if (key.startsWith(`${scopeId}.`) && typeof entry?.cls === 'function') return entry.cls;
+      }
+    }
+
+    // Newer DocumentSheetConfig-based registry, if this Foundry version uses it instead.
+    try {
+      const configs = foundry.applications?.apps?.DocumentSheetConfig?.getSheetClassesForSubType?.('Actor', type);
+      if (Array.isArray(configs)) {
+        const found = configs.find(c => typeof c?.id === 'string' && c.id.startsWith(`${scopeId}.`));
+        if (typeof found?.cls === 'function') return found.cls;
+      }
+    } catch { /* API shape not available on this Foundry version */ }
+
+    return null;
+  }
+
+  /**
+   * Fallback for when DC20's advancement code can't be reached directly
+   * (see _getAdvancementApi): render a throwaway, off-screen instance of
+   * DC20's own native actor sheet and simulate a click on its real
+   * "Level Up"/"Level Down" control, so DC20's own bundled code runs
+   * exactly as if the user had opened their sheet and clicked it
+   * themselves — confirmed against DC20's actual source
+   * (sheets/actor-sheet/listeners.mjs): `html.find(".level").click(...)`
+   * reads `data-up`/`data-item-id` off the clicked element and calls
+   * `changeLevel(up, itemId, actor)`.
+   *
+   * Nothing here is persisted — no actor flags, no document updates, no
+   * sheet-registration changes — so disabling the "levelUpNativeRelay"
+   * setting, or removing this module entirely, leaves no trace. The
+   * temporary sheet is deliberately NOT closed immediately: the real
+   * advancement dialog it opens is a separate Application, but if DC20's
+   * own sheet tracks and closes child dialogs on its own close(), closing
+   * it right away could kill the dialog we just triggered. Instead, any
+   * *previous* leftover relay sheet is closed the next time this runs,
+   * which bounds the leak to at most one hidden instance without risking
+   * the dialog currently in use.
+   *
+   * Returns true if a plausible click was dispatched, false if this
+   * fallback isn't usable right now — callers should treat that the same
+   * as any other failed attempt.
+   */
+  async _tryNativeSheetLevelChange(up, classItem) {
+    if (!game.settings.get(MODULE_ID, 'levelUpNativeRelay')) return false;
+
+    const Cls = this._getDC20NativeSheetClass();
+    if (!Cls) {
+      console.warn('DC20 Alt Sheet | Could not locate DC20\'s native actor sheet class for the level relay');
+      return false;
+    }
+
+    try { await this._pendingLevelRelaySheet?.close({ force: true }); } catch { /* already gone */ }
+    this._pendingLevelRelaySheet = null;
+
+    let temp = null;
+    try {
+      try { temp = new Cls({ document: this.actor }); }
+      catch { temp = new Cls(this.actor, {}); }
+      if (typeof temp?.render !== 'function') return false;
+
+      await temp.render(true);
+      const el = temp.element instanceof HTMLElement ? temp.element : temp.element?.[0];
+      if (!el) return false;
+
+      const host = el.closest('.app, .application') ?? el;
+      host.style.position   = 'fixed';
+      host.style.left       = '-10000px';
+      host.style.top        = '-10000px';
+      host.style.visibility = 'hidden';
+
+      const wantUp = up ? 'true' : 'false';
+      const candidates = [...el.querySelectorAll('.level[data-item-id]')]
+        .filter(n => n.dataset.itemId === classItem.id);
+      const control = candidates.find(n => n.dataset.up === wantUp) ?? candidates[0];
+      if (!control) {
+        console.warn('DC20 Alt Sheet | Could not find DC20\'s native level control in its own sheet markup');
+        await temp.close({ force: true });
+        return false;
+      }
+
+      console.debug('DC20 Alt Sheet | Relaying level change through DC20\'s native sheet', { up, classItemId: classItem.id });
+      control.click();
+      // Give the click handler's synchronous setup (and, on level-down,
+      // DC20's own confirmation popup) a beat to run before we move on.
+      await new Promise(r => setTimeout(r, 50));
+
+      this._pendingLevelRelaySheet = temp;
+      return true;
+    } catch (err) {
+      console.error('DC20 Alt Sheet | Native-sheet level relay failed', err);
+      try { await temp?.close({ force: true }); } catch { /* already gone */ }
+      return false;
+    }
+  }
+
+  /**
    * Replicate the system's `changeLevel(up, itemId, actor)` using the imported
    * advancement functions. Mirrors the official flow: on level-up it calls
    * `applyAdvancements` (which opens the advancement dialog) with the *new*
@@ -1974,57 +2090,73 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     };
 
     console.debug('DC20 Alt Sheet | Importing advancement functions from DC20 system…');
-    let api;
+    let api = null;
     try {
       api = await this._getAdvancementApi();
     } catch (err) {
-      console.error('DC20 Alt Sheet | could not load DC20 advancement code', err);
-      ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelUpFailed', { error: err?.message ?? err }));
-      return;
+      // DC20 ships as a single bundle with no exported symbols, so this
+      // import fails for essentially every real install — that's expected,
+      // not fatal. Fall through to the native-sheet relay below.
+      console.warn('DC20 Alt Sheet | Direct import unavailable, will try relaying through DC20\'s own sheet instead:', err?.message ?? err);
     }
 
-    // Primary path — the system's own changeLevel entry point (version-stable).
-    console.debug('DC20 Alt Sheet | Using system changeLevel("true")');
-    try {
-      await api.changeLevel('true', classItem.id, this.actor);
-      await resetXp();
-      return;
-    } catch (err) {
-      console.error('DC20 Alt Sheet | changeLevel threw:', err);
-      // The dialog opens before the level write, so a late throw isn't
-      // necessarily failure — only bail if the level truly didn't move.
-      const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
-      if (after !== before) {
-        console.warn(
-          'DC20 Alt Sheet | Level changed despite an error above — the advancement dialog may not have ' +
-          'opened correctly. This often means one of the class/ancestry/subclass/background items has a ' +
-          'broken advancement macro (see the error for a DC20-side stack trace, e.g. from dc20rpg.mjs).'
-        );
+    if (api?.changeLevel) {
+      // Primary path — the system's own changeLevel entry point (version-stable).
+      console.debug('DC20 Alt Sheet | Using system changeLevel("true")');
+      try {
+        await api.changeLevel('true', classItem.id, this.actor);
         await resetXp();
         return;
+      } catch (err) {
+        console.error('DC20 Alt Sheet | changeLevel threw:', err);
+        // The dialog opens before the level write, so a late throw isn't
+        // necessarily failure — only bail if the level truly didn't move.
+        const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
+        if (after !== before) {
+          console.warn(
+            'DC20 Alt Sheet | Level changed despite an error above — the advancement dialog may not have ' +
+            'opened correctly. This often means one of the class/ancestry/subclass/background items has a ' +
+            'broken advancement macro (see the error for a DC20-side stack trace, e.g. from dc20rpg.mjs).'
+          );
+          await resetXp();
+          return;
+        }
+      }
+
+      // Secondary path — replicate changeLevel using applyAdvancements pulled
+      // from the advancement subsystem (in case changeLevel threw at runtime).
+      console.debug('DC20 Alt Sheet | Falling back to replicated changeLevel via applyAdvancements');
+      try {
+        if (await this._replicateChangeLevel(true, classItem, api)) {
+          await resetXp();
+          return;
+        }
+      } catch (err) {
+        console.error('DC20 Alt Sheet | replicated changeLevel failed:', err);
+        const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
+        if (after !== before) { await resetXp(); return; }
       }
     }
 
-    // Secondary path — replicate changeLevel using applyAdvancements pulled
-    // from the advancement subsystem (in case changeLevel threw at runtime).
-    console.debug('DC20 Alt Sheet | Falling back to replicated changeLevel via applyAdvancements');
+    // Fallback — relay the click through a hidden instance of DC20's own
+    // native sheet (see _tryNativeSheetLevelChange). This is what actually
+    // works for a normal bundled install.
+    console.debug('DC20 Alt Sheet | Relaying level-up through DC20\'s native sheet');
     try {
-      if (await this._replicateChangeLevel(true, classItem, api)) {
+      if (await this._tryNativeSheetLevelChange(true, classItem)) {
         await resetXp();
         return;
       }
     } catch (err) {
-      console.error('DC20 Alt Sheet | replicated changeLevel failed:', err);
-      const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
-      if (after !== before) { await resetXp(); return; }
+      console.error('DC20 Alt Sheet | Native-sheet relay failed:', err);
     }
 
-    // Both paths failed to make any progress. A level-up with no chosen
+    // Every path failed to make any progress. A level-up with no chosen
     // advancements would leave the character in a half-finished state, so
     // report the failure instead of bumping the level number regardless.
-    console.error('DC20 Alt Sheet | Level-up could not be completed — neither changeLevel nor the replicated fallback made progress');
+    console.error('DC20 Alt Sheet | Level-up could not be completed — no available path made progress');
     ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelUpFailed', {
-      error: 'DC20\'s advancement code ran but produced no change — see the console for details.',
+      error: 'DC20\'s advancement code could not be reached — see the console for details.',
     }));
   }
 
@@ -2054,47 +2186,59 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     if (!confirmed) return;
 
     console.debug('DC20 Alt Sheet | Level-down confirmed');
-    let api;
+    let api = null;
     try {
       api = await this._getAdvancementApi();
     } catch (err) {
-      console.error('DC20 Alt Sheet | could not load DC20 advancement code', err);
-      ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelDownFailed', { error: err?.message ?? err }));
-      return;
+      // Expected for essentially every real install — see _onLevelUp.
+      console.warn('DC20 Alt Sheet | Direct import unavailable, will try relaying through DC20\'s own sheet instead:', err?.message ?? err);
     }
 
-    // Primary — system changeLevel("false").
-    try {
-      await api.changeLevel('false', classItem.id, this.actor);
-      return;
-    } catch (err) {
-      console.error('DC20 Alt Sheet | changeLevel("false") threw:', err);
-      const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
-      if (after !== before) {
-        console.warn(
-          'DC20 Alt Sheet | Level changed despite an error above — possibly a broken advancement macro ' +
-          'on the class/ancestry/subclass/background items.'
-        );
+    if (api?.changeLevel) {
+      // Primary — system changeLevel("false").
+      try {
+        await api.changeLevel('false', classItem.id, this.actor);
         return;
+      } catch (err) {
+        console.error('DC20 Alt Sheet | changeLevel("false") threw:', err);
+        const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
+        if (after !== before) {
+          console.warn(
+            'DC20 Alt Sheet | Level changed despite an error above — possibly a broken advancement macro ' +
+            'on the class/ancestry/subclass/background items.'
+          );
+          return;
+        }
+      }
+
+      // Secondary — replicated changeLevel via removeAdvancements (in case
+      // changeLevel threw at runtime).
+      try {
+        if (await this._replicateChangeLevel(false, classItem, api)) return;
+      } catch (err) {
+        console.error('DC20 Alt Sheet | replicated level-down failed:', err);
+        const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
+        if (after !== before) return;
       }
     }
 
-    // Secondary — replicated changeLevel via removeAdvancements (in case
-    // changeLevel threw at runtime).
+    // Fallback — relay the click through a hidden instance of DC20's own
+    // native sheet. Note this means the user may see DC20's own "Do you
+    // want to level down?" confirmation on top of the one just above —
+    // harmless but a known double-prompt quirk of this relay.
+    console.debug('DC20 Alt Sheet | Relaying level-down through DC20\'s native sheet');
     try {
-      if (await this._replicateChangeLevel(false, classItem, api)) return;
+      if (await this._tryNativeSheetLevelChange(false, classItem)) return;
     } catch (err) {
-      console.error('DC20 Alt Sheet | replicated level-down failed:', err);
-      const after = Number(this.actor.items.get(classItem.id)?.system?.level) || 0;
-      if (after !== before) return;
+      console.error('DC20 Alt Sheet | Native-sheet relay failed:', err);
     }
 
-    // Both paths failed to make any progress. A level-down with no cleanup
+    // Every path failed to make any progress. A level-down with no cleanup
     // would leave the character in a half-finished state, so report the
     // failure instead of decrementing the level number regardless.
-    console.error('DC20 Alt Sheet | Level-down could not be completed — neither changeLevel nor the replicated fallback made progress');
+    console.error('DC20 Alt Sheet | Level-down could not be completed — no available path made progress');
     ui.notifications?.error(game.i18n.format('DC20AltSheet.notify.levelDownFailed', {
-      error: 'DC20\'s advancement code ran but produced no change — see the console for details.',
+      error: 'DC20\'s advancement code could not be reached — see the console for details.',
     }));
   }
 
