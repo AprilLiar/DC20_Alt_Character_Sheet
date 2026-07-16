@@ -1459,26 +1459,54 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     try { await this._pendingLevelRelaySheet?.close({ force: true }); } catch { /* already gone */ }
     this._pendingLevelRelaySheet = null;
 
+    // DC20's actor sheet is confirmed (via its own deprecation warning) to
+    // still be a V1 Application (DocumentSheet → FormApplication →
+    // Application) — its constructor takes (document, options), not the
+    // { document } wrapper ApplicationV2 expects. V1's constructor doesn't
+    // validate that shape at all, so passing the wrong one doesn't throw
+    // until render() tries to call a document method on it — check the
+    // actual class hierarchy instead of guessing via try/catch.
+    const isV2 = Cls.prototype instanceof foundry.applications.api.ApplicationV2;
+
+    // Position it off-screen from the very first paint (both V1 and V2
+    // Applications honor initial left/top in their construction options),
+    // rather than positioning it only after render — which would risk a
+    // brief visible flash at its default position first.
+    const offscreen = { left: -10000, top: -10000 };
+
     let temp = null;
     try {
-      try { temp = new Cls({ document: this.actor }); }
-      catch { temp = new Cls(this.actor, {}); }
+      temp = isV2
+        ? new Cls({ document: this.actor, position: offscreen })
+        : new Cls(this.actor, offscreen);
       if (typeof temp?.render !== 'function') return false;
 
-      await temp.render(true);
-      const el = temp.element instanceof HTMLElement ? temp.element : temp.element?.[0];
-      if (!el) return false;
+      // V2's render() resolves only once the DOM is actually populated; V1's
+      // does not (it kicks off rendering and returns immediately, with the
+      // element itself sometimes not yet attached). Poll for both the
+      // element and its .level control rather than assume either timing.
+      temp.render(true);
 
-      const host = el.closest('.app, .application') ?? el;
-      host.style.position   = 'fixed';
-      host.style.left       = '-10000px';
-      host.style.top        = '-10000px';
-      host.style.visibility = 'hidden';
-
+      let el = null, control = null;
       const wantUp = up ? 'true' : 'false';
-      const candidates = [...el.querySelectorAll('.level[data-item-id]')]
-        .filter(n => n.dataset.itemId === classItem.id);
-      const control = candidates.find(n => n.dataset.up === wantUp) ?? candidates[0];
+      for (let attempt = 0; attempt < 25 && !control; attempt++) {
+        if (attempt > 0) await new Promise(r => setTimeout(r, 40));
+        const candidate = temp.element instanceof HTMLElement ? temp.element : temp.element?.[0];
+        if (!candidate) continue;
+        el = candidate;
+        // Defense-in-depth in case the initial off-screen position above
+        // wasn't honored (e.g. a future DC20 version re-centers itself).
+        const host = el.closest('.app, .application') ?? el;
+        host.style.position   = 'fixed';
+        host.style.left       = '-10000px';
+        host.style.top        = '-10000px';
+        host.style.visibility = 'hidden';
+
+        const candidates = [...el.querySelectorAll('.level[data-item-id]')]
+          .filter(n => n.dataset.itemId === classItem.id);
+        control = candidates.find(n => n.dataset.up === wantUp) ?? candidates[0] ?? null;
+      }
+      if (!el) return false;
       if (!control) {
         console.warn('DC20 Alt Sheet | Could not find DC20\'s native level control in its own sheet markup');
         await temp.close({ force: true });
