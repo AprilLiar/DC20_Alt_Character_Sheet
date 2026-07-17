@@ -2311,44 +2311,129 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
   }
 
   /**
-   * Dynamically import and open DC20's own item-browser dialog (the same one
-   * used by the official sheet's "Add" buttons), locked to `slotType`.
+   * Handles the drop DC20's own compendium-browser "Add" button synthesizes
+   * (dialogs/compendium-browser/item-browser.mjs#_onAddItem: it builds a
+   * synthetic DragEvent carrying { uuid, type: "Item" } and calls
+   * `parentWindow._onDrop(event)`) whenever that browser's parentWindow is
+   * this sheet — which is the normal case both when we import
+   * createItemBrowser directly and pass `this`, and when DC20's own native
+   * `.open-compendium` control is relayed through (see
+   * _tryNativeSheetCompendiumBrowse): `actor.sheet` there resolves to
+   * whatever's already cached on the actor document (this sheet), since
+   * constructing a sheet instance directly — unlike opening one through the
+   * `actor.sheet` getter — never touches that cache.
    *
-   * The browser's own "Add" button works by synthesizing a drop event and
-   * calling `parentWindow._onDrop(event)` — the convention the official V1
-   * actor sheet implements. Our sheet is ApplicationV2 and has no such
-   * method, so we hand it a minimal shim that mirrors _bindCharSlots'
-   * native drop handling: replace any existing item of this type, then
-   * create the new one so DC20's own advancement hook fires normally.
+   * Mirrors _bindCharSlots' native drop handling: replace any existing item
+   * of the dropped item's own type, then create the new one, so DC20's own
+   * advancement hook fires normally.
+   */
+  async _onDrop(event) {
+    let data;
+    try { data = JSON.parse(event.dataTransfer.getData('text/plain')); } catch { return; }
+    if (data?.type !== 'Item' || !data.uuid) return;
+
+    let source;
+    try { source = await fromUuid(data.uuid); } catch { return; }
+    if (!source || !['class', 'ancestry', 'subclass', 'background'].includes(source.type)) return;
+    if (source.parent?.id === this.actor.id) return;
+
+    const existing = this.actor.items.filter(i => i.type === source.type);
+    for (const ex of existing) await ex.delete();
+    await Item.create(source.toObject(), { parent: this.actor });
+  }
+
+  /**
+   * Open DC20's own item-browser dialog (the same one used by the official
+   * sheet's "Add" buttons), locked to `slotType`, for an empty
+   * character-build slot.
+   *
+   * DC20 ships as a single bundle with no exported symbols (see
+   * _getAdvancementApi's doc comment for the full story), so the direct
+   * import below only succeeds on a dev/unbundled install. The normal path
+   * is the native-sheet relay fallback — see _tryNativeSheetCompendiumBrowse.
    */
   async _openCharSlotBrowser(slotType) {
     const mod = await this._systemImport('dialogs/compendium-browser/item-browser.mjs');
     const createItemBrowser = mod?.createItemBrowser;
-    if (typeof createItemBrowser !== 'function') {
-      console.error('DC20 Alt Sheet | could not load the DC20 compendium browser (createItemBrowser not found)');
-      ui.notifications?.error(game.i18n.localize('DC20AltSheet.notify.compendiumBrowserError'));
+    if (typeof createItemBrowser === 'function') {
+      createItemBrowser(slotType, true, this);
       return;
     }
 
-    const actor = this.actor;
-    const dropShim = {
-      async _onDrop(event) {
-        let data;
-        try { data = JSON.parse(event.dataTransfer.getData('text/plain')); } catch { return; }
-        if (data?.type !== 'Item' || !data.uuid) return;
+    console.warn('DC20 Alt Sheet | Direct import unavailable, will try relaying through DC20\'s own sheet instead');
+    if (await this._tryNativeSheetCompendiumBrowse(slotType)) return;
 
-        let source;
-        try { source = await fromUuid(data.uuid); } catch { return; }
-        if (!source || source.type !== slotType) return;
-        if (source.parent?.id === actor.id) return;
+    console.error('DC20 Alt Sheet | could not open the DC20 compendium browser (no available path)');
+    ui.notifications?.error(game.i18n.localize('DC20AltSheet.notify.compendiumBrowserError'));
+  }
 
-        const existing = actor.items.filter(i => i.type === slotType);
-        for (const ex of existing) await ex.delete();
-        await Item.create(source.toObject(), { parent: actor });
-      },
-    };
+  /**
+   * Fallback for when DC20's compendium-browser code can't be reached
+   * directly: render a throwaway, off-screen instance of DC20's own native
+   * actor sheet and simulate a click on its real "Add from Compendium"
+   * control for the given slot type — confirmed against DC20's actual
+   * source (sheets/actor-sheet/listeners.mjs):
+   * `html.find('.open-compendium').click(ev => createItemBrowser(datasetOf(ev).itemType, datasetOf(ev).unlock !== "true", actor.sheet))`.
+   *
+   * Unlike the level-up relay (_tryNativeSheetLevelChange), it's safe to
+   * close the hidden sheet immediately after the click here: the resulting
+   * compendium browser's parentWindow is `actor.sheet`, which resolves to
+   * THIS sheet (see _onDrop above), not the hidden one — so nothing about
+   * the browser depends on the hidden sheet surviving past the click.
+   *
+   * Nothing here is persisted, and it shares the "levelUpNativeRelay"
+   * setting as its on/off switch (same underlying mechanism).
+   */
+  async _tryNativeSheetCompendiumBrowse(slotType) {
+    if (!game.settings.get(MODULE_ID, 'levelUpNativeRelay')) return false;
 
-    createItemBrowser(slotType, true, dropShim);
+    const Cls = this._getDC20NativeSheetClass();
+    if (!Cls) {
+      console.warn('DC20 Alt Sheet | Could not locate DC20\'s native actor sheet class for the compendium relay');
+      return false;
+    }
+
+    const isV2 = Cls.prototype instanceof foundry.applications.api.ApplicationV2;
+    const offscreen = { left: -10000, top: -10000 };
+
+    let temp = null;
+    try {
+      temp = isV2
+        ? new Cls({ document: this.actor, position: offscreen })
+        : new Cls(this.actor, offscreen);
+      if (typeof temp?.render !== 'function') return false;
+
+      temp.render(true);
+
+      let el = null, control = null;
+      for (let attempt = 0; attempt < 25 && !control; attempt++) {
+        if (attempt > 0) await new Promise(r => setTimeout(r, 40));
+        const candidate = temp.element instanceof HTMLElement ? temp.element : temp.element?.[0];
+        if (!candidate) continue;
+        el = candidate;
+        const host = el.closest('.app, .application') ?? el;
+        host.style.position   = 'fixed';
+        host.style.left       = '-10000px';
+        host.style.top        = '-10000px';
+        host.style.visibility = 'hidden';
+
+        control = el.querySelector(`.open-compendium[data-item-type="${slotType}"]`);
+      }
+      if (!el || !control) {
+        console.warn('DC20 Alt Sheet | Could not find DC20\'s native compendium-browse control in its own sheet markup');
+        return false;
+      }
+
+      console.debug('DC20 Alt Sheet | Relaying compendium browse through DC20\'s native sheet', { slotType });
+      control.click();
+      await new Promise(r => setTimeout(r, 50));
+      return true;
+    } catch (err) {
+      console.error('DC20 Alt Sheet | Native-sheet compendium relay failed', err);
+      return false;
+    } finally {
+      try { await temp?.close({ force: true }); } catch { /* already gone */ }
+    }
   }
 
   /** Roll a skill / trade / language from the Activities knowledge list. */
