@@ -1,17 +1,18 @@
-/** Broad check for whether an item requires attunement, covering DC20 property naming conventions. */
+/**
+ * Whether an item requires attunement. DC20's item-sheet source (sheets/item-sheet.mjs
+ * #_onAddStandardProperty) confirms every item has a system.properties.<key> entry for
+ * every property in CONFIG.DC20RPG.PROPERTIES by schema default (an always-present
+ * object carrying label/type/cost/journalUuid) — the property is only actually assigned
+ * to this specific item when its own `.active` flag is set, which is what toggling it on
+ * from the item sheet writes (`system.properties.${selected}.active`). Checking the bare
+ * presence of system.properties.attunement (as this used to) is true for every item
+ * regardless of whether attunement was ever enabled for it.
+ */
 function _requiresAttunement(item) {
   const s = item.system;
-  const p = s.properties ?? {};
   return !!(
-    s.statuses?.requiresAttunement ||
-    s.statuses?.attuned ||          // already attuned → always show button
-    s.requiresAttunement ||
-    s.attunement?.required ||
-    s.attunement?.requiresAttunement ||
-    s.attunement === true ||
-    p.att || p.attunement || p.requiresAttunement ||
-    s.requirements?.attunement ||
-    s.traits?.attunement
+    s.statuses?.attuned ||           // already attuned → always show the button
+    s.properties?.attunement?.active
   );
 }
 
