@@ -91,6 +91,7 @@
 .dc20-alt-sheet .chip-label {
   font-family: var(--font-heading);
   font-size: var(--fs-xs);
+  line-height: 1;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -99,11 +100,13 @@
 .dc20-alt-sheet .chip-val {
   font-family: var(--font-heading);
   font-size: var(--fs-sm);
+  line-height: 1;
   font-weight: 700;
   color: var(--p-accent);
 }
 .dc20-alt-sheet .chip-unit {
   font-size: var(--fs-xs);
+  line-height: 1;
   color: var(--p-ink-muted);
 }
 .dc20-alt-sheet .chip-size-select {
