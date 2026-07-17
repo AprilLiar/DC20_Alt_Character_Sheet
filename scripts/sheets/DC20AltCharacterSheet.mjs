@@ -1077,10 +1077,21 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
    * Health's current-HP and temp-HP inputs (rendered once collapsed in the
    * header and once again per row in the resource dropdown) have no name=
    * attribute, so Foundry's generic submitOnChange form processing ignores
-   * them. Instead we commit both together in one update, recomputing
-   * system.resources.health.value (= current + temp) so it stays correct
-   * for the DC20 system's own damage/heal code, which reads that field
-   * directly rather than deriving it from current/temp.
+   * them — each is committed individually here instead.
+   *
+   * Only ever send the ONE field that actually changed, never both current
+   * and temp (and never `value` ourselves). DC20's own Actor#_preUpdate
+   * hook (`updateActorHp` in helpers/actors/tokens.mjs) inspects the update
+   * payload to decide how to reconcile system.resources.health.value
+   * (= current + temp, used by DC20's own damage/heal code): if `value` is
+   * present it takes that as an explicit heal/damage delta and *recomputes
+   * both* current and temp from it, discarding whichever of the two we
+   * didn't intend to touch. That's exactly what previously turned "add 5
+   * temp HP" into "heal 5 current HP, temp reset to 0" — we were sending
+   * current+temp+value together, so DC20 treated the value bump as a heal.
+   * Sending just `current` or just `temp` makes DC20 take its other,
+   * correct branches, which derive `value` from the untouched field itself
+   * — no need to compute it ourselves at all.
    */
   _bindHealthResource() {
     if (!this.isEditable) return;
@@ -1092,18 +1103,14 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     scopes.forEach(scope => {
       const curInp  = scope.querySelector('[data-health-field="current"]');
       const tempInp = scope.querySelector('[data-health-field="temp"]');
-      if (!curInp) return;
-      const commit = () => {
+      curInp?.addEventListener('change', () => {
         const current = Math.trunc(Number(curInp.value)) || 0;
-        const temp    = tempInp ? Math.max(0, Math.trunc(Number(tempInp.value)) || 0) : 0;
-        this.actor.update({
-          'system.resources.health.current': current,
-          'system.resources.health.temp':    temp,
-          'system.resources.health.value':   current + temp,
-        });
-      };
-      curInp.addEventListener('change', commit);
-      tempInp?.addEventListener('change', commit);
+        this.actor.update({ 'system.resources.health.current': current });
+      });
+      tempInp?.addEventListener('change', () => {
+        const temp = Math.max(0, Math.trunc(Number(tempInp.value)) || 0);
+        this.actor.update({ 'system.resources.health.temp': temp });
+      });
     });
   }
 
