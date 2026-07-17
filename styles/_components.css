@@ -529,7 +529,8 @@
   line-height: 1.4;
 }
 .dc20-alt-sheet .cost-badge i { font-size: 9px; }
-.dc20-alt-sheet .cost-ap  { color: var(--c-ap-light);    background: rgba(46, 109, 164, 0.15); }
+.dc20-alt-sheet .cost-badge-icon { width: 9px; height: 9px; display: block; }
+.dc20-alt-sheet .cost-ap  { color: #a855c4;              background: rgba(120, 50, 128, 0.15); }
 .dc20-alt-sheet .cost-sta { color: var(--c-sta-light);   background: rgba(176, 92, 40, 0.15);  }
 .dc20-alt-sheet .cost-mna { color: var(--c-mana-light);  background: rgba(123, 79, 174, 0.15); }
 .dc20-alt-sheet .cost-grt { color: var(--c-grit-light);  background: rgba(58, 138, 58, 0.15);  }

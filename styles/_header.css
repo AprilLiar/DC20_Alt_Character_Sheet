@@ -51,28 +51,26 @@
   align-items: center;
 }
 
-/* Generic pip dot (reused on combat page too) */
+/* AP pip — DC20's own purple/grey cube SVG (see apPips helper) */
 .dc20-alt-sheet .ap-pip {
-  width: calc(11px * var(--dc20-scale));
-  height: calc(11px * var(--dc20-scale));
-  border-radius: 50%;
-  border: 1.5px solid rgba(180, 200, 255, 0.5);
-  background: transparent;
-  transition: background var(--t-fast), box-shadow var(--t-fast);
+  width: calc(13px * var(--dc20-scale));
+  height: calc(13px * var(--dc20-scale));
+  display: block;
   cursor: pointer;
   user-select: none;
+  opacity: 0.55;
+  transition: opacity var(--t-fast), filter var(--t-fast);
 }
 .dc20-alt-sheet .ap-pip:hover {
-  border-color: #99bbff;
-  box-shadow: 0 0 5px rgba(100, 150, 255, 0.4);
+  opacity: 0.8;
+  filter: drop-shadow(0 0 3px rgba(120, 50, 128, 0.7));
 }
 .dc20-alt-sheet .ap-pip.filled {
-  background: #6699dd;
-  border-color: #99bbff;
-  box-shadow: 0 0 4px rgba(100, 150, 255, 0.6);
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(120, 50, 128, 0.75));
 }
 .dc20-alt-sheet .ap-pip.filled:hover {
-  box-shadow: 0 0 8px rgba(100, 150, 255, 0.9);
+  filter: drop-shadow(0 0 7px rgba(120, 50, 128, 1));
 }
 
 /* ── Defences: PD / AD (small, right after AP) ── */

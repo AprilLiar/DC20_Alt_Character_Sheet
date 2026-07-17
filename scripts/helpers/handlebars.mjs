@@ -48,10 +48,21 @@ export function registerHandlebarsHelpers() {
     return new Handlebars.SafeString(dots.join(''));
   });
 
+  // DC20's own purple/grey AP-cube SVGs (systems/dc20rpg/images/sheet/header/
+  // ap-{full,empty}.svg — used by the base system's token HUD AP bar) are
+  // plain static image assets, so — unlike the system's bundled .mjs files,
+  // which don't exist as individually fetchable files in an installed
+  // package — they're safe to reference directly by path, the same way
+  // condition icons already pull system-owned image files.
+  const AP_CUBE_FULL  = 'systems/dc20rpg/images/sheet/header/ap-full.svg';
+  const AP_CUBE_EMPTY = 'systems/dc20rpg/images/sheet/header/ap-empty.svg';
+
   Handlebars.registerHelper('apPips', (current, max = 4) => {
     const pips = [];
     for (let i = 0; i < max; i++) {
-      pips.push(`<span class="ap-pip ${i < current ? 'filled' : ''}" data-pip-index="${i}"></span>`);
+      const filled = i < current;
+      const src = filled ? AP_CUBE_FULL : AP_CUBE_EMPTY;
+      pips.push(`<img class="ap-pip${filled ? ' filled' : ''}" data-pip-index="${i}" src="${src}" alt="AP">`);
     }
     return new Handlebars.SafeString(pips.join(''));
   });
@@ -59,7 +70,7 @@ export function registerHandlebarsHelpers() {
   Handlebars.registerHelper('itemCost', (costs) => {
     if (!costs) return new Handlebars.SafeString('');
     const DEFS = [
-      { key: 'ap',      icon: 'fas fa-bolt',       cls: 'cost-ap'  },
+      { key: 'ap',      img: AP_CUBE_FULL,          cls: 'cost-ap'  },
       { key: 'stamina', icon: 'fas fa-fist-raised', cls: 'cost-sta' },
       { key: 'mana',    icon: 'fas fa-fire',        cls: 'cost-mna' },
       { key: 'grit',    icon: 'fas fa-shield-alt',  cls: 'cost-grt' },
@@ -67,7 +78,12 @@ export function registerHandlebarsHelpers() {
     ];
     const parts = DEFS
       .filter(d => costs[d.key])
-      .map(d => `<span class="cost-badge ${d.cls}"><i class="${d.icon}"></i>${costs[d.key]}</span>`);
+      .map(d => {
+        const iconHtml = d.img
+          ? `<img class="cost-badge-icon" src="${d.img}" alt="">`
+          : `<i class="${d.icon}"></i>`;
+        return `<span class="cost-badge ${d.cls}">${iconHtml}${costs[d.key]}</span>`;
+      });
     return new Handlebars.SafeString(parts.join(''));
   });
 }
