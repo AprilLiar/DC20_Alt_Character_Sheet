@@ -1613,9 +1613,13 @@
 }
 .dc20-alt-sheet .char-slot-empty {
   flex: 1;
+  min-width: 0;
   font-size: var(--fs-sm);
   color: var(--p-ink-muted);
   font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .dc20-alt-sheet .char-slot-browse {
   flex-shrink: 0;
