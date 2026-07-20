@@ -1,12 +1,19 @@
 import { getFavourites, getLastUsed } from '../helpers/tracking.mjs';
 import { MODULE_ID } from '../constants.mjs';
 
-/** The four fixed DC20 basic checks (rolled via actor.roll(key, 'check')). */
+/**
+ * The four fixed DC20 basic checks (rolled via actor.roll(key, 'check')).
+ * `path` matches the roll-data property DC20's own DC20Roll.prepareCheckDetails
+ * (roll/rollApi.mjs) resolves each key's formula against — e.g. "att" adds
+ * "+ @attack.martial" — so reading actor.getRollData() at that same path
+ * gives the exact bonus DC20 itself would use, including anything from
+ * active effects, modifiers, or (for prime) the useMaxPrime game setting.
+ */
 const BASIC_ROLLS = [
-  { key: 'att',   label: 'Attack Check'  },
-  { key: 'spe',   label: 'Spell Check'   },
-  { key: 'mar',   label: 'Martial Check' },
-  { key: 'prime', label: 'Prime Check'   },
+  { key: 'att',   label: 'Attack Check',  path: 'attack.martial' },
+  { key: 'spe',   label: 'Spell Check',   path: 'check.spell'    },
+  { key: 'mar',   label: 'Martial Check', path: 'check.martial'  },
+  { key: 'prime', label: 'Prime Check',   path: 'prime'          },
 ];
 
 const ATTR_CONFIG = {
@@ -114,7 +121,13 @@ export async function prepareCore(actor) {
     languages,
     movement,
     senses,
-    basicRolls: BASIC_ROLLS,
+    basicRolls: (() => {
+      const rollData = actor.getRollData();
+      return BASIC_ROLLS.map(r => ({
+        ...r,
+        bonus: Number(foundry.utils.getProperty(rollData, r.path)) || 0,
+      }));
+    })(),
     customRolls,
     favourites,
     lastUsed,
