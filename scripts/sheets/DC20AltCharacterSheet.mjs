@@ -414,6 +414,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindBiographyAutoSave();
     this._bindItemPopup();
     this._bindPortraitFit();
+    this._bindWindowResize();
     this._restoreScroll();
   }
 
@@ -449,6 +450,78 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._portraitRO?.disconnect();
     this._portraitRO = null;
     super._onClose(options);
+  }
+
+  /**
+   * Foundry's `resizable: true` only gives a small drag handle in the
+   * window's bottom-right corner. This adds a bigger, visible grip icon
+   * there (enhancing Foundry's own handle in place, whichever of the
+   * plausible class names it turns out to use, rather than duplicating a
+   * second corner handler that could fight it for the same drag) plus
+   * genuine edge-resize strips along the right, left, and bottom edges,
+   * which Foundry doesn't provide at all.
+   *
+   * The window chrome (unlike PARTS content) persists across re-renders,
+   * so this only needs to run once — guarded by checking whether the edge
+   * elements already exist.
+   */
+  _bindWindowResize() {
+    const el = this.element;
+    if (!el || el.querySelector('.dc20-resize-edge')) return;
+
+    const corner = el.querySelector('.window-resize-handle, .window-resizable-handle, [class*="resize-handle"]');
+    if (corner && !corner.querySelector('.dc20-resize-icon')) {
+      corner.classList.add('dc20-corner-resize');
+      corner.insertAdjacentHTML('beforeend',
+        '<svg class="dc20-resize-icon" viewBox="0 0 10 10" width="10" height="10" fill="none" ' +
+        'stroke="currentColor" stroke-width="1.2" stroke-linecap="round">' +
+        '<line x1="9" y1="1" x2="1" y2="9"/><line x1="9" y1="4.5" x2="4.5" y2="9"/><line x1="9" y1="8" x2="8" y2="9"/>' +
+        '</svg>');
+    }
+
+    const MIN_W = 500, MIN_H = 400;
+    const makeEdge = (cls, cursor) => {
+      const div = document.createElement('div');
+      div.className = `dc20-resize-edge ${cls}`;
+      div.style.cursor = cursor;
+      el.appendChild(div);
+      return div;
+    };
+    const right  = makeEdge('dc20-resize-edge-right',  'ew-resize');
+    const left   = makeEdge('dc20-resize-edge-left',   'ew-resize');
+    const bottom = makeEdge('dc20-resize-edge-bottom', 'ns-resize');
+
+    const startDrag = (edge) => (event) => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const start = { ...this.position };
+
+      const onMove = (ev) => {
+        const dx = ev.clientX - startX;
+        const dy = ev.clientY - startY;
+        const update = {};
+        if (edge === 'right') update.width = Math.max(MIN_W, start.width + dx);
+        if (edge === 'left') {
+          const w = Math.max(MIN_W, start.width - dx);
+          update.width = w;
+          update.left  = start.left + (start.width - w);
+        }
+        if (edge === 'bottom') update.height = Math.max(MIN_H, start.height + dy);
+        this.setPosition(update);
+      };
+      const onUp = () => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+      };
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp, { once: true });
+    };
+
+    right.addEventListener('pointerdown', startDrag('right'));
+    left.addEventListener('pointerdown', startDrag('left'));
+    bottom.addEventListener('pointerdown', startDrag('bottom'));
   }
 
   _bindBiographyAutoSave() {

@@ -3,6 +3,29 @@
    Window structure: header strip + right-side nav + page area.
    ============================================================ */
 
+/* ── Window resize: bigger corner grip + edge-drag strips (see _bindWindowResize) ── */
+.dc20-alt-sheet .dc20-corner-resize {
+  width: 20px !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  color: var(--p-ink-muted);
+  opacity: 0.75;
+  transition: opacity var(--t-fast), color var(--t-fast);
+}
+.dc20-alt-sheet .dc20-corner-resize:hover {
+  opacity: 1;
+  color: var(--p-accent);
+}
+.dc20-alt-sheet .dc20-resize-edge {
+  position: absolute;
+  z-index: 40;
+}
+.dc20-alt-sheet .dc20-resize-edge-right  { top: 6px; right: -3px; bottom: 20px; width: 8px; }
+.dc20-alt-sheet .dc20-resize-edge-left   { top: 6px; left: -3px;  bottom: 20px; width: 8px; }
+.dc20-alt-sheet .dc20-resize-edge-bottom { left: 6px; right: 20px; bottom: -3px; height: 8px; }
+
 /* Application window background */
 .dc20-alt-sheet .window-content {
   display: grid;
