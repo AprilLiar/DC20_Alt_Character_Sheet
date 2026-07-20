@@ -399,6 +399,7 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
     this._bindApPips();
     this._bindResourceDropdown();
     this._bindHealthResource();
+    this._bindResourceValueMax();
     this._bindSplitBuilder();
     this._bindSplitDivider();
     this._registerContextMenu();
@@ -1183,6 +1184,36 @@ export class DC20AltCharacterSheet extends foundry.applications.api.HandlebarsAp
       tempInp?.addEventListener('change', () => {
         const temp = Math.max(0, Math.trunc(Number(tempInp.value)) || 0);
         this.actor.update({ 'system.resources.health.temp': temp });
+      });
+    });
+  }
+
+  /**
+   * Every non-health resource's value/max inputs (rendered once collapsed
+   * in the header and once again per row in the resource dropdown) use
+   * Foundry's generic submitOnChange form processing via name= — which
+   * gathers *every* named field in the form on any single change, not just
+   * the one edited. That's harmless for most fields, but not here: custom
+   * resources (and, via the same code path, DC20's own resources — see
+   * Actor#_prepareCustomResources) compute `max` from `maxFormula + bonus`
+   * on every derived-data pass, so the max input's name= actually targets
+   * `maxFormula` (see prepareHeader.mjs), not `max`, precisely so a direct
+   * edit lands on the right field. But because both the value and max
+   * inputs for the *same* resource share one form, and the same resource
+   * renders twice (collapsed + dropdown), editing value alone still
+   * resubmits max's current *displayed* (derived) value back into
+   * maxFormula as a side effect — which is where "editing value resets
+   * max" came from once bonus was ever non-zero. Committing each field
+   * individually — the same fix already applied to health — sidesteps all
+   * of that: each input reports only its own value, to only its own path.
+   */
+  _bindResourceValueMax() {
+    if (!this.isEditable) return;
+    this.element.querySelectorAll('.hstrip-input[name]').forEach(inp => {
+      const path = inp.name;
+      inp.removeAttribute('name');
+      inp.addEventListener('change', () => {
+        this.actor.update({ [path]: Math.trunc(Number(inp.value)) || 0 });
       });
     });
   }
