@@ -109,27 +109,36 @@
   line-height: 1;
   color: var(--p-ink-muted);
 }
+/* Styled as an actual small button (opaque accent fill) rather than plain
+   text, so it reads as clickable/editable like the rest of the chip row —
+   it's the only chip in that row whose value is a control, not a label. */
 .dc20-alt-sheet .chip-size-select {
-  background: transparent;
+  background: var(--p-accent);
   border: none;
-  color: var(--p-accent);
+  border-radius: var(--r-sm);
+  color: var(--p-light);
   font-family: var(--font-heading);
   font-size: var(--fs-sm);
   font-weight: 700;
   cursor: pointer;
-  padding: 0;
+  padding: calc(1px * var(--dc20-scale)) calc(6px * var(--dc20-scale));
   margin: 0;
   text-transform: capitalize;
   appearance: none;
   -webkit-appearance: none;
-  line-height: inherit;
-  height: auto;
-  min-height: 0;
-  vertical-align: baseline;
-  display: inline;
-  max-width: 6em;
+  box-sizing: border-box;
+  height: calc(17px * var(--dc20-scale));
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  max-width: 8em;
+  transition: filter var(--t-fast), box-shadow var(--t-fast);
 }
-.dc20-alt-sheet .chip-size-select:focus { outline: none; }
+.dc20-alt-sheet .chip-size-select:hover { filter: brightness(1.12); }
+.dc20-alt-sheet .chip-size-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+}
 
 /* Attribute cards in a horizontal row inside the north panel */
 
